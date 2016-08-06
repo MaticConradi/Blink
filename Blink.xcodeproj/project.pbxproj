@@ -1,0 +1,507 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		64DAB0A01D55EA0C0029BB8B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DAB09F1D55EA0C0029BB8B /* AppDelegate.swift */; };
+		64DAB0A21D55EA0C0029BB8B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DAB0A11D55EA0C0029BB8B /* ViewController.swift */; };
+		64DAB0A51D55EA0C0029BB8B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 64DAB0A31D55EA0C0029BB8B /* Main.storyboard */; };
+		64DAB0A71D55EA0C0029BB8B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 64DAB0A61D55EA0C0029BB8B /* Assets.xcassets */; };
+		64DAB0AA1D55EA0C0029BB8B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 64DAB0A81D55EA0C0029BB8B /* LaunchScreen.storyboard */; };
+		64DAB0B51D55EA0C0029BB8B /* BlinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DAB0B41D55EA0C0029BB8B /* BlinkTests.swift */; };
+		64DAB0C01D55EA0C0029BB8B /* BlinkUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DAB0BF1D55EA0C0029BB8B /* BlinkUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		64DAB0B11D55EA0C0029BB8B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 64DAB0941D55EA0C0029BB8B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 64DAB09B1D55EA0C0029BB8B;
+			remoteInfo = Blink;
+		};
+		64DAB0BC1D55EA0C0029BB8B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 64DAB0941D55EA0C0029BB8B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 64DAB09B1D55EA0C0029BB8B;
+			remoteInfo = Blink;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		64DAB09C1D55EA0C0029BB8B /* Blink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Blink.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		64DAB09F1D55EA0C0029BB8B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		64DAB0A11D55EA0C0029BB8B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		64DAB0A41D55EA0C0029BB8B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		64DAB0A61D55EA0C0029BB8B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		64DAB0A91D55EA0C0029BB8B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		64DAB0AB1D55EA0C0029BB8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		64DAB0B01D55EA0C0029BB8B /* BlinkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlinkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		64DAB0B41D55EA0C0029BB8B /* BlinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlinkTests.swift; sourceTree = "<group>"; };
+		64DAB0B61D55EA0C0029BB8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		64DAB0BB1D55EA0C0029BB8B /* BlinkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlinkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		64DAB0BF1D55EA0C0029BB8B /* BlinkUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlinkUITests.swift; sourceTree = "<group>"; };
+		64DAB0C11D55EA0C0029BB8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		64DAB0991D55EA0C0029BB8B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64DAB0AD1D55EA0C0029BB8B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64DAB0B81D55EA0C0029BB8B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		64DAB0931D55EA0C0029BB8B = {
+			isa = PBXGroup;
+			children = (
+				64DAB09E1D55EA0C0029BB8B /* Blink */,
+				64DAB0B31D55EA0C0029BB8B /* BlinkTests */,
+				64DAB0BE1D55EA0C0029BB8B /* BlinkUITests */,
+				64DAB09D1D55EA0C0029BB8B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		64DAB09D1D55EA0C0029BB8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				64DAB09C1D55EA0C0029BB8B /* Blink.app */,
+				64DAB0B01D55EA0C0029BB8B /* BlinkTests.xctest */,
+				64DAB0BB1D55EA0C0029BB8B /* BlinkUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		64DAB09E1D55EA0C0029BB8B /* Blink */ = {
+			isa = PBXGroup;
+			children = (
+				64DAB09F1D55EA0C0029BB8B /* AppDelegate.swift */,
+				64DAB0A11D55EA0C0029BB8B /* ViewController.swift */,
+				64DAB0A31D55EA0C0029BB8B /* Main.storyboard */,
+				64DAB0A61D55EA0C0029BB8B /* Assets.xcassets */,
+				64DAB0A81D55EA0C0029BB8B /* LaunchScreen.storyboard */,
+				64DAB0AB1D55EA0C0029BB8B /* Info.plist */,
+			);
+			path = Blink;
+			sourceTree = "<group>";
+		};
+		64DAB0B31D55EA0C0029BB8B /* BlinkTests */ = {
+			isa = PBXGroup;
+			children = (
+				64DAB0B41D55EA0C0029BB8B /* BlinkTests.swift */,
+				64DAB0B61D55EA0C0029BB8B /* Info.plist */,
+			);
+			path = BlinkTests;
+			sourceTree = "<group>";
+		};
+		64DAB0BE1D55EA0C0029BB8B /* BlinkUITests */ = {
+			isa = PBXGroup;
+			children = (
+				64DAB0BF1D55EA0C0029BB8B /* BlinkUITests.swift */,
+				64DAB0C11D55EA0C0029BB8B /* Info.plist */,
+			);
+			path = BlinkUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		64DAB09B1D55EA0C0029BB8B /* Blink */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 64DAB0C41D55EA0C0029BB8B /* Build configuration list for PBXNativeTarget "Blink" */;
+			buildPhases = (
+				64DAB0981D55EA0C0029BB8B /* Sources */,
+				64DAB0991D55EA0C0029BB8B /* Frameworks */,
+				64DAB09A1D55EA0C0029BB8B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Blink;
+			productName = Blink;
+			productReference = 64DAB09C1D55EA0C0029BB8B /* Blink.app */;
+			productType = "com.apple.product-type.application";
+		};
+		64DAB0AF1D55EA0C0029BB8B /* BlinkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 64DAB0C71D55EA0C0029BB8B /* Build configuration list for PBXNativeTarget "BlinkTests" */;
+			buildPhases = (
+				64DAB0AC1D55EA0C0029BB8B /* Sources */,
+				64DAB0AD1D55EA0C0029BB8B /* Frameworks */,
+				64DAB0AE1D55EA0C0029BB8B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				64DAB0B21D55EA0C0029BB8B /* PBXTargetDependency */,
+			);
+			name = BlinkTests;
+			productName = BlinkTests;
+			productReference = 64DAB0B01D55EA0C0029BB8B /* BlinkTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		64DAB0BA1D55EA0C0029BB8B /* BlinkUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 64DAB0CA1D55EA0C0029BB8B /* Build configuration list for PBXNativeTarget "BlinkUITests" */;
+			buildPhases = (
+				64DAB0B71D55EA0C0029BB8B /* Sources */,
+				64DAB0B81D55EA0C0029BB8B /* Frameworks */,
+				64DAB0B91D55EA0C0029BB8B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				64DAB0BD1D55EA0C0029BB8B /* PBXTargetDependency */,
+			);
+			name = BlinkUITests;
+			productName = BlinkUITests;
+			productReference = 64DAB0BB1D55EA0C0029BB8B /* BlinkUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		64DAB0941D55EA0C0029BB8B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = Conradi.si;
+				TargetAttributes = {
+					64DAB09B1D55EA0C0029BB8B = {
+						CreatedOnToolsVersion = 7.3.1;
+					};
+					64DAB0AF1D55EA0C0029BB8B = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = 64DAB09B1D55EA0C0029BB8B;
+					};
+					64DAB0BA1D55EA0C0029BB8B = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = 64DAB09B1D55EA0C0029BB8B;
+					};
+				};
+			};
+			buildConfigurationList = 64DAB0971D55EA0C0029BB8B /* Build configuration list for PBXProject "Blink" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 64DAB0931D55EA0C0029BB8B;
+			productRefGroup = 64DAB09D1D55EA0C0029BB8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				64DAB09B1D55EA0C0029BB8B /* Blink */,
+				64DAB0AF1D55EA0C0029BB8B /* BlinkTests */,
+				64DAB0BA1D55EA0C0029BB8B /* BlinkUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		64DAB09A1D55EA0C0029BB8B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64DAB0AA1D55EA0C0029BB8B /* LaunchScreen.storyboard in Resources */,
+				64DAB0A71D55EA0C0029BB8B /* Assets.xcassets in Resources */,
+				64DAB0A51D55EA0C0029BB8B /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64DAB0AE1D55EA0C0029BB8B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64DAB0B91D55EA0C0029BB8B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		64DAB0981D55EA0C0029BB8B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64DAB0A21D55EA0C0029BB8B /* ViewController.swift in Sources */,
+				64DAB0A01D55EA0C0029BB8B /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64DAB0AC1D55EA0C0029BB8B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64DAB0B51D55EA0C0029BB8B /* BlinkTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64DAB0B71D55EA0C0029BB8B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				64DAB0C01D55EA0C0029BB8B /* BlinkUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		64DAB0B21D55EA0C0029BB8B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 64DAB09B1D55EA0C0029BB8B /* Blink */;
+			targetProxy = 64DAB0B11D55EA0C0029BB8B /* PBXContainerItemProxy */;
+		};
+		64DAB0BD1D55EA0C0029BB8B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 64DAB09B1D55EA0C0029BB8B /* Blink */;
+			targetProxy = 64DAB0BC1D55EA0C0029BB8B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		64DAB0A31D55EA0C0029BB8B /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				64DAB0A41D55EA0C0029BB8B /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		64DAB0A81D55EA0C0029BB8B /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				64DAB0A91D55EA0C0029BB8B /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		64DAB0C21D55EA0C0029BB8B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		64DAB0C31D55EA0C0029BB8B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		64DAB0C51D55EA0C0029BB8B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Blink/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.Blink;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		64DAB0C61D55EA0C0029BB8B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = Blink/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.Blink;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		64DAB0C81D55EA0C0029BB8B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = BlinkTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.BlinkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blink.app/Blink";
+			};
+			name = Debug;
+		};
+		64DAB0C91D55EA0C0029BB8B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = BlinkTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.BlinkTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blink.app/Blink";
+			};
+			name = Release;
+		};
+		64DAB0CB1D55EA0C0029BB8B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = BlinkUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.BlinkUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = Blink;
+			};
+			name = Debug;
+		};
+		64DAB0CC1D55EA0C0029BB8B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = BlinkUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.BlinkUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = Blink;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		64DAB0971D55EA0C0029BB8B /* Build configuration list for PBXProject "Blink" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				64DAB0C21D55EA0C0029BB8B /* Debug */,
+				64DAB0C31D55EA0C0029BB8B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		64DAB0C41D55EA0C0029BB8B /* Build configuration list for PBXNativeTarget "Blink" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				64DAB0C51D55EA0C0029BB8B /* Debug */,
+				64DAB0C61D55EA0C0029BB8B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		64DAB0C71D55EA0C0029BB8B /* Build configuration list for PBXNativeTarget "BlinkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				64DAB0C81D55EA0C0029BB8B /* Debug */,
+				64DAB0C91D55EA0C0029BB8B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		64DAB0CA1D55EA0C0029BB8B /* Build configuration list for PBXNativeTarget "BlinkUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				64DAB0CB1D55EA0C0029BB8B /* Debug */,
+				64DAB0CC1D55EA0C0029BB8B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 64DAB0941D55EA0C0029BB8B /* Project object */;
+}
