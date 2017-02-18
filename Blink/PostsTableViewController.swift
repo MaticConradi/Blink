@@ -322,6 +322,12 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
             
             post.append(NSMutableAttributedString(string: rawPost))
             post.append(touchForMore)
+        }else if arrayConditions[indexPath.row] == "3" && !arrayAnswered.contains(indexPath.row) {
+            let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
+            let touchForMore = NSMutableAttributedString(string: " Touch to reveal...", attributes: attributes)
+            
+            post.append(NSMutableAttributedString(string: rawPost))
+            post.append(touchForMore)
         }else if arrayConditions[indexPath.row] == "3" && arrayAnswered.contains(indexPath.row) {
             let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
             let question = NSMutableAttributedString(string: rawPost, attributes: attributes)
