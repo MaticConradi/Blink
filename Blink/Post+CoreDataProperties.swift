@@ -11,11 +11,13 @@ import CoreData
 
 extension Post {
     @nonobjc public class func createFetchRequest() -> NSFetchRequest<Post> {
-        return NSFetchRequest<Post>(entityName: "Post");
+        return NSFetchRequest<Post>(entityName: "Post")
     }
     
     @NSManaged var post: String
+    @NSManaged var desc: String
     @NSManaged var link: String
+    @NSManaged var image: String
     @NSManaged var condition: String
     @NSManaged var time: Int
 }

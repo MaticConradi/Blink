@@ -9,7 +9,6 @@
 import UIKit
 
 class PostNavigationController: UINavigationController {
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         let backButton = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: navigationController, action: nil)

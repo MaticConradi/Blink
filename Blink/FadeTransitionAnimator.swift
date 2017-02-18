@@ -14,7 +14,7 @@ class FadeTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     let maskLayer = CAShapeLayer()
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.3;
+        return 0.3
     }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
@@ -54,7 +54,6 @@ class ReplaceTopSegue: UIStoryboardSegue {
         vcs?.removeLast()
         vcs?.append(toVC)
         
-        fromVC.navigationController?.setViewControllers(vcs!,
-                                                        animated: true)
+        fromVC.navigationController?.setViewControllers(vcs!, animated: true)
     }
 }

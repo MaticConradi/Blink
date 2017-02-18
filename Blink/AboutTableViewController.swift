@@ -7,89 +7,117 @@
 //
 
 import UIKit
+import SafariServices
+import UserNotifications
+import UserNotificationsUI
 
 class AboutTableViewController: UITableViewController {
-
+    let defaults = UserDefaults.standard
+    let currentCal = Calendar(identifier: Calendar.Identifier.gregorian)
+    
+    let requestIdentifier = "DailyReminder"
+    let center = UNUserNotificationCenter.current()
+    let calendar = Calendar.current
+    
+    @IBOutlet var aboutTableView: UITableView!
+    @IBOutlet weak var datePicker: UIDatePicker!
+    @IBOutlet weak var notifications: UISwitch!
+    @IBOutlet weak var feedback: UISwitch!
+    @IBOutlet weak var datePickerLabel: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        var notificationTime = (calendar as NSCalendar).components([.year, .month, .day, .hour, .minute, .second], from: Date())
+        notificationTime.hour = defaults.integer(forKey: "notificationTimeHour")
+        notificationTime.minute = defaults.integer(forKey: "notificationTimeMinute")
+        
+        datePicker.date = calendar.date(from: notificationTime)!
+        notifications.isOn = defaults.bool(forKey: "dailyNotifications")
+        if defaults.bool(forKey: "dailyNotifications") {
+            self.datePickerLabel.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+            self.datePicker.layer.opacity = 1
+        }else{
+            self.datePickerLabel.textColor = UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
+            self.datePicker.layer.opacity = 0.2
+        }
+        feedback.isOn = defaults.bool(forKey: "shakeToSendFeedback")
+        aboutTableView.backgroundColor = UIColor(red: 0.04, green: 0.04, blue: 0.04, alpha: 1.0)
+        aboutTableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0)
+        datePicker.setValue(UIColor.white, forKey: "textColor")
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    @IBAction func notificationsChanged(_ sender: UISwitch) {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        defaults.set(notifications.isOn, forKey: "dailyNotifications")
+        if notifications.isOn {
+            createLocalNotification()
+            UIView.animate(withDuration: 0.3, animations: {
+                self.datePickerLabel.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+                self.datePicker.layer.opacity = 1
+            })
+        }else{
+            UIView.animate(withDuration: 0.3, animations: {
+                self.datePickerLabel.textColor = UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
+                self.datePicker.layer.opacity = 0.2
+            })
+        }
     }
-
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+    
+    @IBAction func feedbackChanged(_ sender: UISwitch) {
+        defaults.set(feedback.isOn, forKey: "shakeToSendFeedback")
     }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+    
+    @IBAction func timeChanged(_ sender: UIDatePicker) {
+        notifications.setOn(true, animated: true)
+        UIView.animate(withDuration: 0.3, animations: {
+            self.datePickerLabel.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+            self.datePicker.layer.opacity = 1
+        })
+        
+        defaults.set(true, forKey: "dailyNotifications")
+        let notificationTime = (calendar as NSCalendar).components([.year, .month, .day, .hour, .minute, .second], from: datePicker.date)
+        defaults.set(notificationTime.hour, forKey: "notificationTimeHour")
+        defaults.set(notificationTime.minute, forKey: "notificationTimeMinute")
+        createLocalNotification()
     }
-
-    /*
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
-        return cell
+    
+    func tapped() {
+        //Generate haptic feedback
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
     }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section == 1 && indexPath.row == 0 {
+            let vc = SFSafariViewController(url: URL(string: "http://www.conradi.si")!, entersReaderIfAvailable: false)
+            vc.preferredControlTintColor = UIColor.black
+            navigationController?.present(vc, animated: true)
+        }else if indexPath.section == 1 && indexPath.row == 1 {
+            let vc = SFSafariViewController(url: URL(string: "https://newsapi.org")!, entersReaderIfAvailable: false)
+            vc.preferredControlTintColor = UIColor.black
+            navigationController?.present(vc, animated: true)
+        }
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+    
+    func createLocalNotification() {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        
+        var oneDayfromNow: Date {
+            return (Calendar.current as NSCalendar).date(byAdding: .day, value: 1, to: Date(), options: [])!
+        }
+        
+        var notificationTime = (calendar as NSCalendar).components([.year, .month, .day, .hour, .minute, .second], from: oneDayfromNow)
+        notificationTime.hour = defaults.integer(forKey: "notificationTimeHour")
+        notificationTime.minute = defaults.integer(forKey: "notificationTimeMinute")
+        
+        let content = UNMutableNotificationContent()
+        content.body = "I have something for you..."
+        content.sound = UNNotificationSound.default()
+        content.badge = 1
+        
+        let trigger = UNCalendarNotificationTrigger.init(dateMatching: notificationTime, repeats: true)
+        let request = UNNotificationRequest(identifier:requestIdentifier, content: content, trigger: trigger)
+        
+        center.add(request)
     }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

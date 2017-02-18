@@ -19,11 +19,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     let requestIdentifier = "DailyReminder"
     let center = UNUserNotificationCenter.current()
+    let defaults = UserDefaults.standard
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         UIApplication.shared.applicationIconBadgeNumber = 0
         center.requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in }
-        self.createLocalNotification()
+        if defaults.bool(forKey: "dailyNotifications") {
+            self.createLocalNotification()
+        }
         return true
     }
     
@@ -62,26 +65,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func createLocalNotification() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        
+        let cal = Calendar.current
         var oneDayfromNow: Date {
             return (Calendar.current as NSCalendar).date(byAdding: .day, value: 1, to: Date(), options: [])!
         }
         
-        let cal = Calendar.current
-        
-        var oneDayfromNowDayTime = (cal as NSCalendar).components([.year, .month, .day, .hour, .minute, .second], from: oneDayfromNow)
-        oneDayfromNowDayTime.hour = 8
-        oneDayfromNowDayTime.minute = 0
-        oneDayfromNowDayTime.second = 0
+        var notificationTime = (cal as NSCalendar).components([.year, .month, .day, .hour, .minute, .second], from: oneDayfromNow)
+        notificationTime.hour = defaults.integer(forKey: "notificationTimeHour")
+        notificationTime.minute = defaults.integer(forKey: "notificationTimeMinute")
         
         let content = UNMutableNotificationContent()
-        content.body = "A mystery awaits..."
+        content.body = "I have something for you..."
         content.sound = UNNotificationSound.default()
         content.badge = 1
         
-        let trigger = UNCalendarNotificationTrigger.init(dateMatching: oneDayfromNowDayTime, repeats: true)
+        let trigger = UNCalendarNotificationTrigger.init(dateMatching: notificationTime, repeats: true)
         let request = UNNotificationRequest(identifier:requestIdentifier, content: content, trigger: trigger)
         
         center.add(request)
+    }
+    
+    func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
+        SDImageCache.shared().clearMemory()
+        SDImageCache.shared().clearDisk()
     }
     
     func applicationWillResignActive(_ application: UIApplication) {
@@ -102,7 +109,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillTerminate(_ application: UIApplication) {
+        SDImageCache.shared().clearMemory()
+        SDImageCache.shared().clearDisk()
         print("ℹ️ App will terminate.")
     }
 }
-
