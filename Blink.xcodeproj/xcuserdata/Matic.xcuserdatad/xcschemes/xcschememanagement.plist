@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Blink Widget.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 		<key>Blink.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -23,6 +28,11 @@
 			<true/>
 		</dict>
 		<key>64DAB0BA1D55EA0C0029BB8B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>64E382E41D96E17100467364</key>
 		<dict>
 			<key>primary</key>
 			<true/>

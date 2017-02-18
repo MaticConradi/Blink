@@ -7,13 +7,50 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		640FE8421D6499CC00340147 /* SettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640FE8411D6499CC00340147 /* SettingsCell.swift */; };
+		64360DF81D589E4E0094AE6B /* PostNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64360DF71D589E4E0094AE6B /* PostNavigationController.swift */; };
+		64360DFA1D58A0BC0094AE6B /* CenturyCity.otf in Resources */ = {isa = PBXBuildFile; fileRef = 64360DF91D58A0BC0094AE6B /* CenturyCity.otf */; };
+		643F44271D639384000A6775 /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 643F44261D639384000A6775 /* SettingsTableViewController.swift */; };
+		643F442B1D63AF67000A6775 /* NavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 643F442A1D63AF67000A6775 /* NavigationControllerDelegate.swift */; };
+		643F442D1D63B083000A6775 /* FadeTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 643F442C1D63B083000A6775 /* FadeTransitionAnimator.swift */; };
+		643F442F1D63BF12000A6775 /* home-light.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 643F442E1D63BF12000A6775 /* home-light.pdf */; };
+		646A7E041E1068A00045F685 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64E382E61D96E17100467364 /* NotificationCenter.framework */; };
+		646A7E061E1068A00045F685 /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 646A7E051E1068A00045F685 /* UserNotificationsUI.framework */; };
+		647183C81D63116100712A97 /* home.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 647183C61D63116100712A97 /* home.pdf */; };
+		6476909C1D62063300C2BECD /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 647690891D62063300C2BECD /* Icon-72.png */; };
+		6476909D1D62063300C2BECD /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 6476908A1D62063300C2BECD /* Icon.png */; };
+		6476909E1D62063300C2BECD /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 6476908B1D62063300C2BECD /* Icon-Small.png */; };
+		6476909F1D62063300C2BECD /* Icon-76@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6476908C1D62063300C2BECD /* Icon-76@2x.png */; };
+		647690A01D62063300C2BECD /* Icon-60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6476908D1D62063300C2BECD /* Icon-60@2x.png */; };
+		647690A11D62063300C2BECD /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 6476908E1D62063300C2BECD /* Icon-Small-50.png */; };
+		647690A21D62063300C2BECD /* Icon-Small-40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6476908F1D62063300C2BECD /* Icon-Small-40@2x.png */; };
+		647690A31D62063300C2BECD /* Icon-Small-40.png in Resources */ = {isa = PBXBuildFile; fileRef = 647690901D62063300C2BECD /* Icon-Small-40.png */; };
+		647690A41D62063300C2BECD /* iTunesArtwork@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 647690911D62063300C2BECD /* iTunesArtwork@2x.png */; };
+		647690A51D62063300C2BECD /* Icon-Small-40@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 647690921D62063300C2BECD /* Icon-Small-40@3x.png */; };
+		647690A61D62063300C2BECD /* Icon-Small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 647690931D62063300C2BECD /* Icon-Small@2x.png */; };
+		647690A71D62063300C2BECD /* Icon-60.png in Resources */ = {isa = PBXBuildFile; fileRef = 647690941D62063300C2BECD /* Icon-60.png */; };
+		647690A81D62063300C2BECD /* Icon-76.png in Resources */ = {isa = PBXBuildFile; fileRef = 647690951D62063300C2BECD /* Icon-76.png */; };
+		647690A91D62063300C2BECD /* Icon-Small-50@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 647690961D62063300C2BECD /* Icon-Small-50@2x.png */; };
+		647690AA1D62063300C2BECD /* Icon-Small@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 647690971D62063300C2BECD /* Icon-Small@3x.png */; };
+		647690AB1D62063300C2BECD /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 647690981D62063300C2BECD /* Icon@2x.png */; };
+		647690AC1D62063300C2BECD /* Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 647690991D62063300C2BECD /* Icon-72@2x.png */; };
+		647690AD1D62063300C2BECD /* Icon-60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6476909A1D62063300C2BECD /* Icon-60@3x.png */; };
+		647690B01D6207F800C2BECD /* Icon-83,5@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 647690AF1D6207F800C2BECD /* Icon-83,5@2x.png */; };
+		64887D121D89D06B0061A489 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64887D111D89D06B0061A489 /* UserNotifications.framework */; };
+		64887D141D89DC6E0061A489 /* Icon-20.png in Resources */ = {isa = PBXBuildFile; fileRef = 64887D131D89DC6E0061A489 /* Icon-20.png */; };
+		64B1ED411D61BA3A00396961 /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B1ED401D61BA3A00396961 /* PostCell.swift */; };
+		64BED38B1D68DD2D007D8170 /* nointernet.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 64BED38A1D68DD2D007D8170 /* nointernet.pdf */; };
+		64BED38F1D68F0E0007D8170 /* nointernet2.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 64BED38E1D68F0E0007D8170 /* nointernet2.pdf */; };
+		64D5251F1D8EE9EE000B2EA9 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64D5251E1D8EE9EE000B2EA9 /* Post.swift */; };
+		64D525211D8EEA73000B2EA9 /* Post+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64D525201D8EEA73000B2EA9 /* Post+CoreDataProperties.swift */; };
 		64DAB0A01D55EA0C0029BB8B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DAB09F1D55EA0C0029BB8B /* AppDelegate.swift */; };
-		64DAB0A21D55EA0C0029BB8B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DAB0A11D55EA0C0029BB8B /* ViewController.swift */; };
 		64DAB0A51D55EA0C0029BB8B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 64DAB0A31D55EA0C0029BB8B /* Main.storyboard */; };
 		64DAB0A71D55EA0C0029BB8B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 64DAB0A61D55EA0C0029BB8B /* Assets.xcassets */; };
 		64DAB0AA1D55EA0C0029BB8B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 64DAB0A81D55EA0C0029BB8B /* LaunchScreen.storyboard */; };
 		64DAB0B51D55EA0C0029BB8B /* BlinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DAB0B41D55EA0C0029BB8B /* BlinkTests.swift */; };
 		64DAB0C01D55EA0C0029BB8B /* BlinkUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DAB0BF1D55EA0C0029BB8B /* BlinkUITests.swift */; };
+		64DAB0D01D5601460029BB8B /* PostsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DAB0CF1D5601460029BB8B /* PostsTableViewController.swift */; };
+		64F910C51D748DA800E3E4B2 /* myCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 64F910C31D748DA800E3E4B2 /* myCoreDataModel.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,10 +70,58 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		64E382F51D96E17200467364 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		640FE8411D6499CC00340147 /* SettingsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsCell.swift; sourceTree = "<group>"; };
+		64360DF71D589E4E0094AE6B /* PostNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostNavigationController.swift; sourceTree = "<group>"; };
+		64360DF91D58A0BC0094AE6B /* CenturyCity.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = CenturyCity.otf; sourceTree = "<group>"; };
+		643F44261D639384000A6775 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
+		643F442A1D63AF67000A6775 /* NavigationControllerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationControllerDelegate.swift; sourceTree = "<group>"; };
+		643F442C1D63B083000A6775 /* FadeTransitionAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FadeTransitionAnimator.swift; sourceTree = "<group>"; };
+		643F442E1D63BF12000A6775 /* home-light.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "home-light.pdf"; sourceTree = "<group>"; };
+		646A7E051E1068A00045F685 /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
+		647183C61D63116100712A97 /* home.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = home.pdf; sourceTree = "<group>"; };
+		647690891D62063300C2BECD /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
+		6476908A1D62063300C2BECD /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		6476908B1D62063300C2BECD /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small.png"; sourceTree = "<group>"; };
+		6476908C1D62063300C2BECD /* Icon-76@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76@2x.png"; sourceTree = "<group>"; };
+		6476908D1D62063300C2BECD /* Icon-60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60@2x.png"; sourceTree = "<group>"; };
+		6476908E1D62063300C2BECD /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50.png"; sourceTree = "<group>"; };
+		6476908F1D62063300C2BECD /* Icon-Small-40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-40@2x.png"; sourceTree = "<group>"; };
+		647690901D62063300C2BECD /* Icon-Small-40.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-40.png"; sourceTree = "<group>"; };
+		647690911D62063300C2BECD /* iTunesArtwork@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iTunesArtwork@2x.png"; sourceTree = "<group>"; };
+		647690921D62063300C2BECD /* Icon-Small-40@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-40@3x.png"; sourceTree = "<group>"; };
+		647690931D62063300C2BECD /* Icon-Small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small@2x.png"; sourceTree = "<group>"; };
+		647690941D62063300C2BECD /* Icon-60.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60.png"; sourceTree = "<group>"; };
+		647690951D62063300C2BECD /* Icon-76.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-76.png"; sourceTree = "<group>"; };
+		647690961D62063300C2BECD /* Icon-Small-50@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small-50@2x.png"; sourceTree = "<group>"; };
+		647690971D62063300C2BECD /* Icon-Small@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-Small@3x.png"; sourceTree = "<group>"; };
+		647690981D62063300C2BECD /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
+		647690991D62063300C2BECD /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@2x.png"; sourceTree = "<group>"; };
+		6476909A1D62063300C2BECD /* Icon-60@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-60@3x.png"; sourceTree = "<group>"; };
+		647690AF1D6207F800C2BECD /* Icon-83,5@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-83,5@2x.png"; sourceTree = "<group>"; };
+		64887D111D89D06B0061A489 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		64887D131D89DC6E0061A489 /* Icon-20.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-20.png"; sourceTree = "<group>"; };
+		6497C2BB1D625176001922A7 /* Blink-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Blink-Bridging-Header.h"; sourceTree = "<group>"; };
+		64B1ED401D61BA3A00396961 /* PostCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
+		64BED38A1D68DD2D007D8170 /* nointernet.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = nointernet.pdf; sourceTree = "<group>"; };
+		64BED38E1D68F0E0007D8170 /* nointernet2.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = nointernet2.pdf; sourceTree = "<group>"; };
+		64D5251E1D8EE9EE000B2EA9 /* Post.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
+		64D525201D8EEA73000B2EA9 /* Post+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Post+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		64DAB09C1D55EA0C0029BB8B /* Blink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Blink.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		64DAB09F1D55EA0C0029BB8B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		64DAB0A11D55EA0C0029BB8B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		64DAB0A41D55EA0C0029BB8B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		64DAB0A61D55EA0C0029BB8B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		64DAB0A91D55EA0C0029BB8B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -47,6 +132,9 @@
 		64DAB0BB1D55EA0C0029BB8B /* BlinkUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlinkUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		64DAB0BF1D55EA0C0029BB8B /* BlinkUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlinkUITests.swift; sourceTree = "<group>"; };
 		64DAB0C11D55EA0C0029BB8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		64DAB0CF1D5601460029BB8B /* PostsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostsTableViewController.swift; sourceTree = "<group>"; };
+		64E382E61D96E17100467364 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
+		64F910C41D748DA800E3E4B2 /* myCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = myCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +142,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				646A7E061E1068A00045F685 /* UserNotificationsUI.framework in Frameworks */,
+				646A7E041E1068A00045F685 /* NotificationCenter.framework in Frameworks */,
+				64887D121D89D06B0061A489 /* UserNotifications.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,6 +165,47 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		64360DFB1D58B4400094AE6B /* Icon */ = {
+			isa = PBXGroup;
+			children = (
+				64887D131D89DC6E0061A489 /* Icon-20.png */,
+				647690AF1D6207F800C2BECD /* Icon-83,5@2x.png */,
+				647690891D62063300C2BECD /* Icon-72.png */,
+				6476908A1D62063300C2BECD /* Icon.png */,
+				6476908B1D62063300C2BECD /* Icon-Small.png */,
+				6476908C1D62063300C2BECD /* Icon-76@2x.png */,
+				6476908D1D62063300C2BECD /* Icon-60@2x.png */,
+				6476908E1D62063300C2BECD /* Icon-Small-50.png */,
+				6476908F1D62063300C2BECD /* Icon-Small-40@2x.png */,
+				647690901D62063300C2BECD /* Icon-Small-40.png */,
+				647690911D62063300C2BECD /* iTunesArtwork@2x.png */,
+				647690921D62063300C2BECD /* Icon-Small-40@3x.png */,
+				647690931D62063300C2BECD /* Icon-Small@2x.png */,
+				647690941D62063300C2BECD /* Icon-60.png */,
+				647690951D62063300C2BECD /* Icon-76.png */,
+				647690961D62063300C2BECD /* Icon-Small-50@2x.png */,
+				647690971D62063300C2BECD /* Icon-Small@3x.png */,
+				647690981D62063300C2BECD /* Icon@2x.png */,
+				647690991D62063300C2BECD /* Icon-72@2x.png */,
+				6476909A1D62063300C2BECD /* Icon-60@3x.png */,
+				647183C61D63116100712A97 /* home.pdf */,
+				643F442E1D63BF12000A6775 /* home-light.pdf */,
+				64BED38A1D68DD2D007D8170 /* nointernet.pdf */,
+				64BED38E1D68F0E0007D8170 /* nointernet2.pdf */,
+			);
+			path = Icon;
+			sourceTree = "<group>";
+		};
+		64887D101D89D06B0061A489 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				646A7E051E1068A00045F685 /* UserNotificationsUI.framework */,
+				64887D111D89D06B0061A489 /* UserNotifications.framework */,
+				64E382E61D96E17100467364 /* NotificationCenter.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		64DAB0931D55EA0C0029BB8B = {
 			isa = PBXGroup;
 			children = (
@@ -81,6 +213,7 @@
 				64DAB0B31D55EA0C0029BB8B /* BlinkTests */,
 				64DAB0BE1D55EA0C0029BB8B /* BlinkUITests */,
 				64DAB09D1D55EA0C0029BB8B /* Products */,
+				64887D101D89D06B0061A489 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -98,11 +231,23 @@
 			isa = PBXGroup;
 			children = (
 				64DAB09F1D55EA0C0029BB8B /* AppDelegate.swift */,
-				64DAB0A11D55EA0C0029BB8B /* ViewController.swift */,
+				64DAB0CF1D5601460029BB8B /* PostsTableViewController.swift */,
+				643F44261D639384000A6775 /* SettingsTableViewController.swift */,
 				64DAB0A31D55EA0C0029BB8B /* Main.storyboard */,
+				64B1ED401D61BA3A00396961 /* PostCell.swift */,
+				640FE8411D6499CC00340147 /* SettingsCell.swift */,
+				643F442C1D63B083000A6775 /* FadeTransitionAnimator.swift */,
+				64360DF71D589E4E0094AE6B /* PostNavigationController.swift */,
+				643F442A1D63AF67000A6775 /* NavigationControllerDelegate.swift */,
 				64DAB0A61D55EA0C0029BB8B /* Assets.xcassets */,
 				64DAB0A81D55EA0C0029BB8B /* LaunchScreen.storyboard */,
 				64DAB0AB1D55EA0C0029BB8B /* Info.plist */,
+				64360DFB1D58B4400094AE6B /* Icon */,
+				64F910C31D748DA800E3E4B2 /* myCoreDataModel.xcdatamodeld */,
+				64D525201D8EEA73000B2EA9 /* Post+CoreDataProperties.swift */,
+				64D5251E1D8EE9EE000B2EA9 /* Post.swift */,
+				6497C2BB1D625176001922A7 /* Blink-Bridging-Header.h */,
+				64360DF91D58A0BC0094AE6B /* CenturyCity.otf */,
 			);
 			path = Blink;
 			sourceTree = "<group>";
@@ -135,6 +280,7 @@
 				64DAB0981D55EA0C0029BB8B /* Sources */,
 				64DAB0991D55EA0C0029BB8B /* Frameworks */,
 				64DAB09A1D55EA0C0029BB8B /* Resources */,
+				64E382F51D96E17200467364 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
@@ -187,19 +333,28 @@
 		64DAB0941D55EA0C0029BB8B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0730;
+				LastSwiftUpdateCheck = 0800;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = Conradi.si;
 				TargetAttributes = {
 					64DAB09B1D55EA0C0029BB8B = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = KLVC5PQYT3;
+						LastSwiftMigration = 0800;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 0;
+							};
+						};
 					};
 					64DAB0AF1D55EA0C0029BB8B = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0800;
 						TestTargetID = 64DAB09B1D55EA0C0029BB8B;
 					};
 					64DAB0BA1D55EA0C0029BB8B = {
 						CreatedOnToolsVersion = 7.3.1;
+						LastSwiftMigration = 0800;
 						TestTargetID = 64DAB09B1D55EA0C0029BB8B;
 					};
 				};
@@ -229,9 +384,34 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				64BED38B1D68DD2D007D8170 /* nointernet.pdf in Resources */,
+				64BED38F1D68F0E0007D8170 /* nointernet2.pdf in Resources */,
+				6476909E1D62063300C2BECD /* Icon-Small.png in Resources */,
+				647183C81D63116100712A97 /* home.pdf in Resources */,
+				647690A51D62063300C2BECD /* Icon-Small-40@3x.png in Resources */,
+				647690A21D62063300C2BECD /* Icon-Small-40@2x.png in Resources */,
+				647690A01D62063300C2BECD /* Icon-60@2x.png in Resources */,
+				647690B01D6207F800C2BECD /* Icon-83,5@2x.png in Resources */,
+				64887D141D89DC6E0061A489 /* Icon-20.png in Resources */,
+				647690A11D62063300C2BECD /* Icon-Small-50.png in Resources */,
+				6476909F1D62063300C2BECD /* Icon-76@2x.png in Resources */,
+				643F442F1D63BF12000A6775 /* home-light.pdf in Resources */,
+				647690AD1D62063300C2BECD /* Icon-60@3x.png in Resources */,
 				64DAB0AA1D55EA0C0029BB8B /* LaunchScreen.storyboard in Resources */,
+				64360DFA1D58A0BC0094AE6B /* CenturyCity.otf in Resources */,
+				647690A91D62063300C2BECD /* Icon-Small-50@2x.png in Resources */,
+				647690AC1D62063300C2BECD /* Icon-72@2x.png in Resources */,
 				64DAB0A71D55EA0C0029BB8B /* Assets.xcassets in Resources */,
+				647690A41D62063300C2BECD /* iTunesArtwork@2x.png in Resources */,
 				64DAB0A51D55EA0C0029BB8B /* Main.storyboard in Resources */,
+				6476909D1D62063300C2BECD /* Icon.png in Resources */,
+				647690A61D62063300C2BECD /* Icon-Small@2x.png in Resources */,
+				6476909C1D62063300C2BECD /* Icon-72.png in Resources */,
+				647690AB1D62063300C2BECD /* Icon@2x.png in Resources */,
+				647690A31D62063300C2BECD /* Icon-Small-40.png in Resources */,
+				647690A71D62063300C2BECD /* Icon-60.png in Resources */,
+				647690AA1D62063300C2BECD /* Icon-Small@3x.png in Resources */,
+				647690A81D62063300C2BECD /* Icon-76.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,8 +436,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				64DAB0A21D55EA0C0029BB8B /* ViewController.swift in Sources */,
+				64DAB0D01D5601460029BB8B /* PostsTableViewController.swift in Sources */,
+				64360DF81D589E4E0094AE6B /* PostNavigationController.swift in Sources */,
 				64DAB0A01D55EA0C0029BB8B /* AppDelegate.swift in Sources */,
+				64D5251F1D8EE9EE000B2EA9 /* Post.swift in Sources */,
+				640FE8421D6499CC00340147 /* SettingsCell.swift in Sources */,
+				643F442B1D63AF67000A6775 /* NavigationControllerDelegate.swift in Sources */,
+				643F442D1D63B083000A6775 /* FadeTransitionAnimator.swift in Sources */,
+				64F910C51D748DA800E3E4B2 /* myCoreDataModel.xcdatamodeld in Sources */,
+				643F44271D639384000A6775 /* SettingsTableViewController.swift in Sources */,
+				64B1ED411D61BA3A00396961 /* PostCell.swift in Sources */,
+				64D525211D8EEA73000B2EA9 /* Post+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,8 +515,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -349,7 +540,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -372,8 +563,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -389,9 +582,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -401,10 +595,22 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Blink",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Blink/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.Blink;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Blink/Blink-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -412,10 +618,21 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Blink",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = Blink/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.Blink;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Blink/Blink-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -427,6 +644,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.BlinkTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blink.app/Blink";
 			};
 			name = Debug;
@@ -439,6 +657,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.BlinkTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blink.app/Blink";
 			};
 			name = Release;
@@ -450,6 +669,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.BlinkUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Blink;
 			};
 			name = Debug;
@@ -461,6 +681,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.BlinkUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Blink;
 			};
 			name = Release;
@@ -484,6 +705,7 @@
 				64DAB0C61D55EA0C0029BB8B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		64DAB0C71D55EA0C0029BB8B /* Build configuration list for PBXNativeTarget "BlinkTests" */ = {
 			isa = XCConfigurationList;
@@ -492,6 +714,7 @@
 				64DAB0C91D55EA0C0029BB8B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		64DAB0CA1D55EA0C0029BB8B /* Build configuration list for PBXNativeTarget "BlinkUITests" */ = {
 			isa = XCConfigurationList;
@@ -500,8 +723,22 @@
 				64DAB0CC1D55EA0C0029BB8B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		64F910C31D748DA800E3E4B2 /* myCoreDataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				64F910C41D748DA800E3E4B2 /* myCoreDataModel.xcdatamodel */,
+			);
+			currentVersion = 64F910C41D748DA800E3E4B2 /* myCoreDataModel.xcdatamodel */;
+			path = myCoreDataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 64DAB0941D55EA0C0029BB8B /* Project object */;
 }
