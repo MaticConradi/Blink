@@ -12,7 +12,7 @@ import CoreData
 import SystemConfiguration
 import MessageUI
 
-class PostsTableViewController: UITableViewController, NSFetchedResultsControllerDelegate, MFMailComposeViewControllerDelegate, UIViewControllerPreviewingDelegate {
+class PostsTableViewController: UITableViewController, MFMailComposeViewControllerDelegate, UIViewControllerPreviewingDelegate {
     
     //**********************************
     // MARK: Variables
@@ -25,8 +25,6 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
     
     //Core data
     var container: NSPersistentContainer!
-    var fetchedResultsController: NSFetchedResultsController<Post>!
-    var commitPredicate: NSPredicate?
     
     //Stuff
     let myRefreshControl: UIRefreshControl = UIRefreshControl()

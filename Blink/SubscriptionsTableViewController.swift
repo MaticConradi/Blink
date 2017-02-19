@@ -16,8 +16,6 @@ class SubscriptionsTableViewController: UITableViewController {
     
     //CORE DATA
     var container: NSPersistentContainer!
-    var fetchedResultsController: NSFetchedResultsController<Post>!
-    var commitPredicate: NSPredicate?
     
     //Stuff
     let defaults = UserDefaults.standard
@@ -49,7 +47,6 @@ class SubscriptionsTableViewController: UITableViewController {
         
         settingsTableView.rowHeight = 100
         settingsTableView.backgroundColor = UIColor(red: 0.04, green: 0.04, blue: 0.04, alpha: 1.0)
-        print("\(UIApplication.shared.statusBarFrame.height) + \(self.navigationController!.navigationBar.frame.height)")
         settingsTableView.contentInset = UIEdgeInsetsMake(UIApplication.shared.statusBarFrame.height + self.navigationController!.navigationBar.frame.height, 0, 0, 0)
     }
     
@@ -108,7 +105,7 @@ class SubscriptionsTableViewController: UITableViewController {
     
     
     //**********************************
-    // MARK: Configure default posts
+    // MARK: Add default posts
     //**********************************
     
     
