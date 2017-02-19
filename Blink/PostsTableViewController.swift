@@ -57,10 +57,7 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
     var baseURL = ""
     
     //Helpers: default posts
-    var arrayDefaultPosts = [[String]]()
-    var progressDefPosts = [false, false, false, false, false, false, false, false, false, false]
-    var progressDefOrder = [[Int]]()
-    var progressSortedDefOrder = [[Int]]()
+    var arrayDefaultPosts = [String]()
     
     //Helpers: 3D touch previews
     var indexPathRow = 0
@@ -576,16 +573,16 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
     func setUp() {
         //SET UP
         print("📳 Set up")
-        arrayDefaultPosts = [["I'll try to help you with some advice. ⚖️", ""],
-                             ["I know some of the best cat facts. 🐈 Because why not. And I'm lonely. Mostly because I'm lonely.", ""],
-                             ["I'll satisfy your inner nerd by sending you interesting facts. ⭐️", ""],
-                             ["Pure random stuff. Just for you. 💎", "0"],
-                             ["Do you need some inspiration? I know some good quotes... 💬", ""],
-                             ["I love movies. 🎬 I hope you love them too!", ""],
-                             ["Jokes aside. Expect actual news from New York Times. 📰", "2"],
-                             ["Some numbers are pretty mind-boggling. Here are especially nice ones. 🕵️‍♀️", ""],
-                             ["💻 and ⌨️ and 🖥 and 🎮", ""],
-                             ["When something weird happens, you'll know. 🔥", "1"]]
+        arrayDefaultPosts = ["I'll try to help you with some advice. ⚖️",
+                             "I know some of the best cat facts. 🐈 Because why not. And I'm lonely. Mostly because I'm lonely.",
+                             "I'll satisfy your inner nerd by sending you interesting facts. ⭐️",
+                             "Pure random stuff. Just for you. 💎",
+                             "Do you need some inspiration? I know some good quotes... 💬",
+                             "I love movies. 🎬 I hope you love them too!",
+                             "Jokes aside. Expect actual news from New York Times. 📰",
+                             "Some numbers are pretty mind-boggling. Here are especially nice ones. 🕵️‍♀️",
+                             "💻 and ⌨️ and 🖥 and 🎮",
+                             "When something weird happens, you'll know. 🔥"]
         /*["Beeb boop... ℏ ℇ ≺ ℔ ∦ ℵ ℞ ℬ.", ""],*/
         
         //Set default values
@@ -690,19 +687,19 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
     
     func configDefaultPosts() {
         let data1 = Post(context: container.viewContext)
-        configure(post: data1, text: arrayDefaultPosts[9][0], description: "", condition: "10", link: "0", image: "0", time: 1)
+        configure(post: data1, text: arrayDefaultPosts[9], description: "", condition: "10", link: "0", image: "0", time: 1)
         saveContext()
-        addPost(text: arrayDefaultPosts[9][0], description: "", condition: "10", link: "0", image: "0", time: 1)
+        addPost(text: arrayDefaultPosts[9], description: "", condition: "10", link: "0", image: "0", time: 1)
         
         let data2 = Post(context: container.viewContext)
-        configure(post: data2, text: arrayDefaultPosts[6][0], description: "", condition: "7", link: "0", image: "0", time: 2)
+        configure(post: data2, text: arrayDefaultPosts[6], description: "", condition: "7", link: "0", image: "0", time: 2)
         saveContext()
-        addPost(text: arrayDefaultPosts[6][0], description: "", condition: "7", link: "0", image: "0", time: 2)
+        addPost(text: arrayDefaultPosts[6], description: "", condition: "7", link: "0", image: "0", time: 2)
         
         let data3 = Post(context: container.viewContext)
-        configure(post: data3, text: arrayDefaultPosts[3][0], description: "", condition: "4", link: "0", image: "0", time: 3)
+        configure(post: data3, text: arrayDefaultPosts[3], description: "", condition: "4", link: "0", image: "0", time: 3)
         saveContext()
-        addPost(text: arrayDefaultPosts[3][0], description: "", condition: "4", link: "0", image: "0", time: 3)
+        addPost(text: arrayDefaultPosts[3], description: "", condition: "4", link: "0", image: "0", time: 3)
         
         let data4 = Post(context: container.viewContext)
         configure(post: data4, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "0", image: "0", time: 100)

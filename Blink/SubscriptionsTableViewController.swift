@@ -22,7 +22,7 @@ class SubscriptionsTableViewController: UITableViewController {
     //Stuff
     let defaults = UserDefaults.standard
     
-    var arrayDefaultPosts = [[String]]()
+    var arrayDefaultPosts = [String]()
     var boolDefaultPosts = [Int]()
     
     
@@ -45,7 +45,7 @@ class SubscriptionsTableViewController: UITableViewController {
         }
         
         boolDefaultPosts = defaults.object(forKey: "boolDefaultPosts") as! [Int]
-        arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [[String]]
+        arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
         
         settingsTableView.rowHeight = 100
         settingsTableView.backgroundColor = UIColor(red: 0.04, green: 0.04, blue: 0.04, alpha: 1.0)
@@ -110,7 +110,7 @@ class SubscriptionsTableViewController: UITableViewController {
     func addDefPost(_ i: Int) {
         let data = Post(context: container.viewContext)
         
-        configure(post: data, text: arrayDefaultPosts[i][0], description: "", condition: "\(i + 1)", link: "0", image: "0", time: i + 1)
+        configure(post: data, text: arrayDefaultPosts[i], description: "", condition: "\(i + 1)", link: "0", image: "0", time: i + 1)
         saveContext()
     }
     
