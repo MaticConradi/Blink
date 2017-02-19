@@ -406,7 +406,7 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
         }
         
         if requestCount > 1 {
-            if currentDayTime.compare(lastDayTime) == .orderedDescending || numberOfPosts == 0  {
+            if currentDayTime.compare(lastDayTime) == .orderedDescending || numberOfPosts == 0 {
                 if numberOfPosts == 0 {
                     //First refresh
                     defaults.set(1, forKey: "NumberOfPosts")
@@ -700,9 +700,9 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
         addPost(text: arrayDefaultPosts[6][0], description: "", condition: "7", link: "0", image: "0", time: 2)
         
         let data3 = Post(context: container.viewContext)
-        configure(post: data3, text: arrayDefaultPosts[3][0], description: "", condition: "10", link: "0", image: "0", time: 3)
+        configure(post: data3, text: arrayDefaultPosts[3][0], description: "", condition: "4", link: "0", image: "0", time: 3)
         saveContext()
-        addPost(text: arrayDefaultPosts[3][0], description: "", condition: "10", link: "0", image: "0", time: 3)
+        addPost(text: arrayDefaultPosts[3][0], description: "", condition: "4", link: "0", image: "0", time: 3)
         
         let data4 = Post(context: container.viewContext)
         configure(post: data4, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "0", image: "0", time: 100)
