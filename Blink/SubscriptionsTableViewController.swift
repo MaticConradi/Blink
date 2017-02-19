@@ -110,7 +110,7 @@ class SubscriptionsTableViewController: UITableViewController {
     func addDefPost(_ i: Int) {
         let data = Post(context: container.viewContext)
         
-        configure(post: data, text: arrayDefaultPosts[i], description: "", condition: "\(i + 1)", link: "0", image: "0", time: i + 1)
+        configure(post: data, text: arrayDefaultPosts[i], description: "", condition: "\(i + 1)", link: "", image: "", time: i + 1)
         saveContext()
     }
     

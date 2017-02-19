@@ -74,11 +74,12 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
         UIApplication.shared.statusBarStyle = .default
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1.0)
         self.navigationController?.navigationBar.tintColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)
-        let backButton = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: self.navigationController, action: nil)
-        self.navigationItem.leftBarButtonItem = backButton
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: self.navigationController, action: nil)
         
-        //Necessary stuff
-        NotificationCenter.default.addObserver(self, selector: #selector(PostsTableViewController.dataRefresh), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil )
+        //App did enter foreground
+        NotificationCenter.default.addObserver(self, selector: #selector(PostsTableViewController.dataRefresh), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        
+        //Core data
         container = NSPersistentContainer(name: "myCoreDataModel")
         container.loadPersistentStores { storeDescription, error in
             self.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
@@ -135,7 +136,7 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
         guard let detailViewController = storyboard?.instantiateViewController(withIdentifier: "PreviewViewController") as? PreviewViewController else {
             return nil }
         
-        if arrayLinks[indexPath.row] == "" || arrayLinks[indexPath.row] == "0" || arrayDescriptions[indexPath.row] == "" || arrayImages[indexPath.row] == "" {
+        if arrayLinks[indexPath.row] == "" || arrayDescriptions[indexPath.row] == "" || arrayImages[indexPath.row] == "" {
             return nil
         }
         
@@ -156,124 +157,13 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if arrayLinks[indexPathRow] != "0" && arrayLinks[indexPathRow] != "" {
+        if arrayLinks[indexPathRow] != "" {
             if let url = URL(string: arrayLinks[indexPathRow]) {
                 let vc = SFSafariViewController(url: url, entersReaderIfAvailable: false)
                 vc.preferredControlTintColor = UIColor.black
                 navigationController?.present(vc, animated: true)
             }
         }
-    }
-    
-    
-    //**********************************
-    // MARK: Alerts & popups
-    //**********************************
-    
-    
-    override func motionBegan(_ motion: UIEventSubtype, with event: UIEvent?) {
-        if defaults.bool(forKey: "shakeToSendFeedback") {
-            let alertController = UIAlertController(title: "Send feedback", message: "You've opened a super secret menu. Just kidding. Do you want to send us your feedback?", preferredStyle: .alert)
-            
-            let bugAction = UIAlertAction(title: "Send feedback", style: UIAlertActionStyle.default) {
-                UIAlertAction in
-                self.sendEmail()
-            }
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
-                UIAlertAction in
-            }
-            
-            alertController.addAction(cancelAction)
-            alertController.addAction(bugAction)
-            
-            self.present(alertController, animated: true, completion: nil)
-        }
-    }
-    
-    func sendEmail() {
-        if MFMailComposeViewController.canSendMail() {
-            let mail = MFMailComposeViewController()
-            mail.mailComposeDelegate = self
-            mail.setToRecipients(["info@conradi.si"])
-            mail.setSubject("Bug report/feedback")
-            
-            present(mail, animated: true)
-        } else {
-            let alertController = UIAlertController(title: "Can't compose email", message: "Something went wrong. Check your Mail app.", preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
-                UIAlertAction in
-            }
-            alertController.addAction(cancelAction)
-            
-            self.present(alertController, animated: true, completion: nil)
-        }
-    }
-    
-    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
-        controller.dismiss(animated: true)
-    }
-    
-    @IBAction func share(_ sender: UIButton) {
-        tapped()
-        let button = sender
-        let view = button.superview!
-        let cell = view.superview?.superview as! PostCell
-        let indexPath: IndexPath = blinkTableView.indexPath(for: cell)!
-        
-        let moreOptions = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
-        let shareAction = UIAlertAction(title: "Share", style: .default, handler: {(alert :UIAlertAction!) in
-            var textToShare = ""
-            
-            if self.arrayLinks[indexPath.row] == "0" || self.arrayLinks[indexPath.row] == "" {
-                textToShare = "\(self.arrayPosts[indexPath.row])\n\nvia Blink for iPhone: http://www.conradi.si/"
-            }else{
-                textToShare = "\(self.arrayPosts[indexPath.row]): \(self.arrayLinks[indexPath.row])\n\nvia Blink for iPhone: http://www.conradi.si/"
-            }
-            
-            let objectsToShare = [textToShare] as [Any]
-            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-            activityVC.excludedActivityTypes = [UIActivityType.airDrop, UIActivityType.addToReadingList, UIActivityType.print, UIActivityType.postToVimeo, UIActivityType.openInIBooks, UIActivityType.postToVimeo, UIActivityType.postToFlickr, UIActivityType.assignToContact, UIActivityType.saveToCameraRoll]
-            self.present(activityVC, animated: true, completion: nil)
-        })
-        moreOptions.addAction(shareAction)
-        
-        let unsubscribeAction = UIAlertAction(title: "Unfollow", style: .destructive, handler: {(alert :UIAlertAction!) in
-            //Confirmation
-            let confirmation = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-            
-            let confirmationUnsubscribeAction = UIAlertAction(title: "Unfollow", style: .destructive, handler: {(alert :UIAlertAction!) in
-                if let kategorija = Int(self.arrayConditions[indexPath.row]) {
-                    if kategorija < self.boolDefaultPosts.count {
-                        if self.boolDefaultPosts[kategorija - 1] == 1 {
-                            self.boolDefaultPosts[kategorija - 1] = 0
-                            self.defaults.set(self.boolDefaultPosts, forKey: "boolDefaultPosts")
-                        }
-                    }
-                }
-            })
-            confirmation.addAction(confirmationUnsubscribeAction)
-            
-            let confirmationCancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert :UIAlertAction!) in
-            })
-            confirmation.addAction(confirmationCancelAction)
-            
-            self.present(confirmation, animated: true, completion: nil)
-            
-            confirmation.popoverPresentationController?.sourceView = view
-            confirmation.popoverPresentationController?.sourceRect = sender.frame
-            //End confirmation
-        })
-        moreOptions.addAction(unsubscribeAction)
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert :UIAlertAction!) in
-        })
-        moreOptions.addAction(cancelAction)
-        
-        present(moreOptions, animated: true, completion: nil)
-        
-        moreOptions.popoverPresentationController?.sourceView = view
-        moreOptions.popoverPresentationController?.sourceRect = sender.frame
     }
     
     
@@ -308,12 +198,12 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
         }
         
         if arrayConditions[indexPath.row] == "6" || arrayConditions[indexPath.row] == "7" || arrayConditions[indexPath.row] == "9" {
-            if rawPost.characters.last != "?" && rawPost.characters.last != "!" && rawPost.characters.last != "." {
+            if rawPost.characters.last != "?" && rawPost.characters.last != "!" && rawPost.characters.last != "." && rawPost.characters.last != "\"" {
                 rawPost += "."
             }
         }
         
-        if arrayLinks[indexPath.row] != "0" {
+        if arrayLinks[indexPath.row] != "" {
             let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
             let touchForMore = NSMutableAttributedString(string: " Touch for more...", attributes: attributes)
             
@@ -354,7 +244,7 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if arrayLinks[indexPath.row] != "0" && arrayLinks[indexPath.row] != "" {
+        if arrayLinks[indexPath.row] != "" {
             if let url = URL(string: arrayLinks[indexPath.row]) {
                 let vc = SFSafariViewController(url: url, entersReaderIfAvailable: false)
                 vc.preferredControlTintColor = UIColor.black
@@ -393,12 +283,10 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
         
         if defaults.bool(forKey: "newCategory") {
             loadSavedData()
-            DispatchQueue.main.async { [unowned self] in
-                self.tableView.reloadData()
-                let range = NSMakeRange(0, self.tableView.numberOfSections)
-                let sections = IndexSet(integersIn: range.toRange() ?? 0..<0)
-                self.tableView.reloadSections(sections, with: .fade)
-            }
+            self.tableView.reloadData()
+            let range = NSMakeRange(0, self.tableView.numberOfSections)
+            let sections = IndexSet(integersIn: range.toRange() ?? 0..<0)
+            self.tableView.reloadSections(sections, with: .fade)
             defaults.set(false, forKey: "newCategory")
         }
         
@@ -446,7 +334,7 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
                                                     if let time = post["time"] as? Int {
                                                         if let image = post["image"] as? String {
                                                             if var description = post["description"] as? String {
-                                                                DispatchQueue.main.async { [unowned self] in
+                                                                DispatchQueue.main.sync {
                                                                     
                                                                     //Replace HTML special characters
                                                                     text = text.replacingOccurrences(of: "&quot;", with: "\"")
@@ -487,7 +375,7 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
                 }
             }
             
-            DispatchQueue.main.async { [unowned self] in
+            DispatchQueue.main.sync { [unowned self] in
                 self.myRefreshControl.endRefreshing()
             }
         }
@@ -598,11 +486,6 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
         defaults.set(0, forKey: "notificationTimeMinute")
         defaults.set(calendar.startOfDay(for: Date()), forKey: "lastDayTime")
         
-        //UPDATE
-        //DEFINE URL
-        //baseURL = "http://services.conradi.si/blink/json.php?num=0&cats=0&caveman=0&curiosities=0&daily=1&quotes=0&movies=0&news=1&numbers=0&space=0&tech=0&trending=1&time=\(Int(NSDate().timeIntervalSince1970))&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
-        //print("ℹ️ URL: \(baseURL)")
-        
         //ADD DEFAULT POSTS
         configDefaultPosts()
         saveContext()
@@ -687,24 +570,135 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
     
     func configDefaultPosts() {
         let data1 = Post(context: container.viewContext)
-        configure(post: data1, text: arrayDefaultPosts[9], description: "", condition: "10", link: "0", image: "0", time: 1)
+        configure(post: data1, text: arrayDefaultPosts[9], description: "", condition: "10", link: "", image: "", time: 1)
         saveContext()
-        addPost(text: arrayDefaultPosts[9], description: "", condition: "10", link: "0", image: "0", time: 1)
+        addPost(text: arrayDefaultPosts[9], description: "", condition: "10", link: "", image: "", time: 1)
         
         let data2 = Post(context: container.viewContext)
-        configure(post: data2, text: arrayDefaultPosts[6], description: "", condition: "7", link: "0", image: "0", time: 2)
+        configure(post: data2, text: arrayDefaultPosts[6], description: "", condition: "7", link: "", image: "", time: 2)
         saveContext()
-        addPost(text: arrayDefaultPosts[6], description: "", condition: "7", link: "0", image: "0", time: 2)
+        addPost(text: arrayDefaultPosts[6], description: "", condition: "7", link: "", image: "", time: 2)
         
         let data3 = Post(context: container.viewContext)
-        configure(post: data3, text: arrayDefaultPosts[3], description: "", condition: "4", link: "0", image: "0", time: 3)
+        configure(post: data3, text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", time: 3)
         saveContext()
-        addPost(text: arrayDefaultPosts[3], description: "", condition: "4", link: "0", image: "0", time: 3)
+        addPost(text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", time: 3)
         
         let data4 = Post(context: container.viewContext)
-        configure(post: data4, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "0", image: "0", time: 100)
+        configure(post: data4, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
         saveContext()
-        addPost(text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "0", image: "0", time: 100)
+        addPost(text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
+    }
+    
+    
+    //**********************************
+    // MARK: Alerts & popups
+    //**********************************
+    
+    
+    override func motionBegan(_ motion: UIEventSubtype, with event: UIEvent?) {
+        if defaults.bool(forKey: "shakeToSendFeedback") {
+            let alertController = UIAlertController(title: "Send feedback", message: "You've opened a super secret menu. Just kidding. Do you want to send us your feedback?", preferredStyle: .alert)
+            
+            let bugAction = UIAlertAction(title: "Send feedback", style: UIAlertActionStyle.default) {
+                UIAlertAction in
+                self.sendEmail()
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+                UIAlertAction in
+            }
+            
+            alertController.addAction(cancelAction)
+            alertController.addAction(bugAction)
+            
+            self.present(alertController, animated: true, completion: nil)
+        }
+    }
+    
+    func sendEmail() {
+        if MFMailComposeViewController.canSendMail() {
+            let mail = MFMailComposeViewController()
+            mail.mailComposeDelegate = self
+            mail.setToRecipients(["info@conradi.si"])
+            mail.setSubject("Bug report/feedback")
+            
+            present(mail, animated: true)
+        } else {
+            let alertController = UIAlertController(title: "Can't compose email", message: "Something went wrong. Check your Mail app.", preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel) {
+                UIAlertAction in
+            }
+            alertController.addAction(cancelAction)
+            
+            self.present(alertController, animated: true, completion: nil)
+        }
+    }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true)
+    }
+    
+    @IBAction func share(_ sender: UIButton) {
+        tapped()
+        let button = sender
+        let view = button.superview!
+        let cell = view.superview?.superview as! PostCell
+        let indexPath: IndexPath = blinkTableView.indexPath(for: cell)!
+        
+        let moreOptions = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let shareAction = UIAlertAction(title: "Share", style: .default, handler: {(alert :UIAlertAction!) in
+            var textToShare = ""
+            
+            if self.arrayLinks[indexPath.row] == "" {
+                textToShare = "\(self.arrayPosts[indexPath.row])\n\nvia Blink for iPhone: http://www.conradi.si/"
+            }else{
+                textToShare = "\(self.arrayPosts[indexPath.row]): \(self.arrayLinks[indexPath.row])\n\nvia Blink for iPhone: http://www.conradi.si/"
+            }
+            
+            let objectsToShare = [textToShare] as [Any]
+            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            activityVC.excludedActivityTypes = [UIActivityType.airDrop, UIActivityType.addToReadingList, UIActivityType.print, UIActivityType.postToVimeo, UIActivityType.openInIBooks, UIActivityType.postToVimeo, UIActivityType.postToFlickr, UIActivityType.assignToContact, UIActivityType.saveToCameraRoll]
+            self.present(activityVC, animated: true, completion: nil)
+        })
+        moreOptions.addAction(shareAction)
+        
+        let unsubscribeAction = UIAlertAction(title: "Unfollow", style: .destructive, handler: {(alert :UIAlertAction!) in
+            //Confirmation
+            let confirmation = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            
+            let confirmationUnsubscribeAction = UIAlertAction(title: "Unfollow", style: .destructive, handler: {(alert :UIAlertAction!) in
+                if let kategorija = Int(self.arrayConditions[indexPath.row]) {
+                    if kategorija < self.boolDefaultPosts.count {
+                        if self.boolDefaultPosts[kategorija - 1] == 1 {
+                            self.boolDefaultPosts[kategorija - 1] = 0
+                            self.defaults.set(self.boolDefaultPosts, forKey: "boolDefaultPosts")
+                        }
+                    }
+                }
+            })
+            confirmation.addAction(confirmationUnsubscribeAction)
+            
+            let confirmationCancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert :UIAlertAction!) in
+            })
+            confirmation.addAction(confirmationCancelAction)
+            
+            self.present(confirmation, animated: true, completion: nil)
+            
+            confirmation.popoverPresentationController?.sourceView = view
+            confirmation.popoverPresentationController?.sourceRect = sender.frame
+            //End confirmation
+        })
+        moreOptions.addAction(unsubscribeAction)
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert :UIAlertAction!) in
+        })
+        moreOptions.addAction(cancelAction)
+        
+        present(moreOptions, animated: true, completion: nil)
+        
+        moreOptions.popoverPresentationController?.sourceView = view
+        moreOptions.popoverPresentationController?.sourceRect = sender.frame
     }
     
     

@@ -453,7 +453,7 @@
                             <tableViewSection headerTitle="Other" id="RmD-bR-jYM">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="MySettingCell" textLabel="F17-b2-TUk" rowHeight="44" style="IBUITableViewCellStyleDefault" id="nkK-7t-0hl" customClass="SettingsCell" customModule="Blink" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="422" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="423" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="nkK-7t-0hl" id="Za1-ij-QI1">
                                             <rect key="frame" x="0.0" y="0.0" width="342" height="44"/>
@@ -472,7 +472,7 @@
                                         <color key="backgroundColor" red="0.078431372550000003" green="0.078431372550000003" blue="0.078431372550000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="MySettingCell" textLabel="hgy-hm-lDo" rowHeight="44" style="IBUITableViewCellStyleDefault" id="Qad-7f-KFY" customClass="SettingsCell" customModule="Blink" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="466" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="467" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Qad-7f-KFY" id="Tyz-X6-ePp">
                                             <rect key="frame" x="0.0" y="0.0" width="342" height="44"/>
