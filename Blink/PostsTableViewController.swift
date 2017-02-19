@@ -375,7 +375,7 @@ class PostsTableViewController: UITableViewController, NSFetchedResultsControlle
                 }
             }
             
-            DispatchQueue.main.sync { [unowned self] in
+            DispatchQueue.main.sync {
                 self.myRefreshControl.endRefreshing()
             }
         }

@@ -42,8 +42,12 @@ class AboutTableViewController: UITableViewController {
         }
         feedback.isOn = defaults.bool(forKey: "shakeToSendFeedback")
         aboutTableView.backgroundColor = UIColor(red: 0.04, green: 0.04, blue: 0.04, alpha: 1.0)
-        aboutTableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0)
+        aboutTableView.contentInset = UIEdgeInsetsMake(UIApplication.shared.statusBarFrame.height + self.navigationController!.navigationBar.frame.height, 0, 0, 0)
         datePicker.setValue(UIColor.white, forKey: "textColor")
+    }
+    
+    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
+        aboutTableView.contentInset = UIEdgeInsetsMake(UIApplication.shared.statusBarFrame.height + self.navigationController!.navigationBar.frame.height, 0, 0, 0)
     }
     
     @IBAction func notificationsChanged(_ sender: UISwitch) {

@@ -17,16 +17,4 @@ class PostNavigationController: UINavigationController {
             self.navigationBar.titleTextAttributes = [NSFontAttributeName: font]
         }
     }
-    
-    override var shouldAutorotate: Bool {
-        return false
-    }
-    
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return UIInterfaceOrientationMask.portrait
-    }
-    
-    override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation {
-        return UIInterfaceOrientation.portrait
-    }
 }

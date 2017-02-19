@@ -49,7 +49,12 @@ class SubscriptionsTableViewController: UITableViewController {
         
         settingsTableView.rowHeight = 100
         settingsTableView.backgroundColor = UIColor(red: 0.04, green: 0.04, blue: 0.04, alpha: 1.0)
-        settingsTableView.contentInset = UIEdgeInsetsMake(64, 0, 0, 0)
+        print("\(UIApplication.shared.statusBarFrame.height) + \(self.navigationController!.navigationBar.frame.height)")
+        settingsTableView.contentInset = UIEdgeInsetsMake(UIApplication.shared.statusBarFrame.height + self.navigationController!.navigationBar.frame.height, 0, 0, 0)
+    }
+    
+    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
+        settingsTableView.contentInset = UIEdgeInsetsMake(UIApplication.shared.statusBarFrame.height + self.navigationController!.navigationBar.frame.height, 0, 0, 0)
     }
     
     
