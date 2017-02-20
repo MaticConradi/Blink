@@ -120,6 +120,10 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         _ = self.navigationController?.popViewController(animated: true)
     }
     
+    override func didReceiveMemoryWarning() {
+        SDImageCache.shared().clearMemory()
+    }
+    
     
     //**********************************
     // MARK: Peek & poop
@@ -248,14 +252,23 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                 vc.preferredControlTintColor = UIColor.black
                 present(vc, animated: true)
             }
-        }else if arrayConditions[indexPath.row] == "3" && !arrayAnswered.contains(indexPath.row) && arrayPosts[indexPath.row] != "I'll satisfy your inner nerd by sending you interesting facts. ⭐️" {
+        }else if arrayConditions[indexPath.row] == "3" && arrayPosts[indexPath.row] != "I'll satisfy your inner nerd by sending you interesting facts. ⭐️" {
             if arrayAnswered.count >= 3 {
                 let row = arrayAnswered[0]
                 arrayAnswered.removeFirst()
                 blinkTableView.reloadRows(at: [IndexPath(row: row, section: 0)], with: .automatic)
+            }else if !arrayAnswered.contains(indexPath.row) {
+                arrayAnswered.append(indexPath.row)
+                blinkTableView.reloadRows(at: [indexPath], with: .automatic)
+            }else{
+                for i in 0..<arrayAnswered.count {
+                    if arrayAnswered[i] == indexPath.row {
+                        arrayAnswered.remove(at: i)
+                        blinkTableView.reloadRows(at: [indexPath], with: .automatic)
+                        break;
+                    }
+                }
             }
-            arrayAnswered.append(indexPath.row)
-            blinkTableView.reloadRows(at: [indexPath], with: .automatic)
         }
     }
     
@@ -495,12 +508,12 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     
     
     func addPost(text: String, description: String, condition: String, link: String, image: String, time: Int) {
-        self.arrayPosts.insert(text, at: 0)
-        self.arrayDescriptions.insert(description, at: 0)
-        self.arrayLinks.insert(link, at: 0)
-        self.arrayImages.insert(image, at: 0)
-        self.arrayTimes.insert(time, at: 0)
-        self.arrayConditions.insert(condition, at: 0)
+        arrayPosts.insert(text, at: 0)
+        arrayDescriptions.insert(description, at: 0)
+        arrayLinks.insert(link, at: 0)
+        arrayImages.insert(image, at: 0)
+        arrayTimes.insert(time, at: 0)
+        arrayConditions.insert(condition, at: 0)
     }
     
     func loadSavedData() {

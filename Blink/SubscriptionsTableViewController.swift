@@ -20,6 +20,8 @@ class SubscriptionsTableViewController: UITableViewController {
     //Stuff
     let defaults = UserDefaults.standard
     
+    var arrayPosts = [String]()
+    
     var arrayDefaultPosts = [String]()
     var boolDefaultPosts = [Int]()
     
@@ -88,19 +90,49 @@ class SubscriptionsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tapped()
+        loadSavedData()
         if boolDefaultPosts[indexPath.row] == 1 {
             boolDefaultPosts[indexPath.row] = 0
             defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
-        }else{
+        }else if !arrayPosts.contains(arrayDefaultPosts[indexPath.row]){
             defaults.set(true, forKey: "newCategory")
             boolDefaultPosts[indexPath.row] = 1
             defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
             addDefPost(indexPath.row)
+        }else{
+            boolDefaultPosts[indexPath.row] = 1
+            defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
         }
         saveContext()
-        let range = NSMakeRange(0, self.tableView.numberOfSections)
-        let sections = IndexSet(integersIn: range.toRange() ?? 0..<0)
-        self.tableView.reloadSections(sections, with: .fade)
+        settingsTableView.reloadRows(at: [indexPath], with: .automatic)
+    }
+    
+    func addPost(text: String) {
+        self.arrayPosts.insert(text, at: 0)
+    }
+    
+    func loadSavedData() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Post")
+        
+        // Helpers
+        var result = [Post]()
+        
+        arrayPosts.removeAll()
+        
+        do {
+            // Execute Fetch Request
+            let records = try container.viewContext.fetch(fetchRequest)
+            
+            if let records = records as? [Post] {
+                result = records
+            }
+            
+            for i in result.count-4..<result.count {
+                addPost(text: result[i].post)
+            }
+        } catch {
+            print("🆘 Unable to fetch managed objects for entity Post.")
+        }
     }
     
     
