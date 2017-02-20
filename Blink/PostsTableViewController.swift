@@ -83,7 +83,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
             self.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
             
             if let error = error {
-                print("🆘 Unresolved error \(error)")
+                print("🆘 Unresolved error while configuring core data: \(error)")
             }
         }
         
@@ -486,7 +486,6 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         
         //ADD DEFAULT POSTS
         configDefaultPosts()
-        saveContext()
     }
     
     
@@ -746,28 +745,29 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     }
     
     func getCondition(_ i: String) -> String {
-        if i == "1" {
-            return "Advice"
-        }else if i == "2"{
-            return "Cat facts"
-        }else if i == "3" {
-            return "Curiosities"
-        }else if i == "4" {
-            return "Mysteries"
-        }else if i == "5" {
-            return "Inspiring quotes"
-        }else if i == "6" {
-            return "Movie reviews"
-        }else if i == "7" {
-            return "News"
-        }else if i == "8" {
-            return "Number trivia"
-        }else if i == "9" {
-            return "Tech talk"
-        }else if i == "10" {
-            return "Weird but trending"
-        }else{
-            return "Blink"
+        switch i {
+        case "1":
+            return "Advice" //1 (0)
+        case "2":
+            return "Cat facts" //2 (1)
+        case "3":
+            return "Curiosities" //3 (2)
+        case "4":
+            return "Mysteries" //4 (3)
+        case "5":
+            return "Inspiring quotes" //5 (4)
+        case "6":
+            return "Movie reviews" //6 (5)
+        case "7":
+            return "News" //7 (6)
+        case "8":
+            return "Number trivia" //8 (7)
+        case "9":
+            return "Tech talk" //9 (8)
+        case "10":
+            return "Weird but trending" //10 (9)
+        default:
+            return "Blink" //Other
         }
     }
 }
