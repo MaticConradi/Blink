@@ -22,7 +22,7 @@ class PreviewViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        imageView.sd_setImage(with: URL(string: imageUrl!))
+        imageView.sd_setImage(with: URL(string: imageUrl!), placeholderImage: nil, options: .progressiveDownload)
         
         switch condition! {
         case "6":
