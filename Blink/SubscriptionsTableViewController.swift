@@ -20,6 +20,7 @@ class SubscriptionsTableViewController: UITableViewController {
     //Stuff
     let defaults = UserDefaults.standard
     
+    let arrayCategories = ["Advice", "Cat facts", "Curiosities", "Mysteries", "Inspiring quotes", "Movie reviews", "News", "Number trivia", "Tech talk", "Weird but trending"]
     var arrayPosts = [String]()
     
     var arrayDefaultPosts = [String]()
@@ -67,18 +68,17 @@ class SubscriptionsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return arrayCategories.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MySettingCell", for: indexPath) as! SettingsCell
-        let arrayTexts: [String] = ["Advice", "Cat facts", "Curiosities", "Mysteries", "Inspiring quotes", "Movie reviews", "News", "Number trivia", "Tech talk", "Weird but trending"]
-        cell.myTitle.text = arrayTexts[(indexPath as NSIndexPath).row]
-        let offColorValue: CGFloat = 0.04 + 0.002 * (CGFloat(arrayTexts.count - (indexPath as NSIndexPath).row))
+        cell.myTitle.text = arrayCategories[(indexPath as NSIndexPath).row]
+        let offColorValue: CGFloat = 0.04 + 0.002 * (CGFloat(arrayCategories.count - (indexPath as NSIndexPath).row))
         
         if boolDefaultPosts[(indexPath as NSIndexPath).row] == 1 {
             cell.myTitle.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-            let colorValue: CGFloat = offColorValue + (0.02 + 0.002 * (CGFloat(arrayTexts.count - (indexPath as NSIndexPath).row)))
+            let colorValue: CGFloat = offColorValue + (0.02 + 0.002 * (CGFloat(arrayCategories.count - (indexPath as NSIndexPath).row)))
             cell.backgroundColor = UIColor(red: colorValue, green: colorValue, blue: colorValue, alpha: 1.0)
         }else{
             cell.myTitle.textColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 0.5)
@@ -93,22 +93,15 @@ class SubscriptionsTableViewController: UITableViewController {
         loadSavedData()
         if boolDefaultPosts[indexPath.row] == 1 {
             boolDefaultPosts[indexPath.row] = 0
-            defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
         }else if !arrayPosts.contains(arrayDefaultPosts[indexPath.row]){
             defaults.set(true, forKey: "newCategory")
             boolDefaultPosts[indexPath.row] = 1
-            defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
             addDefPost(indexPath.row)
         }else{
             boolDefaultPosts[indexPath.row] = 1
-            defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
         }
-        saveContext()
+        defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
         settingsTableView.reloadRows(at: [indexPath], with: .automatic)
-    }
-    
-    func addPost(text: String) {
-        self.arrayPosts.insert(text, at: 0)
     }
     
     func loadSavedData() {
@@ -128,7 +121,7 @@ class SubscriptionsTableViewController: UITableViewController {
             }
             
             for i in result.count-4..<result.count {
-                addPost(text: result[i].post)
+                self.arrayPosts.insert(result[i].post, at: 0)
             }
         } catch {
             print("🆘 Unable to fetch managed objects for entity Post.")
