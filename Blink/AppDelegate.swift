@@ -30,15 +30,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    func change() {
-        if isConnectedToNetwork() {
-            let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-            let offlineView = mainStoryboard.instantiateViewController(withIdentifier: "PostNavigationViewController") as! PostNavigationController
-            window!.rootViewController = offlineView
-            window!.makeKeyAndVisible()
-        }
-    }
-    
     func isConnectedToNetwork() -> Bool {
         var zeroAddress = sockaddr_in()
         zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)

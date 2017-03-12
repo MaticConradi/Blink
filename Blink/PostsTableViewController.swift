@@ -48,8 +48,6 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     
     //Helpers: post management
     var boolDefaultPosts = [Int]()
-    var evenPostOrder = [Int]()
-    var oddPostOrder = [Int]()
     var numberOfPosts = 0
     var requestCount = 0
     var baseURL = ""
@@ -199,8 +197,8 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
             break;
         }
         
-        if arrayConditions[indexPath.row] == "6" || arrayConditions[indexPath.row] == "7" || arrayConditions[indexPath.row] == "9" {
-            if rawPost.characters.last != "?" && rawPost.characters.last != "!" && rawPost.characters.last != "." && rawPost.characters.last != "\"" {
+        if arrayConditions[indexPath.row] == "6" || arrayConditions[indexPath.row] == "7" || arrayConditions[indexPath.row] == "10" {
+            if rawPost.characters.last != "?" && rawPost.characters.last != "!" && rawPost.characters.last != "." && rawPost.characters.last != "\"" && rawPost.characters.last != ")" {
                 rawPost += "."
             }
         }
@@ -208,6 +206,12 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         if arrayLinks[indexPath.row] != "" {
             let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
             let touchForMore = NSMutableAttributedString(string: " Touch for more...", attributes: attributes)
+            
+            post.append(NSMutableAttributedString(string: rawPost))
+            post.append(touchForMore)
+        }else if arrayConditions[indexPath.row] == "9" && arrayPosts[indexPath.row] != "Beeb boop... ℏ ℇ ≺ ℔ ∦ ℵ ℞ ℬ." {
+            let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
+            let touchForMore = NSMutableAttributedString(string: " Touch to view...", attributes: attributes)
             
             post.append(NSMutableAttributedString(string: rawPost))
             post.append(touchForMore)
@@ -305,7 +309,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
             if currentDayTime.compare(lastDayTime) == .orderedDescending || numberOfPosts == 0 {
                 if numberOfPosts == 0 {
                     //First refresh
-                    defaults.set(1, forKey: "NumberOfPosts")
+                    defaults.set(1, forKey: "numberOfPosts")
                 }
                 print("📳 DAY #\(defaults.integer(forKey: "dayNumber") + 1)")
                 lastDayTime = currentDayTime
@@ -318,6 +322,29 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         }
         
         defaults.set(requestCount, forKey: "requestCount")
+    }
+    
+    func update(_ newDay: Bool) {
+        if isConnectedToNetwork(){
+            baseURL = "http://services.conradi.si/blink/json.php?num=\(numberOfPosts)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[5])&news=\(boolDefaultPosts[6])&numbers=\(boolDefaultPosts[7])&space=\(boolDefaultPosts[8])&tech=\(boolDefaultPosts[9])&trending=\(boolDefaultPosts[10])&time=\(self.defaults.integer(forKey: "lastTime"))&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
+            if newDay {
+                //Update day count
+                let day = defaults.integer(forKey: "dayNumber") + 1
+                defaults.set(day, forKey: "dayNumber")
+                if boolDefaultPosts[3] == 1 && day%2 == 0 {
+                    //Increment post number for categories: Mysteries
+                    numberOfPosts += 1
+                    defaults.set(numberOfPosts, forKey: "numberOfPosts")
+                }
+            }
+            print("ℹ️ URL: \(baseURL)")
+            //DOWNLOAD POSTS FROM SERVER
+            performSelector(inBackground: #selector(downloadData), with: nil)
+        }else{
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.0) {
+                self.myRefreshControl.endRefreshing()
+            }
+        }
     }
     
     func downloadData() {
@@ -394,81 +421,6 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         task.resume()
     }
     
-    func update(_ newDay: Bool) {
-        if isConnectedToNetwork(){
-            if newDay {
-                //Update day count
-                let day = defaults.integer(forKey: "dayNumber") + 1
-                defaults.set(day, forKey: "dayNumber")
-                if day < 2 {
-                    //First day update
-                    baseURL = "http://services.conradi.si/blink/json.php?num=\(numberOfPosts)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[5])&news=\(boolDefaultPosts[6])&numbers=\(boolDefaultPosts[7])&tech=\(boolDefaultPosts[8])&trending=\(boolDefaultPosts[9])&time=\(self.defaults.integer(forKey: "lastTime"))&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
-                }else if day%2 == 0 {
-                    //Make post order
-                    var lastEvenUsed = Int(arc4random_uniform(2))
-                    var lastOddUsed = 0
-                    
-                    evenPostOrder.removeAll()
-                    oddPostOrder.removeAll()
-                    
-                    for i in 0..<boolDefaultPosts.count {
-                        if boolDefaultPosts[i] == 1 && i != 5 && i != 6 && i != 8 && i != 9 {
-                            if lastEvenUsed == 1 {
-                                lastEvenUsed = 0
-                                lastOddUsed = 1
-                            }else{
-                                lastEvenUsed = 1
-                                lastOddUsed = 0
-                            }
-                            
-                            evenPostOrder.append(lastEvenUsed)
-                            oddPostOrder.append(lastOddUsed)
-                        }else{
-                            evenPostOrder.append(0)
-                            oddPostOrder.append(0)
-                        }
-                    }
-                    
-                    //Save next day's schedule
-                    defaults.set(oddPostOrder, forKey: "oddPostOrder")
-                    
-                    if evenPostOrder[3] == 1 {
-                        //Increment post number for categories: Mysteries
-                        numberOfPosts += 1
-                        defaults.set(numberOfPosts, forKey: "NumberOfPosts")
-                    }
-                    
-                    baseURL = "http://services.conradi.si/blink/json.php?num=\(numberOfPosts)&advice=\(evenPostOrder[0])&cats=\(evenPostOrder[1])&curiosities=\(evenPostOrder[2])&daily=\(evenPostOrder[3])&quotes=\(evenPostOrder[4])&movies=\(boolDefaultPosts[5])&news=\(boolDefaultPosts[6])&numbers=\(evenPostOrder[7])&tech=\(boolDefaultPosts[8])&trending=\(boolDefaultPosts[9])&time=\(self.defaults.integer(forKey: "lastTime"))&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
-                }else{
-                    oddPostOrder = defaults.object(forKey: "oddPostOrder") as! [Int]
-                    
-                    //Check if user has unsubscribed to any categories.
-                    for i in 0..<boolDefaultPosts.count {
-                        if boolDefaultPosts[i] == 0 && oddPostOrder[i] == 1 {
-                            oddPostOrder[i] = 0
-                        }
-                    }
-                    
-                    if oddPostOrder[3] == 1 {
-                        numberOfPosts += 1
-                        defaults.set(numberOfPosts, forKey: "NumberOfPosts")
-                    }
-                    
-                    baseURL = "http://services.conradi.si/blink/json.php?num=\(numberOfPosts)&advice=\(oddPostOrder[0])&cats=\(oddPostOrder[1])&curiosities=\(oddPostOrder[2])&daily=\(oddPostOrder[3])&quotes=\(oddPostOrder[4])&movies=\(boolDefaultPosts[5])&news=\(boolDefaultPosts[6])&numbers=\(oddPostOrder[7])&tech=\(boolDefaultPosts[8])&trending=\(boolDefaultPosts[9])&time=\(self.defaults.integer(forKey: "lastTime"))&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
-                }
-            }else{
-                baseURL = "http://services.conradi.si/blink/json.php?num=\(numberOfPosts)&advice=0&cats=0&curiosities=0&daily=0&quotes=0&movies=\(boolDefaultPosts[5])&news=\(boolDefaultPosts[6])&numbers=0&tech=\(boolDefaultPosts[8])&trending=\(boolDefaultPosts[9])&time=\(self.defaults.integer(forKey: "lastTime"))&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
-            }
-            print("ℹ️ URL: \(baseURL)")
-            //DOWNLOAD POSTS FROM SERVER
-            performSelector(inBackground: #selector(downloadData), with: nil)
-        }else{
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.0) {
-                self.myRefreshControl.endRefreshing()
-            }
-        }
-    }
-    
     func setUp() {
         //SET UP
         print("📳 Set up")
@@ -480,15 +432,15 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                              "I love movies. 🎬 I hope you love them too!",
                              "Jokes aside. Expect actual news from New York Times. 📰",
                              "Some numbers are pretty mind-boggling. Here are especially nice ones. 🕵️‍♀️",
+                             "Beeb boop... ℏ ℇ ≺ ℔ ∦ ℵ ℞ ℬ.",
                              "💻 and ⌨️ and 🖥 and 🎮",
                              "When something weird happens, you'll know. 🔥"]
-        /*["Beeb boop... ℏ ℇ ≺ ℔ ∦ ℵ ℞ ℬ.", ""],*/
         
         //Set default values
-        boolDefaultPosts = [0, 0, 0, 1, 1, 0, 1, 0, 0, 1]
+        boolDefaultPosts = [0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1]
         defaults.set(arrayDefaultPosts, forKey: "arrayDefaultPosts")
         defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
-        defaults.set(0, forKey: "NumberOfPosts")
+        defaults.set(0, forKey: "numberOfPosts")
         defaults.set(0, forKey: "dayNumber")
         defaults.set(Int(NSDate().timeIntervalSince1970) - 5, forKey: "lastTime")
         defaults.set(true, forKey: "dailyNotifications")
@@ -547,7 +499,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     
     func reloadData() {
         boolDefaultPosts = defaults.object(forKey: "boolDefaultPosts") as! [Int]
-        numberOfPosts = defaults.integer(forKey: "NumberOfPosts")
+        numberOfPosts = defaults.integer(forKey: "numberOfPosts")
         currentDayTime = calendar.startOfDay(for: Date())
         lastDayTime = defaults.object(forKey: "lastDayTime") as! Date
         requestCount = defaults.integer(forKey: "requestCount")
@@ -580,9 +532,9 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     
     func configDefaultPosts() {
         let data1 = Post(context: container.viewContext)
-        configure(post: data1, text: arrayDefaultPosts[9], description: "", condition: "10", link: "", image: "", time: 1)
+        configure(post: data1, text: arrayDefaultPosts[10], description: "", condition: "11", link: "", image: "", time: 1)
         saveContext()
-        addPost(text: arrayDefaultPosts[9], description: "", condition: "10", link: "", image: "", time: 1)
+        addPost(text: arrayDefaultPosts[10], description: "", condition: "11", link: "", image: "", time: 1)
         
         let data2 = Post(context: container.viewContext)
         configure(post: data2, text: arrayDefaultPosts[6], description: "", condition: "7", link: "", image: "", time: 2)
@@ -776,9 +728,11 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         case "8":
             return "Number trivia" //8 (7)
         case "9":
-            return "Tech talk" //9 (8)
+            return "Space photo of the day" //9 (8)
         case "10":
-            return "Weird but trending" //10 (9)
+            return "Tech talk" //10 (9)
+        case "11":
+            return "Weird but trending" //11 (10)
         default:
             return "Blink" //Other
         }
