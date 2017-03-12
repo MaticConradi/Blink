@@ -273,6 +273,12 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                     }
                 }
             }
+        }else if arrayConditions[indexPath.row] == "9" && arrayPosts[indexPath.row] != "Beeb boop... ℏ ℇ ≺ ℔ ∦ ℵ ℞ ℬ." {
+            if let url = URL(string: arrayImages[indexPath.row]) {
+                let vc = SFSafariViewController(url: url, entersReaderIfAvailable: false)
+                vc.preferredControlTintColor = UIColor.black
+                present(vc, animated: true)
+            }
         }
     }
     
