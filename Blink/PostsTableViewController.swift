@@ -47,8 +47,9 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     var lastDayTime = Date()
     
     //Helpers: post management
+    var arrayFuturePosts = [String]()
     var boolDefaultPosts = [Int]()
-    var numberOfPosts = 0
+    var dailyPostNumber = 0
     var requestCount = 0
     var baseURL = ""
     
@@ -94,7 +95,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         //Check app version and perform necessary updates
         versionChech()
         //Load previusly saved data
-        loadSavedData()
+        loadSavedData(onUpdate: false)
         
         //TableView UI changes
         blinkTableView.estimatedRowHeight = 50
@@ -289,58 +290,66 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     
     
     func dataRefresh() {
-        //Reload all variables
-        reloadData()
-        
-        //Remove all anwsers
-        let tempAnwsers = arrayAnswered
-        arrayAnswered.removeAll()
-        for i in 0..<tempAnwsers.count {
-            blinkTableView.reloadRows(at: [IndexPath(row: tempAnwsers[i], section: 0)], with: .automatic)
-        }
-        
-        requestCount += 1
-        print("📳 REQUEST UPDATE #\(requestCount)")
-        
-        if defaults.bool(forKey: "newCategory") {
-            loadSavedData()
-            self.tableView.reloadData()
-            let range = NSMakeRange(0, self.tableView.numberOfSections)
-            let sections = IndexSet(integersIn: range.toRange() ?? 0..<0)
-            self.tableView.reloadSections(sections, with: .fade)
-            defaults.set(false, forKey: "newCategory")
-        }
-        
-        if requestCount > 1 {
-            if currentDayTime.compare(lastDayTime) == .orderedDescending || numberOfPosts == 0 {
-                if numberOfPosts == 0 {
-                    //First refresh
-                    defaults.set(1, forKey: "numberOfPosts")
-                }
-                print("📳 DAY #\(defaults.integer(forKey: "dayNumber") + 1)")
-                lastDayTime = currentDayTime
-                defaults.set(lastDayTime, forKey: "lastDayTime")
-                
-                update(true)
-            }else{
-                update(false)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.0) {
+            //Reload all variables
+            self.reloadData()
+            
+            //Remove all anwsers
+            let tempAnwsers = self.arrayAnswered
+            self.arrayAnswered.removeAll()
+            for i in 0..<tempAnwsers.count {
+                self.blinkTableView.reloadRows(at: [IndexPath(row: tempAnwsers[i], section: 0)], with: .automatic)
             }
+            
+            self.requestCount += 1
+            print("📳 REQUEST UPDATE #\(self.requestCount)")
+            
+            if self.defaults.bool(forKey: "newCategory") {
+                self.defaults.set(false, forKey: "newCategory")
+                self.loadSavedData(onUpdate: true)
+            }
+            
+            if self.requestCount > 1 {
+                if self.dailyPostNumber == 0 {
+                    //First refresh
+                    self.defaults.set(1, forKey: "dailyPostNumber")
+                    print("📳 DAY #\(self.defaults.integer(forKey: "dayNumber") + 1)")
+                    self.lastDayTime = self.currentDayTime
+                    self.defaults.set(self.lastDayTime, forKey: "lastDayTime")
+                    
+                    self.loadSavedData(onUpdate: true)
+                }
+                
+                if self.currentDayTime.compare(self.lastDayTime) == .orderedDescending {
+                    print("📳 DAY #\(self.defaults.integer(forKey: "dayNumber") + 1)")
+                    self.lastDayTime = self.currentDayTime
+                    self.defaults.set(self.lastDayTime, forKey: "lastDayTime")
+                    
+                    self.loadSavedData(onUpdate: true)
+                    self.update(true)
+                }else{
+                    self.loadSavedData(onUpdate: true)
+                    self.update(false)
+                }
+            }
+            
+            self.defaults.set(self.requestCount, forKey: "requestCount")
+            
+            self.myRefreshControl.endRefreshing()
         }
-        
-        defaults.set(requestCount, forKey: "requestCount")
     }
     
     func update(_ newDay: Bool) {
         if isConnectedToNetwork(){
-            baseURL = "http://services.conradi.si/blink/json.php?num=\(numberOfPosts)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[5])&news=\(boolDefaultPosts[6])&numbers=\(boolDefaultPosts[7])&space=\(boolDefaultPosts[8])&tech=\(boolDefaultPosts[9])&trending=\(boolDefaultPosts[10])&time=\(self.defaults.integer(forKey: "lastTime"))&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
+            baseURL = "http://services.conradi.si/blink/json.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[5])&news=\(boolDefaultPosts[6])&numbers=\(boolDefaultPosts[7])&space=\(boolDefaultPosts[8])&tech=\(boolDefaultPosts[9])&trending=\(boolDefaultPosts[10])&time=\(self.defaults.integer(forKey: "lastTime"))&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
             if newDay {
                 //Update day count
                 let day = defaults.integer(forKey: "dayNumber") + 1
                 defaults.set(day, forKey: "dayNumber")
                 if boolDefaultPosts[3] == 1 && day%2 == 0 {
                     //Increment post number for categories: Mysteries
-                    numberOfPosts += 1
-                    defaults.set(numberOfPosts, forKey: "numberOfPosts")
+                    dailyPostNumber += 1
+                    defaults.set(dailyPostNumber, forKey: "dailyPostNumber")
                 }
             }
             print("ℹ️ URL: \(baseURL)")
@@ -372,32 +381,28 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                                 
                                 if let posts = json?["posts"] as? [[String: AnyObject]] {
                                     for post in posts {
-                                        if var text = post["text"] as? String {
+                                        if let text = post["text"] as? String {
                                             if let condition = post["conditions"] as? String{
                                                 if let url = post["url"] as? String {
                                                     if let time = post["time"] as? Int {
                                                         if let image = post["image"] as? String {
-                                                            if var description = post["description"] as? String {
+                                                            if let description = post["description"] as? String {
                                                                 DispatchQueue.main.sync {
-                                                                    
-                                                                    //Replace HTML special characters
-                                                                    text = text.replacingOccurrences(of: "&quot;", with: "\"")
-                                                                    text = text.replacingOccurrences(of: "&#039;", with: "'")
-                                                                    description = description.replacingOccurrences(of: "&quot;", with: "\"")
-                                                                    description = description.replacingOccurrences(of: "&#039;", with: "'")
-                                                                    
-                                                                    if self.arrayPosts.contains(text) == false && self.arrayTimes.contains(time) == false {
-                                                                        print("✅ Added post: \"\(text)\" with time: \(time) and condition \(condition).")
+                                                                    if !self.arrayPosts.contains(text) && !self.arrayFuturePosts.contains(text) {
                                                                         //ADD NEW POSTS
                                                                         let data = Post(context: self.container.viewContext)
                                                                         self.configure(post: data, text: text, description: description, condition: condition, link: url, image: image, time: time)
                                                                         self.saveContext()
                                                                         
-                                                                        self.addPost(text: text, description: description, condition: condition, link: url, image: image, time: time)
-                                                                        
-                                                                        self.blinkTableView.beginUpdates()
-                                                                        self.blinkTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
-                                                                        self.blinkTableView.endUpdates()
+                                                                        if condition == "6" || condition == "7" || condition == "10" || condition == "11" {
+                                                                            print("✅ Added post: \"\(text)\" with time: \(time) and condition \(condition).")
+                                                                            self.addPost(text: text, description: description, condition: condition, link: url, image: image, time: time)
+                                                                            self.blinkTableView.beginUpdates()
+                                                                            self.blinkTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+                                                                            self.blinkTableView.endUpdates()
+                                                                        }else{
+                                                                            print("✅ Scheduled post: \"\(text)\" with time: \(time) and condition \(condition).")
+                                                                        }
                                                                     }
                                                                 }
                                                             }
@@ -417,10 +422,6 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                 } catch {
                     print("🆘 Something went wrong during data download from the server.")
                 }
-            }
-            
-            DispatchQueue.main.sync {
-                self.myRefreshControl.endRefreshing()
             }
         }
         
@@ -446,7 +447,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         boolDefaultPosts = [0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1]
         defaults.set(arrayDefaultPosts, forKey: "arrayDefaultPosts")
         defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
-        defaults.set(0, forKey: "numberOfPosts")
+        defaults.set(0, forKey: "dailyPostNumber")
         defaults.set(0, forKey: "dayNumber")
         defaults.set(Int(NSDate().timeIntervalSince1970) - 5, forKey: "lastTime")
         defaults.set(true, forKey: "dailyNotifications")
@@ -474,18 +475,12 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         arrayConditions.insert(condition, at: 0)
     }
     
-    func loadSavedData() {
+    func loadSavedData(onUpdate: Bool) {
+        print("📳 Loading")
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Post")
         
         // Helpers
         var result = [Post]()
-        
-        arrayPosts.removeAll()
-        arrayDescriptions.removeAll()
-        arrayLinks.removeAll()
-        arrayImages.removeAll()
-        arrayPosts.removeAll()
-        arrayConditions.removeAll()
         
         do {
             // Execute Fetch Request
@@ -495,8 +490,26 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                 result = records
             }
             
-            for item in result {
-                addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
+            if !onUpdate {
+                for item in result {
+                    if item.time <= Int(NSDate().timeIntervalSince1970) && !self.arrayPosts.contains(item.post) {
+                        self.addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
+                    }else if item.time > Int(NSDate().timeIntervalSince1970) && !self.arrayFuturePosts.contains(item.post) {
+                        self.arrayFuturePosts.insert(item.post, at: 0)
+                        print("ℹ️ Post will be visible in: \((item.time - Int(NSDate().timeIntervalSince1970)) / 60) minutes. Post: \(item.post)")
+                    }
+                }
+            }else{
+                for item in result {
+                    if item.time <= Int(NSDate().timeIntervalSince1970) && !arrayPosts.contains(item.post) {
+                        addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
+                        blinkTableView.beginUpdates()
+                        blinkTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+                        blinkTableView.endUpdates()
+                    }else if item.time > Int(NSDate().timeIntervalSince1970) {
+                        self.arrayFuturePosts.insert(item.post, at: 0)
+                    }
+                }
             }
         } catch {
             print("🆘 Unable to fetch managed objects for entity Post.")
@@ -505,7 +518,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     
     func reloadData() {
         boolDefaultPosts = defaults.object(forKey: "boolDefaultPosts") as! [Int]
-        numberOfPosts = defaults.integer(forKey: "numberOfPosts")
+        dailyPostNumber = defaults.integer(forKey: "dailyPostNumber")
         currentDayTime = calendar.startOfDay(for: Date())
         lastDayTime = defaults.object(forKey: "lastDayTime") as! Date
         requestCount = defaults.integer(forKey: "requestCount")
@@ -540,22 +553,44 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         let data1 = Post(context: container.viewContext)
         configure(post: data1, text: arrayDefaultPosts[10], description: "", condition: "11", link: "", image: "", time: 1)
         saveContext()
-        addPost(text: arrayDefaultPosts[10], description: "", condition: "11", link: "", image: "", time: 1)
+        //addPost(text: arrayDefaultPosts[10], description: "", condition: "11", link: "", image: "", time: 1)
         
         let data2 = Post(context: container.viewContext)
         configure(post: data2, text: arrayDefaultPosts[6], description: "", condition: "7", link: "", image: "", time: 2)
         saveContext()
-        addPost(text: arrayDefaultPosts[6], description: "", condition: "7", link: "", image: "", time: 2)
+        //addPost(text: arrayDefaultPosts[6], description: "", condition: "7", link: "", image: "", time: 2)
         
         let data3 = Post(context: container.viewContext)
-        configure(post: data3, text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", time: 3)
+        configure(post: data3, text: arrayDefaultPosts[4], description: "", condition: "5", link: "", image: "", time: 3)
         saveContext()
-        addPost(text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", time: 3)
+        //addPost(text: arrayDefaultPosts[4], description: "", condition: "5", link: "", image: "", time: 3)
         
         let data4 = Post(context: container.viewContext)
-        configure(post: data4, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
+        configure(post: data4, text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", time: 4)
         saveContext()
-        addPost(text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
+        //addPost(text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", time: 4)
+        
+        let data5 = Post(context: container.viewContext)
+        configure(post: data5, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
+        saveContext()
+        //addPost(text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
+        
+        //First posts
+        
+        let data6 = Post(context: container.viewContext)
+        configure(post: data6, text: "Congratulations on your first refresh. Wait ... is that weird? (Psst ... there's more.)", description: "", condition: "11", link: "", image: "", time: Int(NSDate().timeIntervalSince1970) + 3)
+        saveContext()
+        //addPost(text: "Congratulations on your first refresh. Wait ... is that weird? (Psst ... there's more.)", description: "", condition: "11", link: "", image: "", time: Int(NSDate().timeIntervalSince1970) + 3)
+        
+        let data7 = Post(context: container.viewContext)
+        configure(post: data7, text: "\"Life's challenges are not supposed to paralyse you, they're supposed to help you discover who you are.\" — Bernice Reagon", description: "", condition: "5", link: "", image: "", time: Int(NSDate().timeIntervalSince1970) + 3)
+        saveContext()
+        //addPost(text: "\"Life's challenges are not supposed to paralyse you, they're supposed to help you discover who you are.\" — Bernice Reagon", description: "", condition: "5", link: "", image: "", time: Int(NSDate().timeIntervalSince1970) + 3)
+        
+        let data8 = Post(context: container.viewContext)
+        configure(post: data8, text: "Silence is golden. Duck tape is silver.", description: "", condition: "4", link: "", image: "", time: Int(NSDate().timeIntervalSince1970) + 3)
+        saveContext()
+        //addPost(text: "Silence is golden. Duck tape is silver.", description: "", condition: "4", link: "", image: "", time: Int(NSDate().timeIntervalSince1970) + 3)
     }
     
     
