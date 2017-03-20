@@ -9,8 +9,6 @@
 import UIKit
 
 class SettingsPageViewController: UIPageViewController, UIPageViewControllerDataSource {
-    @IBOutlet weak var button: UIButton!
-    
     private(set) lazy var orderedViewControllers: [UIViewController] = {
         return [self.newViewController(name: "SubscriptionsTableViewController"),
                 self.newViewController(name: "AboutTableViewController")]
@@ -24,8 +22,6 @@ class SettingsPageViewController: UIPageViewController, UIPageViewControllerData
     override func viewDidLoad() {
         super.viewDidLoad()
         self.automaticallyAdjustsScrollViewInsets = false
-        let backButton = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: navigationController, action: nil)
-        navigationItem.leftBarButtonItem = backButton
         
         dataSource = self
         
@@ -39,7 +35,7 @@ class SettingsPageViewController: UIPageViewController, UIPageViewControllerData
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UIView.transition(with: self.view,
+        /*UIView.transition(with: self.view,
                           duration: 0.3,
                           options: UIViewAnimationOptions.transitionCrossDissolve,
                           animations:{
@@ -51,18 +47,18 @@ class SettingsPageViewController: UIPageViewController, UIPageViewControllerData
         },
                           completion:{
                             (finished: Bool) -> () in
-        })
+        })*/
     }
     
-    @IBAction func iconTapped(_ sender:UIButton) {
+    /*@IBAction func iconTapped(_ sender:UIButton) {
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
         _ = self.navigationController?.popViewController(animated: true)
-    }
+    }*/
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        UIView.transition(with: self.view,
+        /*UIView.transition(with: self.view,
                           duration: 0.3,
                           options: UIViewAnimationOptions.transitionCrossDissolve,
                           animations:{
@@ -74,7 +70,7 @@ class SettingsPageViewController: UIPageViewController, UIPageViewControllerData
         },
                           completion:{
                             (finished: Bool) -> () in
-        })
+        })*/
     }
     
     func tapped() {

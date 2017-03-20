@@ -12,6 +12,25 @@ import CoreData
 import SystemConfiguration
 import MessageUI
 
+class PostCell: UITableViewCell {
+    @IBOutlet var myTextLabel: UILabel!
+    @IBOutlet var myTypeLabel: UILabel!
+    @IBOutlet weak var cardView: UIView!
+    @IBOutlet weak var postImageView: UIImageView!
+    @IBOutlet weak var imageShadowView: UIView!
+}
+
+class PostsViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.automaticallyAdjustsScrollViewInsets = false
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.view.backgroundColor = UIColor.clear
+    }
+}
+
 class PostsTableViewController: UITableViewController, MFMailComposeViewControllerDelegate, UIViewControllerPreviewingDelegate {
     
     //**********************************
@@ -69,9 +88,6 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         super.viewDidLoad()
         //ViewController UI changes
         UIApplication.shared.statusBarStyle = .default
-        self.navigationController?.navigationBar.barTintColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1.0)
-        self.navigationController?.navigationBar.tintColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: self.navigationController, action: nil)
         
         //App did enter foreground
         NotificationCenter.default.addObserver(self, selector: #selector(PostsTableViewController.dataRefresh), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
@@ -98,10 +114,11 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         loadSavedData(onUpdate: false)
         
         //TableView UI changes
-        blinkTableView.estimatedRowHeight = 50
+        blinkTableView.estimatedRowHeight = 500
         blinkTableView.rowHeight = UITableViewAutomaticDimension
         myRefreshControl.addTarget(self, action: #selector(PostsTableViewController.dataRefresh), for: .valueChanged)
         blinkTableView.addSubview(myRefreshControl)
+        blinkTableView.contentInset = UIEdgeInsetsMake(84, 0, 20, 0)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -182,8 +199,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MyPostCell", for: indexPath) as! PostCell
-        
+        //Data managment
         let post = NSMutableAttributedString()
         var rawPost = arrayPosts[indexPath.row]
         
@@ -238,16 +254,34 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
             post.append(NSMutableAttributedString(string: rawPost))
         }
         
-        cell.myTypeLabel.text = getCondition(arrayConditions[indexPath.row])
-        cell.myTextLabel.attributedText = post
-        
-        cell.cardView.layer.shadowColor = UIColor.black.cgColor
-        cell.cardView.layer.shadowOpacity = 0.10
-        cell.cardView.layer.shadowOffset = CGSize.zero
-        cell.cardView.layer.shadowRadius = 3
-        cell.cardView.layer.cornerRadius = 3
-        
-        return cell
+        if arrayImages[indexPath.row] == "" {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "postCellNoImage", for: indexPath) as! PostCell
+            
+            cell.cardView.layer.shadowColor = UIColor.black.cgColor
+            cell.cardView.layer.shadowRadius = 25
+            cell.cardView.layer.shadowOpacity = 0.15
+            
+            //cell.myTypeLabel.text = getCondition(arrayConditions[indexPath.row])
+            cell.myTextLabel.attributedText = post
+            
+            return cell
+        }else{
+            let cell = tableView.dequeueReusableCell(withIdentifier: "postCellWithImage", for: indexPath) as! PostCell
+            
+            cell.imageShadowView.layer.shadowColor = UIColor.black.cgColor
+            cell.imageShadowView.layer.shadowRadius = 25
+            cell.imageShadowView.layer.shadowOpacity = 0.15
+            cell.postImageView.sd_setImage(with: URL(string: arrayImages[indexPath.row]), placeholderImage: nil, options: .progressiveDownload)
+            
+            cell.cardView.layer.shadowColor = UIColor.black.cgColor
+            cell.cardView.layer.shadowRadius = 25
+            cell.cardView.layer.shadowOpacity = 0.15
+            
+            //cell.myTypeLabel.text = getCondition(arrayConditions[indexPath.row])
+            cell.myTextLabel.attributedText = post
+            
+            return cell
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

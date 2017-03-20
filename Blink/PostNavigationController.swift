@@ -11,10 +11,7 @@ import UIKit
 class PostNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        let backButton = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: navigationController, action: nil)
-        navigationItem.leftBarButtonItem = backButton
-        if let font = UIFont(name: "CenturyCity", size: 20) {
-            self.navigationBar.titleTextAttributes = [NSFontAttributeName: font]
-        }
+        /*let backButton = UIBarButtonItem(title: "", style: UIBarButtonItemStyle.plain, target: navigationController, action: nil)
+        navigationItem.leftBarButtonItem = backButton*/
     }
 }
