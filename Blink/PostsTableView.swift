@@ -21,13 +21,23 @@ class PostCell: UITableViewCell {
 }
 
 class PostsViewController: UIViewController {
+    @IBOutlet weak var navigationView: UIView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.automaticallyAdjustsScrollViewInsets = false
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = true
-        self.navigationController?.view.backgroundColor = UIColor.clear
+        
+        let color1 = UIColor(red: 222/255, green: 222/255, blue: 222/255, alpha: 1).cgColor
+        let color2 = UIColor(red: 222/255, green: 222/255, blue: 222/255, alpha: 0).cgColor
+        
+        let gradient: CAGradientLayer = CAGradientLayer()
+        
+        gradient.colors = [color2, color1]
+        gradient.locations = [0.0 , 0.3]
+        gradient.startPoint = CGPoint(x: 1.0, y:1.0)
+        gradient.endPoint = CGPoint(x: 1.0, y: 0.0)
+        gradient.frame = CGRect(x: 0.0, y: 0.0, width: UIScreen.main.bounds.size.width, height: 94)
+        navigationView.layer.insertSublayer(gradient, at: 0)
     }
 }
 
@@ -118,7 +128,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         blinkTableView.rowHeight = UITableViewAutomaticDimension
         myRefreshControl.addTarget(self, action: #selector(PostsTableViewController.dataRefresh), for: .valueChanged)
         blinkTableView.addSubview(myRefreshControl)
-        blinkTableView.contentInset = UIEdgeInsetsMake(84, 0, 20, 0)
+        blinkTableView.contentInset = UIEdgeInsetsMake(94, 0, 20, 0)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -155,6 +165,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
             return nil }
         
         if arrayLinks[indexPath.row] == "" || arrayDescriptions[indexPath.row] == "" || arrayImages[indexPath.row] == "" {
+            print("Fuck")
             return nil
         }
         

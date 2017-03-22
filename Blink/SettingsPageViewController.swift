@@ -8,6 +8,21 @@
 
 import UIKit
 
+class SettingsViewController: UIViewController {
+    @IBOutlet weak var dismissToolbar: UIToolbar!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        dismissToolbar.layer.borderWidth = 0.5
+        dismissToolbar.layer.borderColor = UIColor.clear.cgColor
+        dismissToolbar.clipsToBounds = true
+    }
+    
+    @IBAction func dismiss(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
+    }
+}
+
 class SettingsPageViewController: UIPageViewController, UIPageViewControllerDataSource {
     private(set) lazy var orderedViewControllers: [UIViewController] = {
         return [self.newViewController(name: "SubscriptionsTableViewController"),
@@ -31,46 +46,6 @@ class SettingsPageViewController: UIPageViewController, UIPageViewControllerData
                                animated: true,
                                completion: nil)
         }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        /*UIView.transition(with: self.view,
-                          duration: 0.3,
-                          options: UIViewAnimationOptions.transitionCrossDissolve,
-                          animations:{
-                            UIApplication.shared.statusBarStyle = .lightContent
-                            self.navigationController?.navigationBar.barTintColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1.0)
-                            if let font = UIFont(name: "CenturyCity", size: 20) {
-                                self.navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName: font, NSForegroundColorAttributeName: UIColor.white]
-                            }
-        },
-                          completion:{
-                            (finished: Bool) -> () in
-        })*/
-    }
-    
-    /*@IBAction func iconTapped(_ sender:UIButton) {
-        let generator = UIImpactFeedbackGenerator(style: .light)
-        generator.impactOccurred()
-        _ = self.navigationController?.popViewController(animated: true)
-    }*/
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        /*UIView.transition(with: self.view,
-                          duration: 0.3,
-                          options: UIViewAnimationOptions.transitionCrossDissolve,
-                          animations:{
-                            UIApplication.shared.statusBarStyle = .default
-                            self.navigationController?.navigationBar.barTintColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1.0)
-                            if let font = UIFont(name: "CenturyCity", size: 20) {
-                                self.navigationController?.navigationBar.titleTextAttributes = [NSFontAttributeName: font, NSForegroundColorAttributeName: UIColor.black]
-                            }
-        },
-                          completion:{
-                            (finished: Bool) -> () in
-        })*/
     }
     
     func tapped() {

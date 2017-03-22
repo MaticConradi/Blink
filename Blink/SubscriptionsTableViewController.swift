@@ -50,11 +50,7 @@ class SubscriptionsTableViewController: UITableViewController {
         
         settingsTableView.rowHeight = 100
         settingsTableView.backgroundColor = UIColor(red: 0.04, green: 0.04, blue: 0.04, alpha: 1.0)
-        settingsTableView.contentInset = UIEdgeInsetsMake(UIApplication.shared.statusBarFrame.height + self.navigationController!.navigationBar.frame.height, 0, 0, 0)
-    }
-    
-    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
-        settingsTableView.contentInset = UIEdgeInsetsMake(UIApplication.shared.statusBarFrame.height + self.navigationController!.navigationBar.frame.height, 0, 0, 0)
+        settingsTableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
     }
     
     
@@ -73,12 +69,12 @@ class SubscriptionsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MySettingCell", for: indexPath) as! SettingsCell
-        cell.myTitle.text = arrayCategories[(indexPath as NSIndexPath).row]
-        let offColorValue: CGFloat = 0.04 + 0.002 * (CGFloat(arrayCategories.count - (indexPath as NSIndexPath).row))
+        cell.myTitle.text = arrayCategories[indexPath.row]
+        let offColorValue: CGFloat = 0.04 + 0.002 * (CGFloat(arrayCategories.count - indexPath.row))
         
-        if boolDefaultPosts[(indexPath as NSIndexPath).row] == 1 {
+        if boolDefaultPosts[indexPath.row] == 1 {
             cell.myTitle.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-            let colorValue: CGFloat = offColorValue + (0.02 + 0.002 * (CGFloat(arrayCategories.count - (indexPath as NSIndexPath).row)))
+            let colorValue: CGFloat = offColorValue + (0.02 + 0.002 * (CGFloat(arrayCategories.count - indexPath.row)))
             cell.backgroundColor = UIColor(red: colorValue, green: colorValue, blue: colorValue, alpha: 1.0)
         }else{
             cell.myTitle.textColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 0.5)

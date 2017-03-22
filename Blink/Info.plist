@@ -30,13 +30,16 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>account.conradi.si</key>
+			<key>services.conradi.si</key>
 			<string></string>
 		</dict>
 	</dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>CenturyCity.otf</string>
+		<string>Chivo-Black.ttf</string>
+		<string>Chivo-BlackItalic.ttf</string>
+		<string>Chivio-Italic.tff</string>
+		<string>Chivio-Regular.tff</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -48,6 +51,8 @@
 	</array>
 	<key>UIRequiresFullScreen</key>
 	<false/>
+	<key>UIStatusBarHidden</key>
+	<true/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleDefault</string>
 	<key>UISupportedInterfaceOrientations</key>
