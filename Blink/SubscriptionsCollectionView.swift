@@ -9,10 +9,14 @@
 import UIKit
 import CoreData
 
-class SubscriptionsTableViewController: UITableViewController {
-    
-    //Outlets
-    @IBOutlet var settingsTableView: UITableView!
+class SettingsCell: UICollectionViewCell {
+    @IBOutlet weak var categoryLabel: UILabel!
+    @IBOutlet weak var backgroundContainerView: UIView!
+}
+
+class SubscriptionsCollectionViewController: UICollectionViewController {
+    //OUTLETS
+    @IBOutlet var subscriptionsCollectionView: UICollectionView!
     
     //CORE DATA
     var container: NSPersistentContainer!
@@ -34,9 +38,9 @@ class SubscriptionsTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        subscriptionsCollectionView.register(SettingsCell.self, forCellWithReuseIdentifier: "subscriptionCell")
         
         container = NSPersistentContainer(name: "myCoreDataModel")
-        
         container.loadPersistentStores { storeDescription, error in
             self.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
             
@@ -47,10 +51,6 @@ class SubscriptionsTableViewController: UITableViewController {
         
         boolDefaultPosts = defaults.object(forKey: "boolDefaultPosts") as! [Int]
         arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
-        
-        settingsTableView.rowHeight = 100
-        settingsTableView.backgroundColor = UIColor(red: 0.04, green: 0.04, blue: 0.04, alpha: 1.0)
-        settingsTableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
     }
     
     
@@ -58,35 +58,34 @@ class SubscriptionsTableViewController: UITableViewController {
     // MARK: TableView
     //**********************************
     
-    
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        print(arrayCategories.count)
         return arrayCategories.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MySettingCell", for: indexPath) as! SettingsCell
-        cell.myTitle.text = arrayCategories[indexPath.row]
-        let offColorValue: CGFloat = 0.04 + 0.002 * (CGFloat(arrayCategories.count - indexPath.row))
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "subscriptionCell", for: indexPath)
         
+        /*cell.categoryLabel.text = arrayCategories[indexPath.row]
         if boolDefaultPosts[indexPath.row] == 1 {
-            cell.myTitle.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-            let colorValue: CGFloat = offColorValue + (0.02 + 0.002 * (CGFloat(arrayCategories.count - indexPath.row)))
-            cell.backgroundColor = UIColor(red: colorValue, green: colorValue, blue: colorValue, alpha: 1.0)
+            cell.backgroundContainerView.backgroundColor = UIColor.black
+            cell.categoryLabel.textColor = UIColor.white
         }else{
-            cell.myTitle.textColor = UIColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 0.5)
-            cell.backgroundColor = UIColor(red: offColorValue, green: offColorValue, blue: offColorValue, alpha: 1.0)
-        }
+            cell.backgroundContainerView.backgroundColor = UIColor.white
+            cell.categoryLabel.textColor = UIColor.black
+        }*/
         
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         tapped()
-        loadSavedData()
+        /*loadSavedData()
         if boolDefaultPosts[indexPath.row] == 1 {
             boolDefaultPosts[indexPath.row] = 0
         }else if !arrayPosts.contains(arrayDefaultPosts[indexPath.row]){
@@ -97,7 +96,7 @@ class SubscriptionsTableViewController: UITableViewController {
             boolDefaultPosts[indexPath.row] = 1
         }
         defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
-        settingsTableView.reloadRows(at: [indexPath], with: .automatic)
+        subscriptionsCollectionView.reloadItems(at: [indexPath])*/
     }
     
     func loadSavedData() {

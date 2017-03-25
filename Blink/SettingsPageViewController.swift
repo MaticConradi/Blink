@@ -25,7 +25,7 @@ class SettingsViewController: UIViewController {
 
 class SettingsPageViewController: UIPageViewController, UIPageViewControllerDataSource {
     private(set) lazy var orderedViewControllers: [UIViewController] = {
-        return [self.newViewController(name: "SubscriptionsTableViewController"),
+        return [self.newViewController(name: "SubscriptionsViewController"),
                 self.newViewController(name: "AboutTableViewController")]
     }()
     

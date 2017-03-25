@@ -18,6 +18,17 @@ class PostCell: UITableViewCell {
     @IBOutlet weak var cardView: UIView!
     @IBOutlet weak var postImageView: UIImageView!
     @IBOutlet weak var imageShadowView: UIView!
+    @IBOutlet weak var widthConstraint: NSLayoutConstraint!
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if UIScreen.main.bounds.size.width < UIScreen.main.bounds.size.height {
+            widthConstraint.constant = UIScreen.main.bounds.size.width - 100
+        }else{
+            widthConstraint.constant = UIScreen.main.bounds.size.height - 100
+        }
+    }
 }
 
 class PostsViewController: UIViewController {
@@ -36,8 +47,10 @@ class PostsViewController: UIViewController {
         gradient.locations = [0.0 , 0.3]
         gradient.startPoint = CGPoint(x: 1.0, y:1.0)
         gradient.endPoint = CGPoint(x: 1.0, y: 0.0)
-        gradient.frame = CGRect(x: 0.0, y: 0.0, width: UIScreen.main.bounds.size.width, height: 94)
+        gradient.frame = CGRect(x: 0.0, y: 0.0, width: UIScreen.main.bounds.size.height, height: 94)
         navigationView.layer.insertSublayer(gradient, at: 0)
+        
+        self.view.layoutIfNeeded()
     }
 }
 
