@@ -17,6 +17,7 @@ class SettingsCell: UICollectionViewCell {
 class SubscriptionsCollectionViewController: UICollectionViewController {
     //OUTLETS
     @IBOutlet var subscriptionsCollectionView: UICollectionView!
+    @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
     
     //CORE DATA
     var container: NSPersistentContainer!
@@ -38,8 +39,6 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        subscriptionsCollectionView.register(SettingsCell.self, forCellWithReuseIdentifier: "subscriptionCell")
-        
         container = NSPersistentContainer(name: "myCoreDataModel")
         container.loadPersistentStores { storeDescription, error in
             self.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
@@ -51,6 +50,7 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
         
         boolDefaultPosts = defaults.object(forKey: "boolDefaultPosts") as! [Int]
         arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
+        collectionViewFlowLayout.estimatedItemSize = CGSize(width: 150, height: 60)
     }
     
     
@@ -64,28 +64,27 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
     
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print(arrayCategories.count)
         return arrayCategories.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "subscriptionCell", for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "subscriptionCell", for: indexPath) as! SettingsCell
         
-        /*cell.categoryLabel.text = arrayCategories[indexPath.row]
+        cell.categoryLabel.text = arrayCategories[indexPath.row]
         if boolDefaultPosts[indexPath.row] == 1 {
             cell.backgroundContainerView.backgroundColor = UIColor.black
             cell.categoryLabel.textColor = UIColor.white
         }else{
-            cell.backgroundContainerView.backgroundColor = UIColor.white
-            cell.categoryLabel.textColor = UIColor.black
-        }*/
+            cell.backgroundContainerView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
+            cell.categoryLabel.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        }
         
         return cell
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         tapped()
-        /*loadSavedData()
+        loadSavedData()
         if boolDefaultPosts[indexPath.row] == 1 {
             boolDefaultPosts[indexPath.row] = 0
         }else if !arrayPosts.contains(arrayDefaultPosts[indexPath.row]){
@@ -96,7 +95,7 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
             boolDefaultPosts[indexPath.row] = 1
         }
         defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
-        subscriptionsCollectionView.reloadItems(at: [indexPath])*/
+        subscriptionsCollectionView.reloadItems(at: [indexPath])
     }
     
     func loadSavedData() {

@@ -64,6 +64,7 @@
 		64922B6C1E817066003B3DA1 /* Chivo-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64922B681E817066003B3DA1 /* Chivo-Italic.ttf */; };
 		64922B6D1E817066003B3DA1 /* Chivo-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64922B691E817066003B3DA1 /* Chivo-Regular.ttf */; };
 		64922B721E81718A003B3DA1 /* BLINK shape.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 64922B711E81718A003B3DA1 /* BLINK shape.pdf */; };
+		64A15F811E8709D1006AF853 /* UICollectionViewLeftAlignedLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A15F801E8709D0006AF853 /* UICollectionViewLeftAlignedLayout.swift */; };
 		64D5251F1D8EE9EE000B2EA9 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64D5251E1D8EE9EE000B2EA9 /* Post.swift */; };
 		64D525211D8EEA73000B2EA9 /* Post+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64D525201D8EEA73000B2EA9 /* Post+CoreDataProperties.swift */; };
 		64DAB0A01D55EA0C0029BB8B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DAB09F1D55EA0C0029BB8B /* AppDelegate.swift */; };
@@ -184,6 +185,7 @@
 		64922B691E817066003B3DA1 /* Chivo-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Chivo-Regular.ttf"; sourceTree = "<group>"; };
 		64922B711E81718A003B3DA1 /* BLINK shape.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "BLINK shape.pdf"; sourceTree = "<group>"; };
 		6497C2BB1D625176001922A7 /* Blink-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Blink-Bridging-Header.h"; sourceTree = "<group>"; };
+		64A15F801E8709D0006AF853 /* UICollectionViewLeftAlignedLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UICollectionViewLeftAlignedLayout.swift; sourceTree = "<group>"; };
 		64D5251E1D8EE9EE000B2EA9 /* Post.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		64D525201D8EEA73000B2EA9 /* Post+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Post+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		64DAB09C1D55EA0C0029BB8B /* Blink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Blink.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -369,6 +371,7 @@
 				643F44261D639384000A6775 /* SubscriptionsCollectionView.swift */,
 				6491613D1E4CE14200677CD4 /* SettingsPageViewController.swift */,
 				648F63EB1E85B3990089B1D7 /* SubscriptionsViewController.swift */,
+				64A15F801E8709D0006AF853 /* UICollectionViewLeftAlignedLayout.swift */,
 				6491613F1E4CEBDF00677CD4 /* AboutTableViewController.swift */,
 				6448A5911E4A4E370061A857 /* PreviewViewController.swift */,
 				64DAB0A31D55EA0C0029BB8B /* Main.storyboard */,
@@ -582,6 +585,7 @@
 				64360DF81D589E4E0094AE6B /* PostNavigationController.swift in Sources */,
 				6448A5CC1E4A69B40061A857 /* UIImage+MultiFormat.m in Sources */,
 				6448A5CD1E4A69B40061A857 /* UIImage+WebP.m in Sources */,
+				64A15F811E8709D1006AF853 /* UICollectionViewLeftAlignedLayout.swift in Sources */,
 				64DAB0A01D55EA0C0029BB8B /* AppDelegate.swift in Sources */,
 				64D5251F1D8EE9EE000B2EA9 /* Post.swift in Sources */,
 				649161401E4CEBDF00677CD4 /* AboutTableViewController.swift in Sources */,

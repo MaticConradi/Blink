@@ -52,6 +52,11 @@ class PostsViewController: UIViewController {
         
         self.view.layoutIfNeeded()
     }
+    
+    @IBAction func scrollToTop(_ sender: Any) {
+        print("1")
+        PostsTableViewController().scrollToTop()
+    }
 }
 
 class PostsTableViewController: UITableViewController, MFMailComposeViewControllerDelegate, UIViewControllerPreviewingDelegate {
@@ -63,7 +68,6 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     
     //Outlets
     @IBOutlet var blinkTableView: UITableView!
-    @IBOutlet weak var button: UIButton!
     
     //Core data
     var container: NSPersistentContainer!
@@ -806,6 +810,10 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         let needsConnection = flags.contains(.connectionRequired)
         
         return (isReachable && !needsConnection)
+    }
+    
+    public func scrollToTop() {
+        
     }
     
     func getCondition(_ i: String) -> String {
