@@ -51,6 +51,33 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
         boolDefaultPosts = defaults.object(forKey: "boolDefaultPosts") as! [Int]
         arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
         collectionViewFlowLayout.estimatedItemSize = CGSize(width: 150, height: 60)
+        
+        let gradient = CAGradientLayer()
+        
+        gradient.frame = subscriptionsCollectionView.superview?.bounds ?? CGRect.null
+        gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor, UIColor.black.cgColor]
+        gradient.locations = [0.0, 0.05, 1.0]
+        subscriptionsCollectionView.superview?.layer.mask = gradient
+        subscriptionsCollectionView.contentInset = UIEdgeInsetsMake(10, 0, 0, 0)
+    }
+    
+    override func willRotate(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
+        UIView.animate(withDuration: duration) { 
+            self.subscriptionsCollectionView.layer.opacity = 0
+        }
+    }
+    
+    /*override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        subscriptionsCollectionView.reloadData()
+    }*/
+    
+    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
+        subscriptionsCollectionView.reloadData()
+        subscriptionsCollectionView.layoutSubviews()
+        UIView.animate(withDuration: 1.0) { 
+            self.subscriptionsCollectionView.layer.opacity = 1
+        }
     }
     
     
@@ -71,9 +98,15 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "subscriptionCell", for: indexPath) as! SettingsCell
         
         cell.categoryLabel.text = arrayCategories[indexPath.row]
+        
         if boolDefaultPosts[indexPath.row] == 1 {
             cell.backgroundContainerView.backgroundColor = UIColor.black
             cell.categoryLabel.textColor = UIColor.white
+            cell.layer.masksToBounds = false
+            cell.backgroundContainerView.layer.masksToBounds = false
+            cell.backgroundContainerView.layer.shadowColor = UIColor.black.cgColor
+            cell.backgroundContainerView.layer.shadowRadius = 20
+            cell.backgroundContainerView.layer.shadowOpacity = 0.5
         }else{
             cell.backgroundContainerView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
             cell.categoryLabel.textColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
@@ -87,7 +120,7 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
         loadSavedData()
         if boolDefaultPosts[indexPath.row] == 1 {
             boolDefaultPosts[indexPath.row] = 0
-        }else if !arrayPosts.contains(arrayDefaultPosts[indexPath.row]){
+        }else if !arrayPosts.contains(arrayDefaultPosts[indexPath.row]) {
             defaults.set(true, forKey: "newCategory")
             boolDefaultPosts[indexPath.row] = 1
             addDefPost(indexPath.row)

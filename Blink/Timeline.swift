@@ -41,21 +41,37 @@ class PostsViewController: UIViewController {
         let color1 = UIColor(red: 222/255, green: 222/255, blue: 222/255, alpha: 1).cgColor
         let color2 = UIColor(red: 222/255, green: 222/255, blue: 222/255, alpha: 0).cgColor
         
+        var x: CGFloat = 0
+        if UIScreen.main.bounds.size.height > UIScreen.main.bounds.size.width {
+            x = UIScreen.main.bounds.size.height
+        }else{
+            x = UIScreen.main.bounds.size.width
+        }
+        
         let gradient: CAGradientLayer = CAGradientLayer()
         
         gradient.colors = [color2, color1]
         gradient.locations = [0.0 , 0.3]
         gradient.startPoint = CGPoint(x: 1.0, y:1.0)
         gradient.endPoint = CGPoint(x: 1.0, y: 0.0)
-        gradient.frame = CGRect(x: 0.0, y: 0.0, width: UIScreen.main.bounds.size.height, height: 94)
+        gradient.frame = CGRect(x: 0.0, y: 0.0, width: x, height: 94)
         navigationView.layer.insertSublayer(gradient, at: 0)
         
         self.view.layoutIfNeeded()
     }
     
     @IBAction func scrollToTop(_ sender: Any) {
-        print("1")
-        PostsTableViewController().scrollToTop()
+        NotificationCenter.default.post(name: Notification.Name("scrollToTop"), object: nil)
+    }
+    
+    @IBAction func presentSettingsAction(_ sender: Any) {
+        tapped()
+    }
+    
+    func tapped() {
+        //Generate haptic feedback
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
     }
 }
 
@@ -113,11 +129,9 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //ViewController UI changes
-        UIApplication.shared.statusBarStyle = .default
-        
-        //App did enter foreground
+        //Observers
         NotificationCenter.default.addObserver(self, selector: #selector(PostsTableViewController.dataRefresh), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PostsTableViewController.scrollToTop), name: Notification.Name("scrollToTop"), object: nil)
         
         //Core data
         container = NSPersistentContainer(name: "myCoreDataModel")
@@ -141,7 +155,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         loadSavedData(onUpdate: false)
         
         //TableView UI changes
-        blinkTableView.estimatedRowHeight = 500
+        blinkTableView.estimatedRowHeight = 300
         blinkTableView.rowHeight = UITableViewAutomaticDimension
         myRefreshControl.addTarget(self, action: #selector(PostsTableViewController.dataRefresh), for: .valueChanged)
         blinkTableView.addSubview(myRefreshControl)
@@ -151,6 +165,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dataRefresh()
+        animateTable()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -167,6 +182,29 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         SDImageCache.shared().clearMemory()
     }
     
+    func animateTable() {
+        blinkTableView.reloadData()
+        
+        let cells = blinkTableView.visibleCells
+        let tableHeight: CGFloat = blinkTableView.bounds.size.height
+        
+        for i in cells {
+            let cell: UITableViewCell = i as UITableViewCell
+            cell.transform = CGAffineTransform(translationX: 0, y: tableHeight)
+        }
+        
+        var index = 0
+        
+        for a in cells {
+            let cell: UITableViewCell = a as UITableViewCell
+            UIView.animate(withDuration: 1.5, delay: 0.05 * Double(index), usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseIn, animations: {
+                cell.transform = CGAffineTransform(translationX: 0, y: 0);
+            }, completion: nil)
+            
+            index += 1
+        }
+    }
+    
     
     //**********************************
     // MARK: Peek & poop
@@ -174,7 +212,6 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        
         guard let indexPath = tableView.indexPathForRow(at: location), let cell = tableView.cellForRow(at: indexPath) as? PostCell else {
             return nil }
         
@@ -182,7 +219,6 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
             return nil }
         
         if arrayLinks[indexPath.row] == "" || arrayDescriptions[indexPath.row] == "" || arrayImages[indexPath.row] == "" {
-            print("Fuck")
             return nil
         }
         
@@ -193,7 +229,8 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         indexPathRow = indexPath.row
         detailViewController.preferredContentSize = CGSize(width: 0.0, height: 550)
         
-        previewingContext.sourceRect = blinkTableView.convert(cell.cardView.frame, from: cell.cardView.superview)
+        previewingContext.sourceRect = cell.frame
+        //previewingContext.sourceRect = blinkTableView.convert(cell.cardView.frame, from: cell.cardView.superview)
         
         return detailViewController
     }
@@ -248,7 +285,9 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
             }
         }
         
-        if arrayLinks[indexPath.row] != "" {
+        if arrayConditions[indexPath.row] == "" {
+            post.append(NSMutableAttributedString(string: rawPost))
+        }else if arrayLinks[indexPath.row] != "" {
             let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
             let touchForMore = NSMutableAttributedString(string: " Touch for more...", attributes: attributes)
             
@@ -456,7 +495,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                                                                         self.configure(post: data, text: text, description: description, condition: condition, link: url, image: image, time: time)
                                                                         self.saveContext()
                                                                         
-                                                                        if condition == "6" || condition == "7" || condition == "10" || condition == "11" {
+                                                                        if condition == "6" || condition == "7" || condition == "10" || condition == "11" || time <= Int(NSDate().timeIntervalSince1970) {
                                                                             print("✅ Added post: \"\(text)\" with time: \(time) and condition \(condition).")
                                                                             self.addPost(text: text, description: description, condition: condition, link: url, image: image, time: time)
                                                                             self.blinkTableView.beginUpdates()
@@ -813,7 +852,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     }
     
     public func scrollToTop() {
-        
+        blinkTableView.setContentOffset(CGPoint(x: 0,y :-94), animated: true)
     }
     
     func getCondition(_ i: String) -> String {

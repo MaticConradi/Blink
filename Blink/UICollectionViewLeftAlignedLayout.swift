@@ -35,7 +35,6 @@ class UICollectionViewLeftAlignedLayout: UICollectionViewFlowLayout {
     }
     
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        
         if let currentItemAttributes = super.layoutAttributesForItem(at: indexPath as IndexPath)?.copy() as? UICollectionViewLayoutAttributes {
             let sectionInset = self.evaluatedSectionInsetForItem(at: indexPath.section)
             let isFirstItemInSection = indexPath.item == 0
