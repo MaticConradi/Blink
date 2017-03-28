@@ -19,6 +19,9 @@ class AboutTableViewController: UITableViewController {
     let center = UNUserNotificationCenter.current()
     let calendar = Calendar.current
     
+    @IBOutlet weak var cardView: UIView!
+    @IBOutlet weak var widthConstraint: NSLayoutConstraint!
+    
     @IBOutlet var aboutTableView: UITableView!
     @IBOutlet weak var datePicker: UIDatePicker!
     @IBOutlet weak var notifications: UISwitch!
@@ -34,16 +37,23 @@ class AboutTableViewController: UITableViewController {
         datePicker.date = calendar.date(from: notificationTime)!
         notifications.isOn = defaults.bool(forKey: "dailyNotifications")
         if defaults.bool(forKey: "dailyNotifications") {
-            self.datePickerLabel.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+            self.datePickerLabel.layer.opacity = 1
             self.datePicker.layer.opacity = 1
         }else{
-            self.datePickerLabel.textColor = UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
+            self.datePickerLabel.layer.opacity = 0.4
             self.datePicker.layer.opacity = 0.2
         }
         feedback.isOn = defaults.bool(forKey: "shakeToSendFeedback")
-        aboutTableView.backgroundColor = UIColor(red: 0.04, green: 0.04, blue: 0.04, alpha: 1.0)
-        aboutTableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
-        datePicker.setValue(UIColor.white, forKey: "textColor")
+        
+        cardView.layer.shadowColor = UIColor.black.cgColor
+        cardView.layer.shadowRadius = 25
+        cardView.layer.shadowOpacity = 0.15
+        
+        if UIScreen.main.bounds.size.width < UIScreen.main.bounds.size.height {
+            widthConstraint.constant = UIScreen.main.bounds.size.width - 80
+        }else{
+            widthConstraint.constant = UIScreen.main.bounds.size.height - 80
+        }
     }
     
     @IBAction func notificationsChanged(_ sender: UISwitch) {
@@ -52,12 +62,12 @@ class AboutTableViewController: UITableViewController {
         if notifications.isOn {
             createLocalNotification()
             UIView.animate(withDuration: 0.3, animations: {
-                self.datePickerLabel.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+                self.datePickerLabel.layer.opacity = 1
                 self.datePicker.layer.opacity = 1
             })
         }else{
             UIView.animate(withDuration: 0.3, animations: {
-                self.datePickerLabel.textColor = UIColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 0.5)
+                self.datePickerLabel.layer.opacity = 0.4
                 self.datePicker.layer.opacity = 0.2
             })
         }
@@ -70,7 +80,7 @@ class AboutTableViewController: UITableViewController {
     @IBAction func timeChanged(_ sender: UIDatePicker) {
         notifications.setOn(true, animated: true)
         UIView.animate(withDuration: 0.3, animations: {
-            self.datePickerLabel.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+            self.datePickerLabel.layer.opacity = 1
             self.datePicker.layer.opacity = 1
         })
         
@@ -88,14 +98,8 @@ class AboutTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 && indexPath.row == 0 {
-            let vc = SFSafariViewController(url: URL(string: "http://www.conradi.si")!, entersReaderIfAvailable: false)
-            vc.preferredControlTintColor = UIColor.black
-            navigationController?.present(vc, animated: true)
-        }else if indexPath.section == 1 && indexPath.row == 1 {
-            let vc = SFSafariViewController(url: URL(string: "https://newsapi.org")!, entersReaderIfAvailable: false)
-            vc.preferredControlTintColor = UIColor.black
-            navigationController?.present(vc, animated: true)
+        if indexPath.row == 2 {
+            UIApplication.shared.open(URL(string: "http://www.conradi.si")!, options: [:], completionHandler: {(true) in })
         }
     }
     

@@ -24,9 +24,9 @@ class PostCell: UITableViewCell {
         super.layoutSubviews()
         
         if UIScreen.main.bounds.size.width < UIScreen.main.bounds.size.height {
-            widthConstraint.constant = UIScreen.main.bounds.size.width - 100
+            widthConstraint.constant = UIScreen.main.bounds.size.width - 80
         }else{
-            widthConstraint.constant = UIScreen.main.bounds.size.height - 100
+            widthConstraint.constant = UIScreen.main.bounds.size.height - 80
         }
     }
 }
@@ -155,7 +155,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         loadSavedData(onUpdate: false)
         
         //TableView UI changes
-        blinkTableView.estimatedRowHeight = 300
+        blinkTableView.estimatedRowHeight = 370
         blinkTableView.rowHeight = UITableViewAutomaticDimension
         myRefreshControl.addTarget(self, action: #selector(PostsTableViewController.dataRefresh), for: .valueChanged)
         blinkTableView.addSubview(myRefreshControl)
@@ -171,11 +171,6 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         myRefreshControl.endRefreshing()
-    }
-    
-    @IBAction func iconTapped(_ sender:UIButton) {
-        tapped()
-        _ = self.navigationController?.popViewController(animated: true)
     }
     
     override func didReceiveMemoryWarning() {
@@ -328,8 +323,10 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
             cell.cardView.layer.shadowRadius = 25
             cell.cardView.layer.shadowOpacity = 0.15
             
-            //cell.myTypeLabel.text = getCondition(arrayConditions[indexPath.row])
+            cell.myTypeLabel.text = getCondition(arrayConditions[indexPath.row])
             cell.myTextLabel.attributedText = post
+            
+            //cell.layoutIfNeeded()
             
             return cell
         }else{
@@ -344,8 +341,10 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
             cell.cardView.layer.shadowRadius = 25
             cell.cardView.layer.shadowOpacity = 0.15
             
-            //cell.myTypeLabel.text = getCondition(arrayConditions[indexPath.row])
+            cell.myTypeLabel.text = getCondition(arrayConditions[indexPath.row])
             cell.myTextLabel.attributedText = post
+            
+            //cell.layoutIfNeeded()
             
             return cell
         }
@@ -749,60 +748,20 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         let cell = view.superview?.superview as! PostCell
         let indexPath: IndexPath = blinkTableView.indexPath(for: cell)!
         
-        let moreOptions = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        var textToShare = ""
         
-        let shareAction = UIAlertAction(title: "Share", style: .default, handler: {(alert :UIAlertAction!) in
-            var textToShare = ""
-            
-            if self.arrayLinks[indexPath.row] == "" {
-                textToShare = "\(self.arrayPosts[indexPath.row])\n\nvia Blink for iPhone: http://www.conradi.si/"
-            }else{
-                textToShare = "\(self.arrayPosts[indexPath.row]): \(self.arrayLinks[indexPath.row])\n\nvia Blink for iPhone: http://www.conradi.si/"
-            }
-            
-            let objectsToShare = [textToShare] as [Any]
-            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-            activityVC.excludedActivityTypes = [UIActivityType.airDrop, UIActivityType.addToReadingList, UIActivityType.print, UIActivityType.postToVimeo, UIActivityType.openInIBooks, UIActivityType.postToVimeo, UIActivityType.postToFlickr, UIActivityType.assignToContact, UIActivityType.saveToCameraRoll]
-            self.present(activityVC, animated: true, completion: nil)
-        })
-        moreOptions.addAction(shareAction)
+        if self.arrayLinks[indexPath.row] == "" {
+            textToShare = "\(self.arrayPosts[indexPath.row])\n\nvia Blink for iPhone: http://www.conradi.si/"
+        }else if self.arrayImages[indexPath.row] != "" {
+            textToShare = "\(self.arrayPosts[indexPath.row]): \(self.arrayImages[indexPath.row])\n\nvia Blink for iPhone: http://www.conradi.si/"
+        }else{
+            textToShare = "\(self.arrayPosts[indexPath.row]): \(self.arrayLinks[indexPath.row])\n\nvia Blink for iPhone: http://www.conradi.si/"
+        }
         
-        let unsubscribeAction = UIAlertAction(title: "Unfollow", style: .destructive, handler: {(alert :UIAlertAction!) in
-            //Confirmation
-            let confirmation = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-            
-            let confirmationUnsubscribeAction = UIAlertAction(title: "Unfollow", style: .destructive, handler: {(alert :UIAlertAction!) in
-                if let kategorija = Int(self.arrayConditions[indexPath.row]) {
-                    if kategorija < self.boolDefaultPosts.count {
-                        if self.boolDefaultPosts[kategorija - 1] == 1 {
-                            self.boolDefaultPosts[kategorija - 1] = 0
-                            self.defaults.set(self.boolDefaultPosts, forKey: "boolDefaultPosts")
-                        }
-                    }
-                }
-            })
-            confirmation.addAction(confirmationUnsubscribeAction)
-            
-            let confirmationCancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert :UIAlertAction!) in
-            })
-            confirmation.addAction(confirmationCancelAction)
-            
-            self.present(confirmation, animated: true, completion: nil)
-            
-            confirmation.popoverPresentationController?.sourceView = view
-            confirmation.popoverPresentationController?.sourceRect = sender.frame
-            //End confirmation
-        })
-        moreOptions.addAction(unsubscribeAction)
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(alert :UIAlertAction!) in
-        })
-        moreOptions.addAction(cancelAction)
-        
-        present(moreOptions, animated: true, completion: nil)
-        
-        moreOptions.popoverPresentationController?.sourceView = view
-        moreOptions.popoverPresentationController?.sourceRect = sender.frame
+        let objectsToShare = [textToShare] as [Any]
+        let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+        activityVC.excludedActivityTypes = [UIActivityType.airDrop, UIActivityType.addToReadingList, UIActivityType.print, UIActivityType.postToVimeo, UIActivityType.openInIBooks, UIActivityType.postToVimeo, UIActivityType.postToFlickr, UIActivityType.assignToContact, UIActivityType.saveToCameraRoll]
+        self.present(activityVC, animated: true, completion: nil)
     }
     
     
