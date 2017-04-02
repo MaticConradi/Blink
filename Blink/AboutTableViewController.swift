@@ -50,10 +50,12 @@ class AboutTableViewController: UITableViewController {
         cardView.layer.shadowOpacity = 0.15
         
         if UIScreen.main.bounds.size.width < UIScreen.main.bounds.size.height {
-            widthConstraint.constant = UIScreen.main.bounds.size.width - 80
+            widthConstraint.constant = UIScreen.main.bounds.size.width - 70
         }else{
-            widthConstraint.constant = UIScreen.main.bounds.size.height - 80
+            widthConstraint.constant = UIScreen.main.bounds.size.height - 70
         }
+        
+        aboutTableView.contentInset = UIEdgeInsetsMake(0, 0, 64, 0)
     }
     
     @IBAction func notificationsChanged(_ sender: UISwitch) {

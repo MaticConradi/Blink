@@ -25,7 +25,7 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
     //Stuff
     let defaults = UserDefaults.standard
     
-    let arrayCategories = ["Advice", "Cat facts", "Curiosities", "Mysteries", "Inspiring quotes", "Movie reviews", "News", "Number trivia", "Space photo of the day", "Tech talk", "Weird but trending"]
+    let arrayCategories = ["Advice", "Cat facts", "Curiosities", "Mysteries", "Inspiring quotes", "Is it Friday yet?", "Movie reviews", "News", "Number trivia", "Space photo of the day", "Sports stuff", "Tech talk", "Weird but trending"]
     var arrayPosts = [String]()
     
     var arrayDefaultPosts = [String]()

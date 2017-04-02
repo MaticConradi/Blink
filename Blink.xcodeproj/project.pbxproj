@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		64133CEE1E9104B5001924AF /* Castle.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 64133CED1E9104B5001924AF /* Castle.jpg */; };
+		64133CF01E9107F1001924AF /* BLINK welcome.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 64133CEF1E9107F1001924AF /* BLINK welcome.pdf */; };
+		64133CF21E910A4B001924AF /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64133CF11E910A4B001924AF /* WelcomeViewController.swift */; };
+		64133CF61E91923B001924AF /* OLDER shape.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 64133CF51E91923B001924AF /* OLDER shape.pdf */; };
 		6429328E1E1BF22700A8EE77 /* More.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6429328D1E1BF22700A8EE77 /* More.pdf */; };
 		643F44271D639384000A6775 /* SubscriptionsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 643F44261D639384000A6775 /* SubscriptionsCollectionView.swift */; };
-		6448A5921E4A4E370061A857 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6448A5911E4A4E370061A857 /* PreviewViewController.swift */; };
 		6448A5BF1E4A69B40061A857 /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 6448A5981E4A69B40061A857 /* MKAnnotationView+WebCache.m */; };
 		6448A5C01E4A69B40061A857 /* NSData+ImageContentType.m in Sources */ = {isa = PBXBuildFile; fileRef = 6448A59A1E4A69B40061A857 /* NSData+ImageContentType.m */; };
 		6448A5C11E4A69B40061A857 /* NSImage+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 6448A59C1E4A69B40061A857 /* NSImage+WebCache.m */; };
@@ -99,9 +102,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		64133CED1E9104B5001924AF /* Castle.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Castle.jpg; sourceTree = "<group>"; };
+		64133CEF1E9107F1001924AF /* BLINK welcome.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "BLINK welcome.pdf"; sourceTree = "<group>"; };
+		64133CF11E910A4B001924AF /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
+		64133CF51E91923B001924AF /* OLDER shape.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "OLDER shape.pdf"; sourceTree = "<group>"; };
 		6429328D1E1BF22700A8EE77 /* More.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = More.pdf; sourceTree = "<group>"; };
 		643F44261D639384000A6775 /* SubscriptionsCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionsCollectionView.swift; sourceTree = "<group>"; };
-		6448A5911E4A4E370061A857 /* PreviewViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
 		6448A5971E4A69B40061A857 /* MKAnnotationView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKAnnotationView+WebCache.h"; sourceTree = "<group>"; };
 		6448A5981E4A69B40061A857 /* MKAnnotationView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKAnnotationView+WebCache.m"; sourceTree = "<group>"; };
 		6448A5991E4A69B40061A857 /* NSData+ImageContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+ImageContentType.h"; sourceTree = "<group>"; };
@@ -220,11 +226,14 @@
 			children = (
 				64A9683F1E89871700C34FBA /* App Icon */,
 				64922B6F1E8170D1003B3DA1 /* Fonts */,
+				64133CED1E9104B5001924AF /* Castle.jpg */,
 				6429328D1E1BF22700A8EE77 /* More.pdf */,
 				647183C61D63116100712A97 /* Home.pdf */,
 				64588DCF1E806654008B0FB0 /* Share.pdf */,
 				64922B711E81718A003B3DA1 /* BLINK shape.pdf */,
+				64133CEF1E9107F1001924AF /* BLINK welcome.pdf */,
 				648F63E71E85AFA70089B1D7 /* CATEGORIES shape.pdf */,
+				64133CF51E91923B001924AF /* OLDER shape.pdf */,
 			);
 			name = Assets;
 			path = Icon;
@@ -346,7 +355,7 @@
 				648F63EB1E85B3990089B1D7 /* SubscriptionsViewController.swift */,
 				6491613D1E4CE14200677CD4 /* Settings.swift */,
 				6491613F1E4CEBDF00677CD4 /* AboutTableViewController.swift */,
-				6448A5911E4A4E370061A857 /* PreviewViewController.swift */,
+				64133CF11E910A4B001924AF /* WelcomeViewController.swift */,
 				64DAB0A31D55EA0C0029BB8B /* Main.storyboard */,
 				64A15F801E8709D0006AF853 /* UICollectionViewLeftAlignedLayout.swift */,
 				64DAB0A61D55EA0C0029BB8B /* Assets.xcassets */,
@@ -496,6 +505,7 @@
 			files = (
 				64A9684F1E89871700C34FBA /* 29@1x.png in Resources */,
 				647183C81D63116100712A97 /* Home.pdf in Resources */,
+				64133CEE1E9104B5001924AF /* Castle.jpg in Resources */,
 				64922B6B1E817066003B3DA1 /* Chivo-BlackItalic.ttf in Resources */,
 				64A968501E89871700C34FBA /* 29@2x.png in Resources */,
 				64A968571E89871700C34FBA /* 83,5@2x.png in Resources */,
@@ -510,6 +520,7 @@
 				64588DD01E806654008B0FB0 /* Share.pdf in Resources */,
 				64A968551E89871700C34FBA /* 76@1x.png in Resources */,
 				648F63E81E85AFA70089B1D7 /* CATEGORIES shape.pdf in Resources */,
+				64133CF01E9107F1001924AF /* BLINK welcome.pdf in Resources */,
 				64DAB0A71D55EA0C0029BB8B /* Assets.xcassets in Resources */,
 				64A9684D1E89871700C34FBA /* 20@2x.png in Resources */,
 				64DAB0A51D55EA0C0029BB8B /* Main.storyboard in Resources */,
@@ -518,6 +529,7 @@
 				64A9684E1E89871700C34FBA /* 20@3x.png in Resources */,
 				64922B721E81718A003B3DA1 /* BLINK shape.pdf in Resources */,
 				64A968541E89871700C34FBA /* 60@3x.png in Resources */,
+				64133CF61E91923B001924AF /* OLDER shape.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -558,12 +570,12 @@
 				6448A5C11E4A69B40061A857 /* NSImage+WebCache.m in Sources */,
 				6448A5C01E4A69B40061A857 /* NSData+ImageContentType.m in Sources */,
 				64F910C51D748DA800E3E4B2 /* myCoreDataModel.xcdatamodeld in Sources */,
-				6448A5921E4A4E370061A857 /* PreviewViewController.swift in Sources */,
 				643F44271D639384000A6775 /* SubscriptionsCollectionView.swift in Sources */,
 				6448A5C21E4A69B40061A857 /* SDImageCache.m in Sources */,
 				6448A5C31E4A69B40061A857 /* SDImageCacheConfig.m in Sources */,
 				6448A5C81E4A69B40061A857 /* SDWebImageManager.m in Sources */,
 				6448A5C51E4A69B40061A857 /* SDWebImageDecoder.m in Sources */,
+				64133CF21E910A4B001924AF /* WelcomeViewController.swift in Sources */,
 				648F63EC1E85B3990089B1D7 /* SubscriptionsViewController.swift in Sources */,
 				6448A5C71E4A69B40061A857 /* SDWebImageDownloaderOperation.m in Sources */,
 				6448A5C41E4A69B40061A857 /* SDWebImageCompat.m in Sources */,
