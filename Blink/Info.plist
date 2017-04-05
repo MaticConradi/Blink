@@ -32,7 +32,7 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>services.conradi.si</key>
+			<key>account.conradi.si</key>
 			<string></string>
 		</dict>
 	</dict>

@@ -152,6 +152,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     var fridayPostNumber = 0
     var requestCount = 0
     var baseURL = ""
+    var olderHeaderIndex = 0
     
     //Helpers: default posts
     var arrayDefaultPosts = [String]()
@@ -318,7 +319,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if arrayPosts[indexPath.row] == "**EARLY**" {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "earlyHeaderCell", for: indexPath) as UITableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "olderHeaderCell", for: indexPath) as UITableViewCell
             return cell
         }
         //Data managment
@@ -326,7 +327,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         let rawPost = arrayPosts[indexPath.row]
         
         switch arrayConditions[indexPath.row] {
-        case "7", "8", "12" :
+        case "7", "8", "11", "12" :
             if arrayLinks[indexPath.row] != "" {
                 let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
                 let touchForMore = NSMutableAttributedString(string: " Touch for more...", attributes: attributes)
@@ -510,27 +511,19 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     
     func update(_ newDay: Bool) {
         if isConnectedToNetwork(){
-            baseURL = "http://services.conradi.si/blink/download.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[6])&news=\(boolDefaultPosts[7])&numbers=\(boolDefaultPosts[8])&space=\(boolDefaultPosts[9])&sports=\(boolDefaultPosts[10])&tech=\(boolDefaultPosts[11])&trending=\(boolDefaultPosts[12])&time=\(self.defaults.integer(forKey: "lastTime"))&version=2&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
             if newDay {
                 //Update day count
                 let day = defaults.integer(forKey: "dayNumber") + 1
                 defaults.set(day, forKey: "dayNumber")
-                //Mysteries
+                //Fortune cookies
                 if boolDefaultPosts[3] == 1 && day%2 == 0 {
-                    //Increment post number for categories: Mysteries
+                    //Increment post number for categories: Fortune cookies
                     dailyPostNumber += 1
                     defaults.set(dailyPostNumber, forKey: "dailyPostNumber")
                 }
-                //Is it friday yet?
-                if boolDefaultPosts[5] == 1 {
-                    if fridayPostNumber == 0 {
-                        fridayPostNumber = Int(arc4random_uniform(UInt32(5)))
-                        addFridayPost()
-                    }
-                    fridayPostNumber -= 1
-                    defaults.set(fridayPostNumber, forKey: "fridayPostNumber")
-                }
             }
+            //baseURL = "http://account.conradi.si/blink/download.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[6])&news=\(boolDefaultPosts[7])&numbers=\(boolDefaultPosts[8])&space=\(boolDefaultPosts[9])&sports=\(boolDefaultPosts[10])&tech=\(boolDefaultPosts[11])&trending=\(boolDefaultPosts[12])&time=\(self.defaults.integer(forKey: "lastTime"))&version=2&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
+            baseURL = "http://services.conradi.si/blink/download.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[6])&news=\(boolDefaultPosts[7])&numbers=\(boolDefaultPosts[8])&space=\(boolDefaultPosts[9])&sports=\(boolDefaultPosts[10])&tech=\(boolDefaultPosts[11])&trending=\(boolDefaultPosts[12])&time=\(self.defaults.integer(forKey: "lastTime"))&version=2&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
             print("ℹ️ URL: \(baseURL)")
             //DOWNLOAD POSTS FROM SERVER
             performSelector(inBackground: #selector(downloadData), with: nil)
@@ -584,6 +577,9 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         self.configure(post: data, text: text, description: "", condition: "6", link: "", image: "", time: Int(Date().timeIntervalSince1970))
         self.saveContext()
         self.addPost(text: text, description: "", condition: "6", link: "", image: "", time: Int(Date().timeIntervalSince1970))
+        self.blinkTableView.beginUpdates()
+        self.blinkTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+        self.blinkTableView.endUpdates()
         print("✅ Added Friday post.")
     }
     
@@ -604,7 +600,20 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                             if self.defaults.integer(forKey: "lastTime") < current_time - 5 {
                                 self.defaults.set(current_time, forKey: "lastTime")
                                 
-                                var earlyHeader = 0
+                                DispatchQueue.main.sync {
+                                    if self.olderHeaderIndex > 0 {
+                                        //Remove old header
+                                        self.arrayPosts.remove(at: self.olderHeaderIndex)
+                                        self.arrayDescriptions.remove(at: self.olderHeaderIndex)
+                                        self.arrayLinks.remove(at: self.olderHeaderIndex)
+                                        self.arrayImages.remove(at: self.olderHeaderIndex)
+                                        self.arrayTimes.remove(at: self.olderHeaderIndex)
+                                        self.arrayConditions.remove(at: self.olderHeaderIndex)
+                                        self.blinkTableView.reloadData()
+                                    }
+                                }
+                                
+                                var olderHeaderNewIndex = 0
                                 
                                 if let posts = json?["posts"] as? [[String: AnyObject]] {
                                     for post in posts {
@@ -624,20 +633,19 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                                                                         break;
                                                                     }
                                                                     
-                                                                    if condition == "7" || condition == "8" || condition == "12" {
-                                                                        if text != "?" && text != "!" && text != "." && text != "\"" && text != ")" {
-                                                                            text += "."
+                                                                    if condition == "7" || condition == "8" || condition == "11" || condition == "12" {
+                                                                        if text.characters.last != "?" && text.characters.last != "!" && text.characters.last != "." && text.characters.last != "\"" && text.characters.last != ")" {
+                                                                            text = text + "."
                                                                         }
                                                                     }
                                                                     
                                                                     if !self.arrayPosts.contains(text) {
-                                                                        earlyHeader += 1
+                                                                        olderHeaderNewIndex += 1
                                                                         //ADD NEW POSTS
                                                                         let data = Post(context: self.container.viewContext)
                                                                         self.configure(post: data, text: text, description: description, condition: condition, link: url, image: image, time: time)
                                                                         self.saveContext()
                                                                         
-                                                                        print("✅ Added post: \"\(text)\" with time: \(time) and condition \(condition).")
                                                                         self.addPost(text: text, description: description, condition: condition, link: url, image: image, time: time)
                                                                         self.blinkTableView.beginUpdates()
                                                                         self.blinkTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
@@ -654,17 +662,29 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                                 }
                                 
                                 DispatchQueue.main.sync {
-                                    if earlyHeader > 0 {
+                                    //Is it friday yet?
+                                    if self.boolDefaultPosts[5] == 1 {
+                                        if self.fridayPostNumber == 0 {
+                                            self.fridayPostNumber = Int(arc4random_uniform(UInt32(5)))
+                                            self.addFridayPost()
+                                            olderHeaderNewIndex += 1
+                                        }
+                                        self.fridayPostNumber -= 1
+                                        self.defaults.set(self.fridayPostNumber, forKey: "fridayPostNumber")
+                                    }
+                                    
+                                    if olderHeaderNewIndex > 0 {
                                         //Header
-                                        self.arrayPosts.insert("**EARLY**", at: earlyHeader)
-                                        self.arrayDescriptions.insert("", at: earlyHeader)
-                                        self.arrayLinks.insert("", at: earlyHeader)
-                                        self.arrayImages.insert("", at: earlyHeader)
-                                        self.arrayTimes.insert(Int(Date().timeIntervalSince1970), at: earlyHeader)
-                                        self.arrayConditions.insert("", at: earlyHeader)
+                                        self.arrayPosts.insert("**EARLY**", at: olderHeaderNewIndex)
+                                        self.arrayDescriptions.insert("", at: olderHeaderNewIndex)
+                                        self.arrayLinks.insert("", at: olderHeaderNewIndex)
+                                        self.arrayImages.insert("", at: olderHeaderNewIndex)
+                                        self.arrayTimes.insert(Int(Date().timeIntervalSince1970), at: olderHeaderNewIndex)
+                                        self.arrayConditions.insert("", at: olderHeaderNewIndex)
                                         self.blinkTableView.beginUpdates()
-                                        self.blinkTableView.insertRows(at: [IndexPath(row: earlyHeader, section: 0)], with: .top)
+                                        self.blinkTableView.insertRows(at: [IndexPath(row: olderHeaderNewIndex, section: 0)], with: .top)
                                         self.blinkTableView.endUpdates()
+                                        self.olderHeaderIndex = olderHeaderNewIndex
                                     }
                                 }
                             }else{
@@ -756,7 +776,22 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                 result = records
             }
             
+            if olderHeaderIndex > 0 {
+                //Remove old header
+                arrayPosts.remove(at: self.olderHeaderIndex)
+                arrayDescriptions.remove(at: self.olderHeaderIndex)
+                arrayLinks.remove(at: self.olderHeaderIndex)
+                arrayImages.remove(at: self.olderHeaderIndex)
+                arrayTimes.remove(at: self.olderHeaderIndex)
+                arrayConditions.remove(at: self.olderHeaderIndex)
+                blinkTableView.beginUpdates()
+                blinkTableView.deleteRows(at: [IndexPath(row: self.olderHeaderIndex, section: 0)], with: .top)
+                blinkTableView.endUpdates()
+                olderHeaderIndex = 0
+            }
+            
             if !onUpdate {
+                //On launch
                 for item in result {
                     if !self.arrayPosts.contains(item.post) {
                         self.addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
@@ -812,6 +847,11 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     
     
     func configDefaultPosts() {
+        let data0 = Post(context: container.viewContext)
+        configure(post: data0, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
+        saveContext()
+        //addPost(text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
+        
         let data1 = Post(context: container.viewContext)
         configure(post: data1, text: arrayDefaultPosts[12], description: "", condition: "13", link: "", image: "", time: 1)
         saveContext()
@@ -832,14 +872,10 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         saveContext()
         //addPost(text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", time: 4)
         
-        let data5 = Post(context: container.viewContext)
-        configure(post: data5, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
-        saveContext()
-        //addPost(text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
         
-        //First posts        
-        let data6 = Post(context: container.viewContext)
-        configure(post: data6, text: "\"Life's challenges are not supposed to paralyse you, they're supposed to help you discover who you are.\" — Bernice Reagon", description: "", condition: "5", link: "", image: "", time: Int(Date().timeIntervalSince1970))
+        //First posts
+        let data5 = Post(context: container.viewContext)
+        configure(post: data5, text: "\"Life's challenges are not supposed to paralyse you, they're supposed to help you discover who you are.\" — Bernice Reagon", description: "", condition: "5", link: "", image: "", time: Int(Date().timeIntervalSince1970))
         saveContext()
         //addPost(text: "\"Life's challenges are not supposed to paralyse you, they're supposed to help you discover who you are.\" — Bernice Reagon", description: "", condition: "5", link: "", image: "", time: Int(Date().timeIntervalSince1970) + 3)
         
@@ -1002,7 +1038,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         case "3":
             return "Curiosities" //3 (2)
         case "4":
-            return "Mysteries" //4 (3)
+            return "Fortune cookies" //4 (3)
         case "5":
             return "Inspiring quotes" //5 (4)
         case "6":

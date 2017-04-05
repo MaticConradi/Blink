@@ -25,7 +25,7 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
     //Stuff
     let defaults = UserDefaults.standard
     
-    let arrayCategories = ["Advice", "Cat facts", "Curiosities", "Mysteries", "Inspiring quotes", "Is it Friday yet?", "Movie reviews", "News", "Number trivia", "Space photo of the day", "Sports stuff", "Tech talk", "Weird but trending"]
+    let arrayCategories = ["Advice", "Cat facts", "Curiosities", "Fortune cookies", "Inspiring quotes", "Is it Friday yet?", "Movie reviews", "News", "Number trivia", "Space photo of the day", "Sports stuff", "Tech talk", "Weird but trending"]
     var arrayPosts = [String]()
     
     var arrayDefaultPosts = [String]()
@@ -61,23 +61,8 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
         subscriptionsCollectionView.contentInset = UIEdgeInsetsMake(10, 0, 0, 0)
     }
     
-    override func willRotate(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
-        UIView.animate(withDuration: duration) { 
-            self.subscriptionsCollectionView.layer.opacity = 0
-        }
-    }
-    
-    /*override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        subscriptionsCollectionView.reloadData()
-    }*/
-    
     override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
         subscriptionsCollectionView.reloadData()
-        subscriptionsCollectionView.layoutSubviews()
-        UIView.animate(withDuration: 1.0) { 
-            self.subscriptionsCollectionView.layer.opacity = 1
-        }
     }
     
     
@@ -163,7 +148,6 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
     
     func addDefPost(_ i: Int) {
         let data = Post(context: container.viewContext)
-        
         configure(post: data, text: arrayDefaultPosts[i], description: "", condition: "\(i + 1)", link: "", image: "", time: i + 1)
         saveContext()
     }
