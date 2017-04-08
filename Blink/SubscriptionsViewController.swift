@@ -15,7 +15,7 @@ class SubscriptionsViewController: UIViewController {
     @IBOutlet weak var landscapeWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var portraitHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var portraitWidthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var categoriesCollectionView: UIView!
+    @IBOutlet weak var containerView: UIView!
     
     override func viewDidLoad(){
         super.viewDidLoad()
@@ -56,15 +56,13 @@ class SubscriptionsViewController: UIViewController {
         
         portraitBackgroundView.layer.insertSublayer(portraitGradient, at: 0)
         landscapeBackgroundView.layer.insertSublayer(landscapeGradient, at: 0)
-    }
-    
-    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
-        view.setNeedsLayout()
-        view.layoutIfNeeded()
-        categoriesCollectionView.layoutSubviews()
-        UIView.animate(withDuration: 1.0) {
-            self.categoriesCollectionView.layer.opacity = 1
-        }
+        
+        let gradient = CAGradientLayer()
+        gradient.frame = CGRect(x: 0, y: 0, width: h, height: h)
+        gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor, UIColor.black.cgColor]
+        gradient.locations = [0.0, 0.05, 1.0]
+        
+        containerView.layer.mask = gradient
     }
     
     override func willAnimateRotation(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
@@ -72,12 +70,10 @@ class SubscriptionsViewController: UIViewController {
             landscapeBackgroundView.layer.opacity = 1
             UIView.animate(withDuration: duration, animations: {
                 self.portraitBackgroundView.layer.opacity = 0
-                self.categoriesCollectionView.layer.opacity = 0
             })
         }else{
             UIView.animate(withDuration: duration, animations: {
                 self.portraitBackgroundView.layer.opacity = 1
-                self.categoriesCollectionView.layer.opacity = 0
             })
             
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + duration) {

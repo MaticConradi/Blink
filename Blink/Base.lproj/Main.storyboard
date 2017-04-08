@@ -246,27 +246,27 @@
                                 </constraints>
                             </view>
                             <containerView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XVX-Zf-pS6">
-                                <rect key="frame" x="0.0" y="129" width="375" height="474"/>
+                                <rect key="frame" x="0.0" y="108" width="375" height="495"/>
                                 <connections>
                                     <segue destination="mcT-26-e1U" kind="embed" id="HEu-Wu-yvv"/>
                                 </connections>
                             </containerView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="CATEGORIES" translatesAutoresizingMaskIntoConstraints="NO" id="hQs-ZG-eAi">
-                                <rect key="frame" x="88" y="70" width="199" height="19"/>
+                                <rect key="frame" x="88" y="50" width="199" height="18"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="18.5" id="BMO-DT-1Zv"/>
-                                    <constraint firstAttribute="width" constant="199" id="TBA-rV-18H"/>
+                                    <constraint firstAttribute="height" constant="18" id="35l-f9-zTa"/>
+                                    <constraint firstAttribute="width" constant="199" id="UDu-Zh-6ru"/>
                                 </constraints>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="hed-Gv-7ny" firstAttribute="centerX" secondItem="k7F-Yg-40V" secondAttribute="centerX" id="3d5-ZK-AjH"/>
-                            <constraint firstItem="hQs-ZG-eAi" firstAttribute="top" secondItem="XKg-rG-EEG" secondAttribute="bottom" constant="50" id="JFj-SZ-kfY"/>
+                            <constraint firstItem="hQs-ZG-eAi" firstAttribute="top" secondItem="k7F-Yg-40V" secondAttribute="topMargin" constant="50" id="KCg-pf-N5g"/>
                             <constraint firstItem="6mQ-gb-h79" firstAttribute="centerY" secondItem="k7F-Yg-40V" secondAttribute="centerY" id="LX5-SL-Z11"/>
+                            <constraint firstItem="hQs-ZG-eAi" firstAttribute="centerX" secondItem="k7F-Yg-40V" secondAttribute="centerX" id="Mh9-CR-Ew6"/>
                             <constraint firstItem="ug6-FL-XNL" firstAttribute="top" secondItem="XVX-Zf-pS6" secondAttribute="bottom" constant="64" id="O4S-vp-BFY"/>
-                            <constraint firstItem="hQs-ZG-eAi" firstAttribute="centerX" secondItem="k7F-Yg-40V" secondAttribute="centerX" id="RKp-Z1-Cny"/>
-                            <constraint firstItem="XVX-Zf-pS6" firstAttribute="top" secondItem="hQs-ZG-eAi" secondAttribute="bottom" constant="40" id="eM0-xt-AMH"/>
+                            <constraint firstItem="XVX-Zf-pS6" firstAttribute="top" secondItem="k7F-Yg-40V" secondAttribute="top" constant="108" id="dUR-8y-MMC"/>
                             <constraint firstAttribute="trailing" secondItem="XVX-Zf-pS6" secondAttribute="trailing" id="edI-We-ej0"/>
                             <constraint firstItem="XVX-Zf-pS6" firstAttribute="leading" secondItem="k7F-Yg-40V" secondAttribute="leading" id="qkc-eB-KCM"/>
                             <constraint firstItem="6mQ-gb-h79" firstAttribute="centerX" secondItem="k7F-Yg-40V" secondAttribute="centerX" id="vHS-eZ-3wR"/>
@@ -274,7 +274,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="categoriesCollectionView" destination="XVX-Zf-pS6" id="gZg-6V-xdy"/>
+                        <outlet property="containerView" destination="XVX-Zf-pS6" id="IP7-nD-p92"/>
                         <outlet property="landscapeBackgroundView" destination="6mQ-gb-h79" id="7Xt-5J-Tqb"/>
                         <outlet property="landscapeHeightConstraint" destination="giB-65-DcZ" id="9Wd-sW-kPQ"/>
                         <outlet property="landscapeWidthConstraint" destination="o6g-m3-wKg" id="GOb-pW-gZo"/>
@@ -285,14 +285,14 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MiK-sO-VDW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5816.0419790104952" y="-496.80000000000001"/>
+            <point key="canvasLocation" x="5815.1999999999998" y="-497.00149925037488"/>
         </scene>
         <!--Subscriptions Collection View Controller-->
         <scene sceneID="ydb-HJ-qC9">
             <objects>
                 <collectionViewController id="mcT-26-e1U" customClass="SubscriptionsCollectionViewController" customModule="Blink" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" id="i3G-Vo-rHB">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="474"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="495"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="20" minimumInteritemSpacing="20" id="wgk-Vh-6Fk" customClass="UICollectionViewLeftAlignedLayout" customModule="Blink" customModuleProvider="target">
@@ -357,7 +357,7 @@
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vuQ-VU-73n" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6550" y="-497"/>
+            <point key="canvasLocation" x="6569" y="-497"/>
         </scene>
         <!--Settings View Controller-->
         <scene sceneID="PHB-k5-wrG">

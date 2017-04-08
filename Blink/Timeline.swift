@@ -498,10 +498,10 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                     defaults.set(lastDayTime, forKey: "lastDayTime")
                     
                     loadSavedData(onUpdate: true)
-                    update(true)
+                    update(newDay: true)
                 }else{
                     loadSavedData(onUpdate: true)
-                    update(false)
+                    update(newDay: false)
                 }
             }
         }
@@ -509,7 +509,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         defaults.set(requestCount, forKey: "requestCount")
     }
     
-    func update(_ newDay: Bool) {
+    func update(newDay: Bool) {
         if isConnectedToNetwork(){
             if newDay {
                 //Update day count
@@ -624,33 +624,37 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                                                         if let image = post["image"] as? String {
                                                             if let description = post["description"] as? String {
                                                                 DispatchQueue.main.sync {
-                                                                    switch condition {
-                                                                    case "7":
-                                                                        text = "Review: " + text
-                                                                    case "8":
-                                                                        text = "Headline: " + text
-                                                                    default:
-                                                                        break;
-                                                                    }
-                                                                    
-                                                                    if condition == "7" || condition == "8" || condition == "11" || condition == "12" {
-                                                                        if text.characters.last != "?" && text.characters.last != "!" && text.characters.last != "." && text.characters.last != "\"" && text.characters.last != ")" {
-                                                                            text = text + "."
+                                                                    //Safety check
+                                                                    if text != "" {
+                                                                        switch condition {
+                                                                        case "7":
+                                                                            text = "Review: " + text
+                                                                        case "8":
+                                                                            text = "Headline: " + text
+                                                                        default:
+                                                                            break;
+                                                                        }
+                                                                        
+                                                                        if condition == "7" || condition == "8" || condition == "11" || condition == "12" {
+                                                                            if text.characters.last != "?" && text.characters.last != "!" && text.characters.last != "." && text.characters.last != "\"" && text.characters.last != ")" {
+                                                                                text = text + "."
+                                                                            }
+                                                                        }
+                                                                        
+                                                                        if !self.arrayPosts.contains(text) {
+                                                                            olderHeaderNewIndex += 1
+                                                                            //ADD NEW POSTS
+                                                                            let data = Post(context: self.container.viewContext)
+                                                                            self.configure(post: data, text: text, description: description, condition: condition, link: url, image: image, time: time)
+                                                                            self.saveContext()
+                                                                            
+                                                                            self.addPost(text: text, description: description, condition: condition, link: url, image: image, time: time)
+                                                                            self.blinkTableView.beginUpdates()
+                                                                            self.blinkTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+                                                                            self.blinkTableView.endUpdates()
                                                                         }
                                                                     }
                                                                     
-                                                                    if !self.arrayPosts.contains(text) {
-                                                                        olderHeaderNewIndex += 1
-                                                                        //ADD NEW POSTS
-                                                                        let data = Post(context: self.container.viewContext)
-                                                                        self.configure(post: data, text: text, description: description, condition: condition, link: url, image: image, time: time)
-                                                                        self.saveContext()
-                                                                        
-                                                                        self.addPost(text: text, description: description, condition: condition, link: url, image: image, time: time)
-                                                                        self.blinkTableView.beginUpdates()
-                                                                        self.blinkTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
-                                                                        self.blinkTableView.endUpdates()
-                                                                    }
                                                                 }
                                                             }
                                                         }

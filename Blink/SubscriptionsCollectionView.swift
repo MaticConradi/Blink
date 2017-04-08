@@ -52,17 +52,7 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
         arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
         collectionViewFlowLayout.estimatedItemSize = CGSize(width: 150, height: 60)
         
-        let gradient = CAGradientLayer()
-        
-        gradient.frame = subscriptionsCollectionView.superview?.bounds ?? CGRect.null
-        gradient.colors = [UIColor.clear.cgColor, UIColor.black.cgColor, UIColor.black.cgColor]
-        gradient.locations = [0.0, 0.05, 1.0]
-        subscriptionsCollectionView.superview?.layer.mask = gradient
         subscriptionsCollectionView.contentInset = UIEdgeInsetsMake(10, 0, 0, 0)
-    }
-    
-    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
-        subscriptionsCollectionView.reloadData()
     }
     
     
