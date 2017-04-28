@@ -39,8 +39,8 @@ class SubscriptionsViewController: UIViewController {
         let color1 = UIColor(red: 222/255, green: 1, blue: 201/255, alpha: 1).cgColor
         let color2 = UIColor(red: 163/255, green: 248/255, blue: 1, alpha: 1).cgColor
         
-        let portraitGradient: CAGradientLayer = CAGradientLayer()
-        let landscapeGradient: CAGradientLayer = CAGradientLayer()
+        let portraitGradient = CAGradientLayer()
+        let landscapeGradient = CAGradientLayer()
         
         portraitGradient.colors = [color1, color2]
         portraitGradient.locations = [0 , 0.9]

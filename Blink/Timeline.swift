@@ -19,14 +19,18 @@ class PostCell: UITableViewCell {
     @IBOutlet weak var postImageView: UIImageView!
     @IBOutlet weak var imageShadowView: UIView!
     @IBOutlet weak var widthConstraint: NSLayoutConstraint!
+    @IBOutlet weak var heightImageConstraint: NSLayoutConstraint!
+    @IBOutlet weak var heightViewConstraint: NSLayoutConstraint!
+    
+    let screenSize = UIScreen.main.bounds.size
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        if UIScreen.main.bounds.size.width < UIScreen.main.bounds.size.height {
-            widthConstraint.constant = UIScreen.main.bounds.size.width - 70
+        if screenSize.width < screenSize.height {
+            widthConstraint.constant = screenSize.width - 70
         }else{
-            widthConstraint.constant = UIScreen.main.bounds.size.height - 70
+            widthConstraint.constant = screenSize.height - 70
         }
     }
     
@@ -36,16 +40,101 @@ class PostCell: UITableViewCell {
     }
 }
 
-class PostsViewController: UIViewController {
-    let defaults = UserDefaults.standard
+class PostsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate, UIViewControllerPreviewingDelegate {
     
+    //**********************************
+    // MARK: Variables
+    //**********************************
+    
+    //Outlets
+    @IBOutlet var tableView: UITableView!
     @IBOutlet weak var navigationView: UIView!
     @IBOutlet weak var blur: UIVisualEffectView!
     @IBOutlet weak var blurView: UIView!
     @IBOutlet weak var cardView: UIView!
     
+    //Core data
+    var container: NSPersistentContainer!
+    
+    //Stuff
+    let myRefreshControl: UIRefreshControl = UIRefreshControl()
+    let defaults = UserDefaults.standard
+    let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
+    var version = "1.0"
+    
+    var arrayPosts = [String]()
+    var arrayDescriptions = [String]()
+    var arrayLinks = [String]()
+    var arrayImages = [String]()
+    var arrayTimes = [Int]()
+    var arrayConditions = [String]()
+    
+    //Helpers: appearance
+    var arrayAnswered = [Int]()
+    var hasAnimated = false
+    var landscape = false
+    
+    //Helpers: time managment
+    var currentDayTime = Date()
+    var lastDayTime = Date()
+    
+    //Helpers: post management
+    var boolDefaultPosts = [Int]()
+    var dailyPostNumber = 0
+    var fridayPostNumber = 0
+    var requestCount = 0
+    var baseURL = ""
+    var olderHeaderIndex = 0
+    var configureFridayPost = false
+    
+    //Helpers: default posts
+    var arrayDefaultPosts = [String]()
+    
+    //Helpers: 3D touch previews
+    var indexPathRow = 0
+    
+    
+    //**********************************
+    // MARK: Essential functions
+    //**********************************
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        //Core data
+        container = NSPersistentContainer(name: "myCoreDataModel")
+        container.loadPersistentStores { storeDescription, error in
+            self.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+            
+            if let error = error {
+                print("🆘 Unresolved error while configuring core data: \(error)")
+            }
+        }
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        if traitCollection.forceTouchCapability == .available {
+            registerForPreviewing(with: self, sourceView: tableView)
+        } else {
+            //No 3D touch
+        }
+        
+        //Check app version and perform necessary updates
+        versionChech()
+        //Load previusly saved data
+        loadSavedData(onUpdate: false)
+        
+        //TableView UI changes
+        //tableView.estimatedRowHeight = 370
+        //tableView.rowHeight = UITableViewAutomaticDimension
+        myRefreshControl.addTarget(self, action: #selector(PostsViewController.dataRefresh), for: .valueChanged)
+        tableView.addSubview(myRefreshControl)
+        tableView.contentInset = UIEdgeInsetsMake(94, 0, 20, 0)
+        
+        //Apple bug fix lol
+        tableView.setNeedsLayout()
+        tableView.layoutIfNeeded()
         
         if (defaults.bool(forKey: "welcomeBlur")) {
             blur.effect = nil
@@ -66,6 +155,7 @@ class PostsViewController: UIViewController {
             x = UIScreen.main.bounds.size.height
         }else{
             x = UIScreen.main.bounds.size.width
+            landscape = true
         }
         
         let gradient: CAGradientLayer = CAGradientLayer()
@@ -84,135 +174,17 @@ class PostsViewController: UIViewController {
         self.view.layoutIfNeeded()
     }
     
-    @IBAction func scrollToTop(_ sender: Any) {
-        NotificationCenter.default.post(name: Notification.Name("scrollToTop"), object: nil)
-    }
-    
-    @IBAction func presentSettingsAction(_ sender: Any) {
-        tapped()
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.0) {
-            self.blur.effect = nil
-            self.blurView.layer.opacity = 0
-            self.blur.isHidden = true
-        }
-    }
-    
-    @IBAction func skipAction(_ sender: Any) {
-        UIView.animate(withDuration: 0.5, animations: {
-            self.blur.effect = nil
-            self.blurView.layer.opacity = 0
-        }) { (true) in
-            self.blur.isHidden = true
-        }
-    }
-    
-    func tapped() {
-        //Generate haptic feedback
-        let generator = UIImpactFeedbackGenerator(style: .light)
-        generator.impactOccurred()
-    }
-}
-
-class PostsTableViewController: UITableViewController, MFMailComposeViewControllerDelegate/*, UIViewControllerPreviewingDelegate*/ {
-    
-    //**********************************
-    // MARK: Variables
-    //**********************************
-    
-    
-    //Outlets
-    @IBOutlet var blinkTableView: UITableView!
-    
-    //Core data
-    var container: NSPersistentContainer!
-    
-    //Stuff
-    let myRefreshControl: UIRefreshControl = UIRefreshControl()
-    let defaults = UserDefaults.standard
-    let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
-    var version = "1.0"
-    
-    var arrayPosts = [String]()
-    var arrayDescriptions = [String]()
-    var arrayLinks = [String]()
-    var arrayImages = [String]()
-    var arrayTimes = [Int]()
-    var arrayConditions = [String]()
-    
-    //Helpers: appearance
-    var arrayAnswered = [Int]()
-    
-    //Helpers: time managment
-    var currentDayTime = Date()
-    var lastDayTime = Date()
-    
-    //Helpers: post management
-    var boolDefaultPosts = [Int]()
-    var dailyPostNumber = 0
-    var fridayPostNumber = 0
-    var requestCount = 0
-    var baseURL = ""
-    var olderHeaderIndex = 0
-    
-    //Helpers: default posts
-    var arrayDefaultPosts = [String]()
-    
-    //Helpers: 3D touch previews
-    var indexPathRow = 0
-    
-    
-    //**********************************
-    // MARK: Essential functions
-    //**********************************
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        //Observers
-        NotificationCenter.default.addObserver(self, selector: #selector(PostsTableViewController.dataRefresh), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(PostsTableViewController.scrollToTop), name: Notification.Name("scrollToTop"), object: nil)
-        
-        //Core data
-        container = NSPersistentContainer(name: "myCoreDataModel")
-        container.loadPersistentStores { storeDescription, error in
-            self.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-            
-            if let error = error {
-                print("🆘 Unresolved error while configuring core data: \(error)")
-            }
-        }
-        
-        /*if traitCollection.forceTouchCapability == .available {
-            registerForPreviewing(with: self, sourceView: view)
-        } else {
-            //No 3D touch
-        }*/
-        
-        //Check app version and perform necessary updates
-        versionChech()
-        //Load previusly saved data
-        loadSavedData(onUpdate: false)
-        
-        //TableView UI changes
-        //blinkTableView.estimatedRowHeight = 370
-        //blinkTableView.rowHeight = UITableViewAutomaticDimension
-        myRefreshControl.addTarget(self, action: #selector(PostsTableViewController.dataRefresh), for: .valueChanged)
-        blinkTableView.addSubview(myRefreshControl)
-        blinkTableView.contentInset = UIEdgeInsetsMake(94, 0, 20, 0)
-        
-        //Apple bug fix lol
-        blinkTableView.setNeedsLayout()
-        blinkTableView.layoutIfNeeded()
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if (defaults.bool(forKey: "welcomeScreen")) {
-            blinkTableView.layer.opacity = 1
+            tableView.layer.opacity = 1
             dataRefresh()
-            animateTable()
+            if !hasAnimated {
+                hasAnimated = true
+                animateTable()
+            }
         }else{
-            blinkTableView.layer.opacity = 0
+            tableView.layer.opacity = 0
         }
     }
     
@@ -236,11 +208,20 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         SDImageCache.shared().clearMemory()
     }
     
+    override func willRotate(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
+        switch toInterfaceOrientation {
+        case .landscapeLeft, .landscapeRight:
+            landscape = true
+        default:
+            landscape = false
+        }
+    }
+    
     func animateTable() {
-        blinkTableView.reloadData()
+        tableView.reloadData()
         
-        let cells = blinkTableView.visibleCells
-        let tableHeight: CGFloat = blinkTableView.bounds.size.height
+        let cells = tableView.visibleCells
+        let tableHeight: CGFloat = tableView.bounds.size.height
         
         for i in cells {
             let cell: UITableViewCell = i as UITableViewCell
@@ -259,34 +240,73 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         }
     }
     
+    @IBAction func scrollToTop(_ sender: Any) {
+        scrollToTop()
+    }
+    
+    @IBAction func presentSettingsAction(_ sender: Any) {
+        tapped()
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.0) {
+            self.blur.effect = nil
+            self.blurView.layer.opacity = 0
+            self.blur.isHidden = true
+        }
+    }
+    
+    @IBAction func skipAction(_ sender: Any) {
+        UIView.animate(withDuration: 0.5, animations: {
+            self.blur.effect = nil
+            self.blurView.layer.opacity = 0
+        }) { (true) in
+            self.blur.isHidden = true
+        }
+    }
+    
     
     //**********************************
     // MARK: Peek & poop
     //**********************************
     
     
-    /*func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
-        guard let indexPath = tableView.indexPathForRow(at: location), let cell = tableView.cellForRow(at: indexPath) as? PostCell else {
-            return nil }
-        
-        guard let detailViewController = storyboard?.instantiateViewController(withIdentifier: "PreviewViewController") as? PreviewViewController else {
-            return nil }
-        
-        if arrayLinks[indexPath.row] == "" || arrayDescriptions[indexPath.row] == "" || arrayImages[indexPath.row] == "" {
-            return nil
+    func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+        if !landscape {
+            guard let indexPath = tableView.indexPathForRow(at: location), let cell = tableView.cellForRow(at: indexPath) as? PostCell else { return nil }
+            
+            if arrayConditions[indexPath.row] == "10" {
+                guard let detailViewController = storyboard?.instantiateViewController(withIdentifier: "PhotoPreviewViewController") as? PhotoPreviewViewController else { return nil }
+                detailViewController.imageURL = arrayImages[indexPath.row]
+                indexPathRow = indexPath.row
+                
+                let manager = SDWebImageManager.shared()
+                manager.loadImage(with: URL(string: arrayImages[indexPath.row]), options: .highPriority, progress: nil, completed: { (image, data, error, cacheType, finished, url) in
+                    if let loadedImage = image {
+                        let width: CGFloat = 300
+                        let height = (width * loadedImage.size.height) / loadedImage.size.width
+                        detailViewController.preferredContentSize = CGSize(width: width, height: height)
+                    }
+                })
+                
+                previewingContext.sourceRect = tableView.convert(cell.imageShadowView.frame, from: cell.imageShadowView.superview)
+                return detailViewController
+            }else if arrayLinks[indexPath.row] != "" && arrayDescriptions[indexPath.row] != "" && arrayImages[indexPath.row] != "" {
+                guard let detailViewController = storyboard?.instantiateViewController(withIdentifier: "PreviewViewController") as? PreviewViewController else { return nil }
+                detailViewController.headline = arrayPosts[indexPath.row]
+                detailViewController.desc = arrayDescriptions[indexPath.row]
+                detailViewController.imageUrl = arrayImages[indexPath.row]
+                detailViewController.condition = arrayConditions[indexPath.row]
+                indexPathRow = indexPath.row
+                detailViewController.preferredContentSize = CGSize(width: 0.0, height: 650)
+                
+                //previewingContext.sourceRect = cell.frame
+                let rect1 = tableView.convert(cell.cardView.frame, from: cell.cardView.superview)
+                let rect2 = tableView.convert(cell.imageShadowView.frame, from: cell.imageShadowView.superview)
+                previewingContext.sourceRect = rect1.union(rect2)
+                
+                return detailViewController
+            }
         }
         
-        detailViewController.headline = arrayPosts[indexPath.row]
-        detailViewController.desc = arrayDescriptions[indexPath.row]
-        detailViewController.imageUrl = arrayImages[indexPath.row]
-        detailViewController.condition = arrayConditions[indexPath.row]
-        indexPathRow = indexPath.row
-        detailViewController.preferredContentSize = CGSize(width: 0.0, height: 550)
-        
-        previewingContext.sourceRect = cell.frame
-        //previewingContext.sourceRect = blinkTableView.convert(cell.cardView.frame, from: cell.cardView.superview)
-        
-        return detailViewController
+        return nil
     }
     
     private func touchedView(view: UIView, location: CGPoint) -> Bool {
@@ -294,14 +314,65 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     }
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-        if arrayLinks[indexPathRow] != "" {
+        if arrayConditions[indexPathRow] == "10" {
+            if let vc = storyboard?.instantiateViewController(withIdentifier: "PhotoGalleryViewController") as? PhotoGalleryViewController {
+                vc.imageURL = arrayImages[indexPathRow]
+                vc.modalPresentationStyle = .overFullScreen
+                present(vc, animated: true)
+            }
+        }else if arrayLinks[indexPathRow] != "" {
             if let url = URL(string: arrayLinks[indexPathRow]) {
                 let vc = SFSafariViewController(url: url, entersReaderIfAvailable: false)
                 vc.preferredControlTintColor = UIColor.black
-                navigationController?.present(vc, animated: true)
+                vc.modalPresentationStyle = .overFullScreen
+                present(vc, animated: true)
             }
         }
-    }*/
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let indexPath = tableView.indexPathForSelectedRow {
+            tableView.cellForRow(at: indexPath)?.isSelected = false;
+            
+            if segue.identifier == "showImageSegue" {
+                if let photoGalleryViewController = segue.destination as? PhotoGalleryViewController {
+                    photoGalleryViewController.imageURL = arrayImages[indexPath.row]
+                }
+            }else if segue.identifier == "showPostSegue" {
+                if let postGalleryViewController = segue.destination as? PostGalleryViewController {
+                    postGalleryViewController.post = arrayPosts[indexPath.row]
+                }
+            }
+        }
+    }
+    
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        if identifier == "showCategoriesSegue" {
+            return true
+        }
+        if let indexPath = tableView.indexPathForSelectedRow {
+            if identifier == "showImageSegue" {
+                if arrayConditions[indexPath.row] == "10" && arrayPosts[indexPath.row] != "Beeb boop... ℏ ℇ ≺ ℔ ∦ ℵ ℞ ℬ." {
+                    return true
+                }
+            }else if identifier == "showPostSegue" {
+                if !(defaults.object(forKey: "arrayDefaultPosts") as! [String]).contains(arrayPosts[indexPath.row]) && arrayPosts[indexPath.row] != "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹" {
+                    switch arrayConditions[indexPath.row] {
+                    case "1", "2", "4", "5", "6", "9", "13":
+                        return true
+                    default:
+                        return false
+                    }
+                }else{
+                    let generator = UINotificationFeedbackGenerator()
+                    generator.notificationOccurred(.error)
+                    return false
+                }
+            }
+        }
+        
+        return false
+    }
     
     
     //**********************************
@@ -309,15 +380,15 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     //**********************************
     
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return arrayPosts.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if arrayPosts[indexPath.row] == "**EARLY**" {
             let cell = tableView.dequeueReusableCell(withIdentifier: "olderHeaderCell", for: indexPath) as UITableViewCell
             return cell
@@ -392,7 +463,8 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
             cell.imageShadowView.layer.shadowColor = UIColor.black.cgColor
             cell.imageShadowView.layer.shadowRadius = 25
             cell.imageShadowView.layer.shadowOpacity = 0.15
-            cell.postImageView.sd_setImage(with: URL(string: arrayImages[indexPath.row]), placeholderImage: nil, options: .progressiveDownload)
+            cell.postImageView.sd_setImage(with: URL(string: arrayImages[indexPath.row]), placeholderImage: nil, options: [.progressiveDownload, .continueInBackground])
+            
             
             cell.cardView.layer.shadowColor = UIColor.black.cgColor
             cell.cardView.layer.shadowRadius = 25
@@ -407,40 +479,44 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         }
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if arrayLinks[indexPath.row] != "" {
-            if let url = URL(string: arrayLinks[indexPath.row]) {
-                let vc = SFSafariViewController(url: url, entersReaderIfAvailable: false)
-                vc.preferredControlTintColor = UIColor.black
-                present(vc, animated: true)
-            }
-        }else if arrayConditions[indexPath.row] == "3" && arrayPosts[indexPath.row] != "I'll satisfy your inner nerd by sending you interesting facts. ⭐️" {
-            if arrayAnswered.count >= 3 {
-                let row = arrayAnswered[0]
-                arrayAnswered.removeFirst()
-                blinkTableView.reloadRows(at: [IndexPath(row: row, section: 0)], with: .automatic)
-            }else if !arrayAnswered.contains(indexPath.row) {
-                arrayAnswered.append(indexPath.row)
-                blinkTableView.reloadRows(at: [indexPath], with: .automatic)
-            }else{
-                for i in 0..<arrayAnswered.count {
-                    if arrayAnswered[i] == indexPath.row {
-                        arrayAnswered.remove(at: i)
-                        blinkTableView.reloadRows(at: [indexPath], with: .automatic)
-                        break;
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if !arrayDefaultPosts.contains(arrayPosts[indexPath.row]) {
+            switch arrayConditions[indexPath.row] {
+            case "7", "8", "11", "12":
+                if let url = URL(string: arrayLinks[indexPath.row]) {
+                    let vc = SFSafariViewController(url: url, entersReaderIfAvailable: false)
+                    vc.preferredControlTintColor = UIColor.black
+                    vc.modalPresentationStyle = .overFullScreen
+                    present(vc, animated: true)
+                }
+            case "3":
+                if arrayAnswered.count >= 3 {
+                    let row = arrayAnswered[0]
+                    arrayAnswered.removeFirst()
+                    tableView.reloadRows(at: [IndexPath(row: row, section: 0)], with: .automatic)
+                }else if !arrayAnswered.contains(indexPath.row) {
+                    arrayAnswered.append(indexPath.row)
+                    tableView.reloadRows(at: [indexPath], with: .automatic)
+                }else{
+                    for i in 0..<arrayAnswered.count {
+                        if arrayAnswered[i] == indexPath.row {
+                            arrayAnswered.remove(at: i)
+                            tableView.reloadRows(at: [indexPath], with: .automatic)
+                            break;
+                        }
                     }
                 }
-            }
-        }else if arrayConditions[indexPath.row] == "10" && arrayPosts[indexPath.row] != "Beeb boop... ℏ ℇ ≺ ℔ ∦ ℵ ℞ ℬ." {
-            if let url = URL(string: arrayImages[indexPath.row]) {
-                let vc = SFSafariViewController(url: url, entersReaderIfAvailable: false)
-                vc.preferredControlTintColor = UIColor.black
-                present(vc, animated: true)
+            case "10": break
+                //self.performSegue(withIdentifier: "showImageSegue", sender: indexPath)
+            case "1", "2", "4", "5", "6", "9", "13": break
+                //self.performSegue(withIdentifier: "showPostSegue", sender: indexPath)
+            default:
+                break
             }
         }
     }
     
-    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         if arrayImages[indexPath.row] == "" {
             return 200
         }else if arrayPosts[indexPath.row] == "**EARLY**" {
@@ -450,10 +526,11 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         return 500
     }
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if arrayPosts[indexPath.row] == "**EARLY**" {
             return 75
         }
+        
         return UITableViewAutomaticDimension
     }
     
@@ -471,12 +548,12 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         let tempAnwsers = arrayAnswered
         arrayAnswered.removeAll()
         for i in 0..<tempAnwsers.count {
-            blinkTableView.reloadRows(at: [IndexPath(row: tempAnwsers[i], section: 0)], with: .automatic)
+            tableView.reloadRows(at: [IndexPath(row: tempAnwsers[i], section: 0)], with: .automatic)
         }
         
         requestCount += 1
         print("📳 REQUEST UPDATE #\(requestCount)")
-            
+        
         if defaults.bool(forKey: "newCategory") {
             defaults.set(false, forKey: "newCategory")
             loadSavedData(onUpdate: true)
@@ -521,14 +598,15 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                     dailyPostNumber += 1
                     defaults.set(dailyPostNumber, forKey: "dailyPostNumber")
                 }
+                //Is it Friday yet?
+                configureFridayPost = true
             }
-            //baseURL = "http://account.conradi.si/blink/download.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[6])&news=\(boolDefaultPosts[7])&numbers=\(boolDefaultPosts[8])&space=\(boolDefaultPosts[9])&sports=\(boolDefaultPosts[10])&tech=\(boolDefaultPosts[11])&trending=\(boolDefaultPosts[12])&time=\(self.defaults.integer(forKey: "lastTime"))&version=2&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
             baseURL = "http://services.conradi.si/blink/download.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[6])&news=\(boolDefaultPosts[7])&numbers=\(boolDefaultPosts[8])&space=\(boolDefaultPosts[9])&sports=\(boolDefaultPosts[10])&tech=\(boolDefaultPosts[11])&trending=\(boolDefaultPosts[12])&time=\(self.defaults.integer(forKey: "lastTime"))&version=2&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
             print("ℹ️ URL: \(baseURL)")
             //DOWNLOAD POSTS FROM SERVER
             performSelector(inBackground: #selector(downloadData), with: nil)
         }else{
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.myRefreshControl.endRefreshing()
             }
         }
@@ -577,9 +655,9 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         self.configure(post: data, text: text, description: "", condition: "6", link: "", image: "", time: Int(Date().timeIntervalSince1970))
         self.saveContext()
         self.addPost(text: text, description: "", condition: "6", link: "", image: "", time: Int(Date().timeIntervalSince1970))
-        self.blinkTableView.beginUpdates()
-        self.blinkTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
-        self.blinkTableView.endUpdates()
+        self.tableView.beginUpdates()
+        self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+        self.tableView.endUpdates()
         print("✅ Added Friday post.")
     }
     
@@ -609,7 +687,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                                         self.arrayImages.remove(at: self.olderHeaderIndex)
                                         self.arrayTimes.remove(at: self.olderHeaderIndex)
                                         self.arrayConditions.remove(at: self.olderHeaderIndex)
-                                        self.blinkTableView.reloadData()
+                                        self.tableView.reloadData()
                                     }
                                 }
                                 
@@ -635,7 +713,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                                                                             break;
                                                                         }
                                                                         
-                                                                        if condition == "7" || condition == "8" || condition == "11" || condition == "12" {
+                                                                        if condition == "7" || condition == "8" || condition == "10" || condition == "11" || condition == "12" {
                                                                             if text.characters.last != "?" && text.characters.last != "!" && text.characters.last != "." && text.characters.last != "\"" && text.characters.last != ")" {
                                                                                 text = text + "."
                                                                             }
@@ -649,9 +727,9 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                                                                             self.saveContext()
                                                                             
                                                                             self.addPost(text: text, description: description, condition: condition, link: url, image: image, time: time)
-                                                                            self.blinkTableView.beginUpdates()
-                                                                            self.blinkTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
-                                                                            self.blinkTableView.endUpdates()
+                                                                            self.tableView.beginUpdates()
+                                                                            self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+                                                                            self.tableView.endUpdates()
                                                                         }
                                                                     }
                                                                     
@@ -667,14 +745,16 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                                 
                                 DispatchQueue.main.sync {
                                     //Is it friday yet?
-                                    if self.boolDefaultPosts[5] == 1 {
+                                    if self.boolDefaultPosts[5] == 1 && self.configureFridayPost {
+                                        self.fridayPostNumber = self.defaults.integer(forKey: "fridayPostNumber")
                                         if self.fridayPostNumber == 0 {
-                                            self.fridayPostNumber = Int(arc4random_uniform(UInt32(5)))
+                                            self.fridayPostNumber = Int(arc4random_uniform(UInt32(4))) + 1
                                             self.addFridayPost()
                                             olderHeaderNewIndex += 1
                                         }
                                         self.fridayPostNumber -= 1
                                         self.defaults.set(self.fridayPostNumber, forKey: "fridayPostNumber")
+                                        self.configureFridayPost = false
                                     }
                                     
                                     if olderHeaderNewIndex > 0 {
@@ -685,9 +765,9 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                                         self.arrayImages.insert("", at: olderHeaderNewIndex)
                                         self.arrayTimes.insert(Int(Date().timeIntervalSince1970), at: olderHeaderNewIndex)
                                         self.arrayConditions.insert("", at: olderHeaderNewIndex)
-                                        self.blinkTableView.beginUpdates()
-                                        self.blinkTableView.insertRows(at: [IndexPath(row: olderHeaderNewIndex, section: 0)], with: .top)
-                                        self.blinkTableView.endUpdates()
+                                        self.tableView.beginUpdates()
+                                        self.tableView.insertRows(at: [IndexPath(row: olderHeaderNewIndex, section: 0)], with: .top)
+                                        self.tableView.endUpdates()
                                         self.olderHeaderIndex = olderHeaderNewIndex
                                     }
                                 }
@@ -701,11 +781,15 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                     }
                     print("❎ Download process complete.")
                     
-                    self.myRefreshControl.endRefreshing()
+                    DispatchQueue.main.sync {
+                        self.myRefreshControl.endRefreshing()
+                    }
                 } catch {
                     print("🆘 Something went wrong during data download from the server.")
                     
-                    self.myRefreshControl.endRefreshing()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        self.myRefreshControl.endRefreshing()
+                    }
                 }
             }
         }
@@ -736,7 +820,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
         boolDefaultPosts = [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1]
         defaults.set(arrayDefaultPosts, forKey: "arrayDefaultPosts")
         defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
-        defaults.set(0, forKey: "dailyPostNumber")
+        defaults.set(68, forKey: "dailyPostNumber")
         defaults.set(0, forKey: "fridayPostNumber")
         defaults.set(0, forKey: "dayNumber")
         defaults.set(Int(Date().timeIntervalSince1970) - 5, forKey: "lastTime")
@@ -788,9 +872,9 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                 arrayImages.remove(at: self.olderHeaderIndex)
                 arrayTimes.remove(at: self.olderHeaderIndex)
                 arrayConditions.remove(at: self.olderHeaderIndex)
-                blinkTableView.beginUpdates()
-                blinkTableView.deleteRows(at: [IndexPath(row: self.olderHeaderIndex, section: 0)], with: .top)
-                blinkTableView.endUpdates()
+                tableView.beginUpdates()
+                tableView.deleteRows(at: [IndexPath(row: self.olderHeaderIndex, section: 0)], with: .top)
+                tableView.endUpdates()
                 olderHeaderIndex = 0
             }
             
@@ -805,9 +889,9 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
                 for item in result {
                     if !self.arrayPosts.contains(item.post) {
                         addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
-                        blinkTableView.beginUpdates()
-                        blinkTableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
-                        blinkTableView.endUpdates()
+                        tableView.beginUpdates()
+                        tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+                        tableView.endUpdates()
                     }
                 }
             }
@@ -817,6 +901,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     }
     
     func reloadData() {
+        arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
         boolDefaultPosts = defaults.object(forKey: "boolDefaultPosts") as! [Int]
         dailyPostNumber = defaults.integer(forKey: "dailyPostNumber")
         fridayPostNumber = defaults.integer(forKey: "fridayPostNumber")
@@ -938,26 +1023,44 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     }
     
     @IBAction func share(_ sender: UIButton) {
-        tapped()
+        let isSharing = true
         let button = sender
         let view = button.superview!
         let cell = view.superview?.superview as! PostCell
-        let indexPath: IndexPath = blinkTableView.indexPath(for: cell)!
+        let indexPath: IndexPath = tableView.indexPath(for: cell)!
         
-        var textToShare = ""
-        
-        if self.arrayLinks[indexPath.row] == "" {
-            textToShare = "\(self.arrayPosts[indexPath.row])\n\nvia Blink for iPhone: https://appsto.re/si/jxhUib.i"
-        }else if self.arrayImages[indexPath.row] != "" {
-            textToShare = "\(self.arrayPosts[indexPath.row]): \(self.arrayImages[indexPath.row])\n\nvia Blink for iPhone: https://appsto.re/si/jxhUib.i"
+        if arrayLinks[indexPath.row] != "" {
+            preparesShare(shareText: "\(arrayPosts[indexPath.row]): \(arrayLinks[indexPath.row])\n\nvia Blink for iPhone: https://appsto.re/si/jxhUib.i", shareImage: nil)
+        }else if arrayConditions[indexPath.row] == "10" {
+            let manager = SDWebImageManager.shared()
+            manager.loadImage(with: URL(string: arrayImages[indexPath.row]), options: .highPriority, progress: nil, completed: { (image, data, error, cacheType, finished, url) in
+                if isSharing {
+                    if let imageToShare = image {
+                        self.preparesShare(shareText: "\(self.arrayPosts[indexPath.row])\n\nvia Blink for iPhone: https://appsto.re/si/jxhUib.i", shareImage: imageToShare)
+                    }
+                }
+            })
         }else{
-            textToShare = "\(self.arrayPosts[indexPath.row]): \(self.arrayLinks[indexPath.row])\n\nvia Blink for iPhone: https://appsto.re/si/jxhUib.i"
+            preparesShare(shareText: "\(arrayPosts[indexPath.row])\n\nvia Blink for iPhone: https://appsto.re/si/jxhUib.i", shareImage: nil)
+        }
+    }
+    
+    func preparesShare(shareText: String?, shareImage: UIImage?){
+        var objectsToShare = [Any]()
+        
+        if let shareTextObj = shareText{
+            objectsToShare.append(shareTextObj)
+        }
+        if let shareImageObj = shareImage{
+            objectsToShare.append(shareImageObj)
         }
         
-        let objectsToShare = [textToShare] as [Any]
-        let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-        activityVC.excludedActivityTypes = [UIActivityType.airDrop, UIActivityType.addToReadingList, UIActivityType.print, UIActivityType.postToVimeo, UIActivityType.openInIBooks, UIActivityType.postToVimeo, UIActivityType.postToFlickr, UIActivityType.assignToContact, UIActivityType.saveToCameraRoll]
-        self.present(activityVC, animated: true, completion: nil)
+        if shareText != nil || shareImage != nil{
+            let activityViewController = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = self.view
+            activityViewController.excludedActivityTypes = [UIActivityType.airDrop, UIActivityType.addToReadingList, UIActivityType.postToVimeo, UIActivityType.openInIBooks]
+            present(activityViewController, animated: true, completion: nil)
+        }
     }
     
     
@@ -967,6 +1070,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     
     
     func versionChech() {
+        defaults.synchronize()
         if (defaults.string(forKey: "version") == nil) {
             setUp()
         }else{
@@ -1024,7 +1128,7 @@ class PostsTableViewController: UITableViewController, MFMailComposeViewControll
     }
     
     public func scrollToTop() {
-        blinkTableView.setContentOffset(CGPoint(x: 0,y :-94), animated: true)
+        tableView.setContentOffset(CGPoint(x: 0,y :-94), animated: true)
     }
     
     func getDayOfWeek() -> Int {
