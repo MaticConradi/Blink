@@ -101,6 +101,9 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //Observers
+        NotificationCenter.default.addObserver(self, selector: #selector(PostsViewController.dataRefresh), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        
         //Core data
         container = NSPersistentContainer(name: "myCoreDataModel")
         container.loadPersistentStores { storeDescription, error in
@@ -601,7 +604,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 //Is it Friday yet?
                 configureFridayPost = true
             }
-            baseURL = "http://services.conradi.si/blink/download.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[6])&news=\(boolDefaultPosts[7])&numbers=\(boolDefaultPosts[8])&space=\(boolDefaultPosts[9])&sports=\(boolDefaultPosts[10])&tech=\(boolDefaultPosts[11])&trending=\(boolDefaultPosts[12])&time=\(self.defaults.integer(forKey: "lastTime"))&version=2&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
+            baseURL = "http://services.conradi.si/blink/download.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[6])&news=\(boolDefaultPosts[7])&numbers=\(boolDefaultPosts[8])&space=\(boolDefaultPosts[9])&sports=\(boolDefaultPosts[10])&tech=\(boolDefaultPosts[11])&time=\(self.defaults.integer(forKey: "lastTime"))&version=2&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
             print("ℹ️ URL: \(baseURL)")
             //DOWNLOAD POSTS FROM SERVER
             performSelector(inBackground: #selector(downloadData), with: nil)
@@ -813,14 +816,13 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                              "Some numbers are pretty mind-boggling. Here are especially nice ones. 🕵️‍♀️",
                              "Beeb boop... ℏ ℇ ≺ ℔ ∦ ℵ ℞ ℬ.",
                              "No one ever says, “It’s only a game.” when their team is winning. 🏋️‍♀️",
-                             "💻 and ⌨️ and 🖥 and 🎮",
-                             "When something weird happens, you'll know. 🔥"]
+                             "💻 and ⌨️ and 🖥 and 🎮"]
         
         //Set default values
-        boolDefaultPosts = [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1]
+        boolDefaultPosts = [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0]
         defaults.set(arrayDefaultPosts, forKey: "arrayDefaultPosts")
         defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
-        defaults.set(68, forKey: "dailyPostNumber")
+        defaults.set(0, forKey: "dailyPostNumber")
         defaults.set(0, forKey: "fridayPostNumber")
         defaults.set(0, forKey: "dayNumber")
         defaults.set(Int(Date().timeIntervalSince1970) - 5, forKey: "lastTime")
@@ -942,34 +944,29 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         //addPost(text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
         
         let data1 = Post(context: container.viewContext)
-        configure(post: data1, text: arrayDefaultPosts[12], description: "", condition: "13", link: "", image: "", time: 1)
-        saveContext()
-        //addPost(text: arrayDefaultPosts[12], description: "", condition: "11", link: "", image: "", time: 1)
-        
-        let data2 = Post(context: container.viewContext)
-        configure(post: data2, text: arrayDefaultPosts[7], description: "", condition: "8", link: "", image: "", time: 2)
+        configure(post: data1, text: arrayDefaultPosts[7], description: "", condition: "8", link: "", image: "", time: 1)
         saveContext()
         //addPost(text: arrayDefaultPosts[6], description: "", condition: "7", link: "", image: "", time: 2)
         
-        let data3 = Post(context: container.viewContext)
-        configure(post: data3, text: arrayDefaultPosts[4], description: "", condition: "5", link: "", image: "", time: 3)
+        let data2 = Post(context: container.viewContext)
+        configure(post: data2, text: arrayDefaultPosts[4], description: "", condition: "5", link: "", image: "", time: 2)
         saveContext()
         //addPost(text: arrayDefaultPosts[4], description: "", condition: "5", link: "", image: "", time: 3)
         
-        let data4 = Post(context: container.viewContext)
-        configure(post: data4, text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", time: 4)
+        let data3 = Post(context: container.viewContext)
+        configure(post: data3, text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", time: 3)
         saveContext()
         //addPost(text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", time: 4)
         
         
         //First posts
-        let data5 = Post(context: container.viewContext)
-        configure(post: data5, text: "\"Life's challenges are not supposed to paralyse you, they're supposed to help you discover who you are.\" — Bernice Reagon", description: "", condition: "5", link: "", image: "", time: Int(Date().timeIntervalSince1970))
+        let data4 = Post(context: container.viewContext)
+        configure(post: data4, text: "\"Life's challenges are not supposed to paralyse you, they're supposed to help you discover who you are.\" — Bernice Reagon", description: "", condition: "5", link: "", image: "", time: Int(Date().timeIntervalSince1970))
         saveContext()
         //addPost(text: "\"Life's challenges are not supposed to paralyse you, they're supposed to help you discover who you are.\" — Bernice Reagon", description: "", condition: "5", link: "", image: "", time: Int(Date().timeIntervalSince1970) + 3)
         
-        let data7 = Post(context: container.viewContext)
-        configure(post: data7, text: "Silence is golden. Duck tape is silver.", description: "", condition: "4", link: "", image: "", time: Int(Date().timeIntervalSince1970))
+        let data5 = Post(context: container.viewContext)
+        configure(post: data5, text: "Silence is golden. Duck tape is silver.", description: "", condition: "4", link: "", image: "", time: Int(Date().timeIntervalSince1970))
         saveContext()
         //addPost(text: "Silence is golden. Duck tape is silver.", description: "", condition: "4", link: "", image: "", time: Int(Date().timeIntervalSince1970) + 3)
     }
@@ -1079,21 +1076,30 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 boolDefaultPosts = defaults.object(forKey: "boolDefaultPosts") as! [Int]
                 boolDefaultPosts.insert(0, at: 5)
                 boolDefaultPosts.insert(0, at: 10)
+                boolDefaultPosts.removeLast()
                 defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
                 
                 arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
                 arrayDefaultPosts.insert("Let me answer this mighty question.", at: 5)
                 arrayDefaultPosts.insert("No one ever says, “It’s only a game.” when their team is winning.", at: 10)
-                defaults.set(arrayDefaultPosts, forKey: "arrayDefaultPosts")
+                arrayDefaultPosts.removeLast()
+                defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
                 
                 defaults.set(0, forKey: "fridayPostNumber")
+            case "1.1":
+                boolDefaultPosts = defaults.object(forKey: "boolDefaultPosts") as! [Int]
+                boolDefaultPosts.removeLast()
+                defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
+                arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
+                arrayDefaultPosts.removeLast()
+                defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
             default:
                 break
             }
         }
         
-        version = "1.1"
-        defaults.set("1.1", forKey: "version")
+        version = "1.3"
+        defaults.set("1.3", forKey: "version")
         print("📳 Version: \(version)")
     }
     
@@ -1158,13 +1164,11 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         case "9":
             return "Number trivia" //9 (8)
         case "10":
-            return "Space photo of the day" //10 (9)
+            return "Space photos" //10 (9)
         case "11":
             return "Sports stuff" //11 (10)
         case "12":
             return "Tech talk" //12 (11)
-        case "13":
-            return "Weird but trending" //13 (12)
         default:
             return "Blink" //Other
         }
