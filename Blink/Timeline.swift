@@ -71,6 +71,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     //Helpers: appearance
     var arrayAnswered = [Int]()
+    var arrayClicked = [Int]()
     var hasAnimated = false
     var landscape = false
     
@@ -89,9 +90,13 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     //Helpers: default posts
     var arrayDefaultPosts = [String]()
+    var arrayAddedDefaultPosts = [Int: String]()
     
     //Helpers: 3D touch previews
     var indexPathRow = 0
+    
+    //Helpers: version checking
+    var updates = [String: Int]()
     
     
     //**********************************
@@ -125,8 +130,11 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         //Check app version and perform necessary updates
         versionChech()
-        //Load previusly saved data
-        loadSavedData(onUpdate: false)
+        //Reload data
+        reloadData()
+        //Load posts
+        dataRefresh()
+        //loadSavedData(onUpdate: false)
         
         //TableView UI changes
         //tableView.estimatedRowHeight = 370
@@ -181,10 +189,11 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         super.viewWillAppear(animated)
         if (defaults.bool(forKey: "welcomeScreen")) {
             tableView.layer.opacity = 1
-            dataRefresh()
             if !hasAnimated {
                 hasAnimated = true
                 animateTable()
+            }else{
+                dataRefresh()
             }
         }else{
             tableView.layer.opacity = 0
@@ -367,8 +376,8 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                         return false
                     }
                 }else{
-                    let generator = UINotificationFeedbackGenerator()
-                    generator.notificationOccurred(.error)
+                    //let generator = UINotificationFeedbackGenerator()
+                    //generator.notificationOccurred(.error)
                     return false
                 }
             }
@@ -398,53 +407,58 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         //Data managment
         let post = NSMutableAttributedString()
+        //let rawPost = "\(arrayPosts[indexPath.row]) \(arrayTimes[indexPath.row])"
         let rawPost = arrayPosts[indexPath.row]
         
-        switch arrayConditions[indexPath.row] {
-        case "7", "8", "11", "12" :
-            if arrayLinks[indexPath.row] != "" {
-                let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
-                let touchForMore = NSMutableAttributedString(string: " Touch for more...", attributes: attributes)
-                
-                post.append(NSMutableAttributedString(string: rawPost))
-                post.append(touchForMore)
+        if arrayDefaultPosts.contains(rawPost) {
+            if arrayClicked.contains(indexPath.row) {
+                post.append(NSMutableAttributedString(string: "You've subscribed to \(getCondition(arrayConditions[indexPath.row]))."))
             }else{
                 post.append(NSMutableAttributedString(string: rawPost))
             }
-        case "10" :
-            if arrayPosts[indexPath.row] != "Beeb boop... ℏ ℇ ≺ ℔ ∦ ℵ ℞ ℬ." {
+        }else{
+            switch arrayConditions[indexPath.row] {
+            case "7", "8", "11", "12" :
+                if arrayLinks[indexPath.row] != "" {
+                    let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
+                    let touchForMore = NSMutableAttributedString(string: " Touch for more...", attributes: attributes)
+                    
+                    post.append(NSMutableAttributedString(string: rawPost))
+                    post.append(touchForMore)
+                }else{
+                    post.append(NSMutableAttributedString(string: rawPost))
+                }
+            case "10" :
                 let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
                 let touchForMore = NSMutableAttributedString(string: " Touch to view...", attributes: attributes)
                 
                 post.append(NSMutableAttributedString(string: rawPost))
                 post.append(touchForMore)
-            }else{
-                post.append(NSMutableAttributedString(string: rawPost))
-            }
-        case "3" :
-            if !arrayAnswered.contains(indexPath.row) && arrayPosts[indexPath.row] != "I'll satisfy your inner nerd by sending you interesting facts. ⭐️" {
-                let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
-                let touchForMore = NSMutableAttributedString(string: " Touch to reveal...", attributes: attributes)
-                
-                post.append(NSMutableAttributedString(string: rawPost))
-                post.append(touchForMore)
-            }else if arrayAnswered.contains(indexPath.row) && arrayPosts[indexPath.row] != "I'll satisfy your inner nerd by sending you interesting facts. ⭐️" {
-                let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
-                let question = NSMutableAttributedString(string: rawPost, attributes: attributes)
-                
-                post.append(question)
-                if arrayDescriptions[indexPath.row] == "True" {
-                    post.append(NSMutableAttributedString(string: " It's true."))
-                }else if arrayDescriptions[indexPath.row] == "False" {
-                    post.append(NSMutableAttributedString(string: " It's false."))
+            case "3" :
+                if !arrayAnswered.contains(indexPath.row) {
+                    let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
+                    let touchForMore = NSMutableAttributedString(string: " Touch to reveal...", attributes: attributes)
+                    
+                    post.append(NSMutableAttributedString(string: rawPost))
+                    post.append(touchForMore)
+                }else if arrayAnswered.contains(indexPath.row) {
+                    let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
+                    let question = NSMutableAttributedString(string: rawPost, attributes: attributes)
+                    
+                    post.append(question)
+                    if arrayDescriptions[indexPath.row] == "True" {
+                        post.append(NSMutableAttributedString(string: " It's true."))
+                    }else if arrayDescriptions[indexPath.row] == "False" {
+                        post.append(NSMutableAttributedString(string: " It's false."))
+                    }else{
+                        post.append(NSMutableAttributedString(string: " \(arrayDescriptions[indexPath.row])"))
+                    }
                 }else{
-                    post.append(NSMutableAttributedString(string: " \(arrayDescriptions[indexPath.row])"))
+                    post.append(NSMutableAttributedString(string: rawPost))
                 }
-            }else{
+            default:
                 post.append(NSMutableAttributedString(string: rawPost))
             }
-        default:
-            post.append(NSMutableAttributedString(string: rawPost))
         }
         
         if arrayImages[indexPath.row] == "" {
@@ -509,12 +523,25 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                         }
                     }
                 }
-            case "10": break
-                //self.performSegue(withIdentifier: "showImageSegue", sender: indexPath)
-            case "1", "2", "4", "5", "6", "9", "13": break
-                //self.performSegue(withIdentifier: "showPostSegue", sender: indexPath)
             default:
                 break
+            }
+        }else{
+            if arrayClicked.count >= 3 {
+                let row = arrayClicked[0]
+                arrayClicked.removeFirst()
+                tableView.reloadRows(at: [IndexPath(row: row, section: 0)], with: .automatic)
+            }else if !arrayClicked.contains(indexPath.row) {
+                arrayClicked.append(indexPath.row)
+                tableView.reloadRows(at: [indexPath], with: .automatic)
+            }else{
+                for i in 0..<arrayClicked.count {
+                    if arrayClicked[i] == indexPath.row {
+                        arrayClicked.remove(at: i)
+                        tableView.reloadRows(at: [indexPath], with: .automatic)
+                        break;
+                    }
+                }
             }
         }
     }
@@ -545,7 +572,9 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     func dataRefresh() {
         //Reload all variables
-        reloadData()
+        if hasAnimated {
+            reloadData()
+        }
         
         //Remove all anwsers
         let tempAnwsers = arrayAnswered
@@ -559,7 +588,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         if defaults.bool(forKey: "newCategory") {
             defaults.set(false, forKey: "newCategory")
-            loadSavedData(onUpdate: true)
+            loadSavedData()
         }else{
             if requestCount > 1 {
                 if dailyPostNumber == 0 {
@@ -569,7 +598,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                     lastDayTime = currentDayTime
                     defaults.set(lastDayTime, forKey: "lastDayTime")
                     
-                    loadSavedData(onUpdate: true)
+                    loadSavedData()
                 }
                 
                 if currentDayTime.compare(lastDayTime) == .orderedDescending {
@@ -577,10 +606,10 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                     lastDayTime = currentDayTime
                     defaults.set(lastDayTime, forKey: "lastDayTime")
                     
-                    loadSavedData(onUpdate: true)
+                    loadSavedData()
                     update(newDay: true)
                 }else{
-                    loadSavedData(onUpdate: true)
+                    loadSavedData()
                     update(newDay: false)
                 }
             }
@@ -803,8 +832,9 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     func setUp() {
         //SET UP
         print("📳 Set up")
-        version = "1.1"
-        defaults.set("1.1", forKey: "version")
+        version = "1.3.1"
+        defaults.set(version, forKey: "version")
+        defaults.set(version, forKey: "setUpVersion")
         arrayDefaultPosts = ["I'll try to help you with some advice. ⚖️",
                              "I know some of the best cat facts. 🐈 Because why not. And I'm lonely. Mostly because I'm lonely.",
                              "I'll satisfy your inner nerd by sending you interesting facts. ⭐️",
@@ -820,6 +850,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         //Set default values
         boolDefaultPosts = [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0]
+        defaults.set(updates, forKey: "updates")
         defaults.set(arrayDefaultPosts, forKey: "arrayDefaultPosts")
         defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
         defaults.set(0, forKey: "dailyPostNumber")
@@ -851,7 +882,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         arrayConditions.insert(condition, at: 0)
     }
     
-    func loadSavedData(onUpdate: Bool) {
+    func loadSavedData() {
         print("📳 Loading")
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Post")
         
@@ -880,20 +911,49 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 olderHeaderIndex = 0
             }
             
-            if !onUpdate {
+            if !hasAnimated {
                 //On launch
                 for item in result {
-                    if !self.arrayPosts.contains(item.post) {
-                        self.addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
+                    if !arrayPosts.contains(item.post) {
+                        addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
+                        
+                        //Because I was stubid
+                        if item.time > updates["1.3.1"]! {
+                            if arrayDefaultPosts.contains(item.post) {
+                                arrayAddedDefaultPosts[item.time] = item.post
+                            }
+                        }
+                    }else if arrayDefaultPosts.contains(item.post) {
+                        if arrayAddedDefaultPosts[item.time] != item.post && item.time > updates["1.3.1"]! {
+                            addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
+                            
+                            arrayAddedDefaultPosts[item.time] = item.post
+                        }
                     }
                 }
             }else{
                 for item in result {
-                    if !self.arrayPosts.contains(item.post) {
+                    if !arrayPosts.contains(item.post) {
                         addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
                         tableView.beginUpdates()
                         tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
                         tableView.endUpdates()
+                        
+                        //Because I was stubid
+                        if item.time > updates["1.3.1"]! {
+                            if arrayDefaultPosts.contains(item.post) {
+                                arrayAddedDefaultPosts[item.time] = item.post
+                            }
+                        }
+                    }else if arrayDefaultPosts.contains(item.post) {
+                        if arrayAddedDefaultPosts[item.time] != item.post && item.time > updates["1.3.1"]! {
+                            addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
+                            tableView.beginUpdates()
+                            tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+                            tableView.endUpdates()
+                            
+                            arrayAddedDefaultPosts[item.time] = item.post
+                        }
                     }
                 }
             }
@@ -905,6 +965,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     func reloadData() {
         arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
         boolDefaultPosts = defaults.object(forKey: "boolDefaultPosts") as! [Int]
+        updates = defaults.dictionary(forKey: "updates") as! [String : Int]
         dailyPostNumber = defaults.integer(forKey: "dailyPostNumber")
         fridayPostNumber = defaults.integer(forKey: "fridayPostNumber")
         currentDayTime = calendar.startOfDay(for: Date())
@@ -938,11 +999,6 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     
     func configDefaultPosts() {
-        let data0 = Post(context: container.viewContext)
-        configure(post: data0, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
-        saveContext()
-        //addPost(text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
-        
         let data1 = Post(context: container.viewContext)
         configure(post: data1, text: arrayDefaultPosts[7], description: "", condition: "8", link: "", image: "", time: 1)
         saveContext()
@@ -969,6 +1025,11 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         configure(post: data5, text: "Silence is golden. Duck tape is silver.", description: "", condition: "4", link: "", image: "", time: Int(Date().timeIntervalSince1970))
         saveContext()
         //addPost(text: "Silence is golden. Duck tape is silver.", description: "", condition: "4", link: "", image: "", time: Int(Date().timeIntervalSince1970) + 3)
+        
+        let data0 = Post(context: container.viewContext)
+        configure(post: data0, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
+        saveContext()
+        //addPost(text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
     }
     
     
@@ -1073,33 +1134,50 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         }else{
             switch defaults.string(forKey: "version")! {
             case "1.0" :
+                arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
                 boolDefaultPosts = defaults.object(forKey: "boolDefaultPosts") as! [Int]
+                
                 boolDefaultPosts.insert(0, at: 5)
                 boolDefaultPosts.insert(0, at: 10)
                 boolDefaultPosts.removeLast()
                 defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
                 
-                arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
                 arrayDefaultPosts.insert("Let me answer this mighty question.", at: 5)
                 arrayDefaultPosts.insert("No one ever says, “It’s only a game.” when their team is winning.", at: 10)
                 arrayDefaultPosts.removeLast()
-                defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
+                defaults.set(arrayDefaultPosts, forKey: "arrayDefaultPosts")
                 
                 defaults.set(0, forKey: "fridayPostNumber")
+                
+                //1.3.1
+                updates["1.3.1"] = Int(Date().timeIntervalSince1970)
+                defaults.set(updates, forKey: "updates")
             case "1.1":
+                arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
                 boolDefaultPosts = defaults.object(forKey: "boolDefaultPosts") as! [Int]
+                
                 boolDefaultPosts.removeLast()
                 defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
-                arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
+                
                 arrayDefaultPosts.removeLast()
-                defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
+                defaults.set(arrayDefaultPosts, forKey: "arrayDefaultPosts")
+                
+                //1.3.1
+                updates["1.3.1"] = Int(Date().timeIntervalSince1970)
+                defaults.set(updates, forKey: "updates")
+            case "1.3":
+                updates["1.3.1"] = Int(Date().timeIntervalSince1970)
+                defaults.set(updates, forKey: "updates")
             default:
                 break
             }
         }
         
-        version = "1.3"
-        defaults.set("1.3", forKey: "version")
+        dailyPostNumber = 86
+        defaults.set(dailyPostNumber, forKey: "dailyPostNumber")
+        
+        version = "1.3.1"
+        defaults.set(version, forKey: "version")
         print("📳 Version: \(version)")
     }
     

@@ -27,6 +27,7 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
     
     let arrayCategories = ["Advice", "Cat facts", "Curiosities", "Fortune cookies", "Inspiring quotes", "Is it Friday yet?", "Movie reviews", "News", "Number trivia", "Space photos", "Sports stuff", "Tech talk"]
     var arrayPosts = [String]()
+    var arrayTimes = [Int]()
     
     var arrayDefaultPosts = [String]()
     var boolDefaultPosts = [Int]()
@@ -95,13 +96,27 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
         loadSavedData()
         if boolDefaultPosts[indexPath.row] == 1 {
             boolDefaultPosts[indexPath.row] = 0
-        }else if !arrayPosts.contains(arrayDefaultPosts[indexPath.row]) {
-            defaults.set(true, forKey: "newCategory")
-            boolDefaultPosts[indexPath.row] = 1
-            addDefPost(indexPath.row)
         }else{
+            var index = -1
+            
+            for i in 0..<arrayPosts.count {
+                if arrayPosts[i] == arrayDefaultPosts[indexPath.row] {
+                    index = i
+                }
+            }
+            
+            if index >= 0 {
+                if arrayTimes[index] + 43200 < Int(Date().timeIntervalSince1970) && arrayPosts[0] != arrayDefaultPosts[indexPath.row] && arrayPosts[1] != arrayDefaultPosts[indexPath.row] && arrayPosts[2] != arrayDefaultPosts[indexPath.row] && arrayPosts[3] != arrayDefaultPosts[indexPath.row] {
+                    defaults.set(true, forKey: "newCategory")
+                    addDefPost(indexPath.row)
+                }
+            }else{
+                defaults.set(true, forKey: "newCategory")
+                addDefPost(indexPath.row)
+            }
             boolDefaultPosts[indexPath.row] = 1
         }
+        
         defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
         subscriptionsCollectionView.reloadItems(at: [indexPath])
     }
@@ -113,6 +128,7 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
         var result = [Post]()
         
         arrayPosts.removeAll()
+        arrayTimes.removeAll()
         
         do {
             // Execute Fetch Request
@@ -122,8 +138,14 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
                 result = records
             }
             
-            for i in result.count-4..<result.count {
-                self.arrayPosts.insert(result[i].post, at: 0)
+            var offset = 20
+            if result.count < 20 {
+                offset = result.count
+            }
+            
+            for i in result.count-offset..<result.count {
+                arrayPosts.insert(result[i].post, at: 0)
+                arrayTimes.insert(result[i].time, at: 0)
             }
         } catch {
             print("🆘 Unable to fetch managed objects for entity Post.")
@@ -138,7 +160,7 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
     
     func addDefPost(_ i: Int) {
         let data = Post(context: container.viewContext)
-        configure(post: data, text: arrayDefaultPosts[i], description: "", condition: "\(i + 1)", link: "", image: "", time: i + 1)
+        configure(post: data, text: arrayDefaultPosts[i], description: "", condition: "\(i + 1)", link: "", image: "", time: Int(Date().timeIntervalSince1970) + i)
         saveContext()
     }
     

@@ -274,7 +274,7 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fOe-l6-h1h">
-                                <rect key="frame" x="35" y="339" width="305" height="143"/>
+                                <rect key="frame" x="35" y="334" width="305" height="148"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3CL-6e-7EJ">
                                         <rect key="frame" x="30" y="61" width="255" height="57"/>
@@ -294,9 +294,9 @@
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="143" id="D2F-kw-at2"/>
+                                    <constraint firstAttribute="height" constant="148" id="D2F-kw-at2"/>
                                     <constraint firstAttribute="trailing" secondItem="8oK-Oe-S1y" secondAttribute="trailing" constant="30" id="VCA-i0-QLw"/>
-                                    <constraint firstAttribute="bottom" secondItem="3CL-6e-7EJ" secondAttribute="bottom" constant="25" id="Wx7-az-j8Z"/>
+                                    <constraint firstAttribute="bottom" secondItem="3CL-6e-7EJ" secondAttribute="bottom" constant="30" id="Wx7-az-j8Z"/>
                                     <constraint firstItem="3CL-6e-7EJ" firstAttribute="top" secondItem="fOe-l6-h1h" secondAttribute="top" constant="61" id="YNl-cT-BZC"/>
                                     <constraint firstItem="3CL-6e-7EJ" firstAttribute="leading" secondItem="fOe-l6-h1h" secondAttribute="leading" constant="30" id="aKC-ds-0o1"/>
                                     <constraint firstItem="8oK-Oe-S1y" firstAttribute="leading" secondItem="fOe-l6-h1h" secondAttribute="leading" constant="30" id="dTJ-ts-Xn3"/>
@@ -537,10 +537,10 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3Vg-be-0TT">
-                                            <rect key="frame" x="35" y="44" width="305" height="124"/>
+                                            <rect key="frame" x="35" y="44" width="305" height="148"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="The squircle at the top looks interesting. What does it do?" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vjz-px-Cie">
-                                                    <rect key="frame" x="30" y="61" width="245" height="38"/>
+                                                    <rect key="frame" x="30" y="61" width="245" height="57"/>
                                                     <fontDescription key="fontDescription" name="Chivo-Regular" family="Chivo" pointSize="16"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -557,12 +557,12 @@
                                             </subviews>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="vjz-px-Cie" secondAttribute="bottom" constant="25" id="EKr-WG-xec"/>
+                                                <constraint firstAttribute="bottom" secondItem="vjz-px-Cie" secondAttribute="bottom" constant="30" id="EKr-WG-xec"/>
                                                 <constraint firstAttribute="trailing" secondItem="vjz-px-Cie" secondAttribute="trailing" constant="30" id="GFC-eC-mKo"/>
                                                 <constraint firstItem="vjz-px-Cie" firstAttribute="top" secondItem="3Vg-be-0TT" secondAttribute="top" constant="61" id="LRi-hz-flf"/>
                                                 <constraint firstItem="5tq-QS-FfS" firstAttribute="leading" secondItem="3Vg-be-0TT" secondAttribute="leading" constant="30" id="N3D-v8-lGK"/>
                                                 <constraint firstItem="vjz-px-Cie" firstAttribute="leading" secondItem="3Vg-be-0TT" secondAttribute="leading" constant="30" id="PUE-Bb-LYL"/>
-                                                <constraint firstAttribute="height" constant="124" id="ZSW-r7-GWN"/>
+                                                <constraint firstAttribute="height" constant="148" id="ZSW-r7-GWN"/>
                                                 <constraint firstAttribute="trailing" secondItem="5tq-QS-FfS" secondAttribute="trailing" constant="30" id="a1D-hM-Scy"/>
                                                 <constraint firstItem="5tq-QS-FfS" firstAttribute="top" secondItem="3Vg-be-0TT" secondAttribute="top" constant="15" id="kDw-gb-5xv"/>
                                             </constraints>
