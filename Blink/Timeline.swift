@@ -612,6 +612,8 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                     loadSavedData()
                     update(newDay: false)
                 }
+            }else{
+                loadSavedData()
             }
         }
         
@@ -850,6 +852,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         //Set default values
         boolDefaultPosts = [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0]
+        updates = ["1.3.1": 0]
         defaults.set(updates, forKey: "updates")
         defaults.set(arrayDefaultPosts, forKey: "arrayDefaultPosts")
         defaults.set(boolDefaultPosts, forKey: "boolDefaultPosts")
@@ -1173,8 +1176,8 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             }
         }
         
-        dailyPostNumber = 86
-        defaults.set(dailyPostNumber, forKey: "dailyPostNumber")
+        /*dailyPostNumber = 86
+        defaults.set(dailyPostNumber, forKey: "dailyPostNumber")*/
         
         version = "1.3.1"
         defaults.set(version, forKey: "version")

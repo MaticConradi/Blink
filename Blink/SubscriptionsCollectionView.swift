@@ -160,7 +160,11 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
     
     func addDefPost(_ i: Int) {
         let data = Post(context: container.viewContext)
-        configure(post: data, text: arrayDefaultPosts[i], description: "", condition: "\(i + 1)", link: "", image: "", time: Int(Date().timeIntervalSince1970) + i)
+        var time = Int(Date().timeIntervalSince1970) + i
+        if arrayTimes[0] >= time {
+            time = arrayTimes[0] + 1
+        }
+        configure(post: data, text: arrayDefaultPosts[i], description: "", condition: "\(i + 1)", link: "", image: "", time: time)
         saveContext()
     }
     
