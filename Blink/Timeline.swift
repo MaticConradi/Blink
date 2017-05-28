@@ -26,7 +26,6 @@ class PostCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
         if screenSize.width < screenSize.height {
             widthConstraint.constant = screenSize.width - 70
         }else{
@@ -66,6 +65,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     var arrayDescriptions = [String]()
     var arrayLinks = [String]()
     var arrayImages = [String]()
+    var arrayImageSizes = [[Double]]()
     var arrayTimes = [Int]()
     var arrayConditions = [String]()
     
@@ -284,7 +284,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         if !landscape {
             guard let indexPath = tableView.indexPathForRow(at: location), let cell = tableView.cellForRow(at: indexPath) as? PostCell else { return nil }
             
-            if arrayConditions[indexPath.row] == "10" {
+            if arrayConditions[indexPath.row] == "10" && arrayImages[indexPath.row] != "" {
                 guard let detailViewController = storyboard?.instantiateViewController(withIdentifier: "PhotoPreviewViewController") as? PhotoPreviewViewController else { return nil }
                 detailViewController.imageURL = arrayImages[indexPath.row]
                 indexPathRow = indexPath.row
@@ -480,8 +480,17 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.imageShadowView.layer.shadowColor = UIColor.black.cgColor
             cell.imageShadowView.layer.shadowRadius = 25
             cell.imageShadowView.layer.shadowOpacity = 0.15
-            cell.postImageView.sd_setImage(with: URL(string: arrayImages[indexPath.row]), placeholderImage: nil, options: [.progressiveDownload, .continueInBackground])
+            cell.postImageView.sd_setImage(with: URL(string: arrayImages[indexPath.row]), placeholderImage: nil, options: [.progressiveDownload, .continueInBackground], completed: { (image, error, cacheType, url) in
+                //Done
+            })
             
+            if arrayImageSizes[indexPath.row].count == 2 {
+                if arrayImageSizes[indexPath.row][0] != 0 || arrayImageSizes[indexPath.row][1] != 0 {
+                    let newHeight = (cell.widthConstraint.constant + 30) * CGFloat(arrayImageSizes[indexPath.row][1]) / CGFloat(arrayImageSizes[indexPath.row][0])
+                    cell.heightImageConstraint.constant = newHeight
+                    cell.heightViewConstraint.constant = newHeight
+                }
+            }
             
             cell.cardView.layer.shadowColor = UIColor.black.cgColor
             cell.cardView.layer.shadowRadius = 25
@@ -571,6 +580,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     
     func dataRefresh() {
+        defaults.synchronize()
         //Reload all variables
         if hasAnimated {
             reloadData()
@@ -618,6 +628,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         
         defaults.set(requestCount, forKey: "requestCount")
+        defaults.synchronize()
     }
     
     func update(newDay: Bool) {
@@ -635,7 +646,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 //Is it Friday yet?
                 configureFridayPost = true
             }
-            baseURL = "http://services.conradi.si/blink/download.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[6])&news=\(boolDefaultPosts[7])&numbers=\(boolDefaultPosts[8])&space=\(boolDefaultPosts[9])&sports=\(boolDefaultPosts[10])&tech=\(boolDefaultPosts[11])&time=\(self.defaults.integer(forKey: "lastTime"))&version=2&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
+            baseURL = "http://services.conradi.si/blink/download.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[6])&news=\(boolDefaultPosts[7])&numbers=\(boolDefaultPosts[8])&space=\(boolDefaultPosts[9])&sports=\(boolDefaultPosts[10])&tech=\(boolDefaultPosts[11])&time=\(self.defaults.integer(forKey: "lastTime"))&version=3&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
             print("ℹ️ URL: \(baseURL)")
             //DOWNLOAD POSTS FROM SERVER
             performSelector(inBackground: #selector(downloadData), with: nil)
@@ -686,9 +697,9 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         
         let data = Post(context: self.container.viewContext)
-        self.configure(post: data, text: text, description: "", condition: "6", link: "", image: "", time: Int(Date().timeIntervalSince1970))
+        self.configure(post: data, text: text, description: "", condition: "6", link: "", image: "", imageSize: [0, 0], time: Int(Date().timeIntervalSince1970))
         self.saveContext()
-        self.addPost(text: text, description: "", condition: "6", link: "", image: "", time: Int(Date().timeIntervalSince1970))
+        self.addPost(text: text, description: "", condition: "6", link: "", image: "", imageSize: [0, 0], time: Int(Date().timeIntervalSince1970))
         self.tableView.beginUpdates()
         self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
         self.tableView.endUpdates()
@@ -719,6 +730,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                                         self.arrayDescriptions.remove(at: self.olderHeaderIndex)
                                         self.arrayLinks.remove(at: self.olderHeaderIndex)
                                         self.arrayImages.remove(at: self.olderHeaderIndex)
+                                        self.arrayImageSizes.remove(at: self.olderHeaderIndex)
                                         self.arrayTimes.remove(at: self.olderHeaderIndex)
                                         self.arrayConditions.remove(at: self.olderHeaderIndex)
                                         self.tableView.reloadData()
@@ -735,38 +747,49 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                                                     if let time = post["time"] as? Int {
                                                         if let image = post["image"] as? String {
                                                             if let description = post["description"] as? String {
-                                                                DispatchQueue.main.sync {
-                                                                    //Safety check
-                                                                    if text != "" {
-                                                                        switch condition {
-                                                                        case "7":
-                                                                            text = "Review: " + text
-                                                                        case "8":
-                                                                            text = "Headline: " + text
-                                                                        default:
-                                                                            break;
-                                                                        }
-                                                                        
-                                                                        if condition == "7" || condition == "8" || condition == "10" || condition == "11" || condition == "12" {
-                                                                            if text.characters.last != "?" && text.characters.last != "!" && text.characters.last != "." && text.characters.last != "\"" && text.characters.last != ")" {
-                                                                                text = text + "."
+                                                                if let imageSize = post["imageSize"] as? String {
+                                                                    DispatchQueue.main.sync {
+                                                                        //Safety check
+                                                                        if text != "" {
+                                                                            switch condition {
+                                                                            case "7":
+                                                                                text = "Review: " + text
+                                                                            case "8":
+                                                                                text = "Headline: " + text
+                                                                            default:
+                                                                                break;
+                                                                            }
+                                                                            
+                                                                            if condition == "7" || condition == "8" || condition == "10" || condition == "11" || condition == "12" {
+                                                                                if text.characters.last != "?" && text.characters.last != "!" && text.characters.last != "." && text.characters.last != "\"" && text.characters.last != ")" {
+                                                                                    text = text + "."
+                                                                                }
+                                                                            }
+                                                                            
+                                                                            let imageSizeComponents : [String] = imageSize.components(separatedBy: "*")
+                                                                            
+                                                                            // And then to access the individual words:
+                                                                            var width: Double = 0
+                                                                            var height: Double = 0
+                                                                            if imageSizeComponents.count == 2 {
+                                                                                width = Double(imageSizeComponents[0]) ?? 0
+                                                                                height = Double(imageSizeComponents[1]) ?? 0
+                                                                            }
+                                                                            
+                                                                            if !self.arrayPosts.contains(text) {
+                                                                                olderHeaderNewIndex += 1
+                                                                                //ADD NEW POSTS
+                                                                                let data = Post(context: self.container.viewContext)
+                                                                                self.configure(post: data, text: text, description: description, condition: condition, link: url, image: image, imageSize: [width, height], time: time)
+                                                                                self.saveContext()
+                                                                                
+                                                                                self.addPost(text: text, description: description, condition: condition, link: url, image: image, imageSize: [width, height], time: time)
+                                                                                self.tableView.beginUpdates()
+                                                                                self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+                                                                                self.tableView.endUpdates()
                                                                             }
                                                                         }
-                                                                        
-                                                                        if !self.arrayPosts.contains(text) {
-                                                                            olderHeaderNewIndex += 1
-                                                                            //ADD NEW POSTS
-                                                                            let data = Post(context: self.container.viewContext)
-                                                                            self.configure(post: data, text: text, description: description, condition: condition, link: url, image: image, time: time)
-                                                                            self.saveContext()
-                                                                            
-                                                                            self.addPost(text: text, description: description, condition: condition, link: url, image: image, time: time)
-                                                                            self.tableView.beginUpdates()
-                                                                            self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
-                                                                            self.tableView.endUpdates()
-                                                                        }
                                                                     }
-                                                                    
                                                                 }
                                                             }
                                                         }
@@ -797,6 +820,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                                         self.arrayDescriptions.insert("", at: olderHeaderNewIndex)
                                         self.arrayLinks.insert("", at: olderHeaderNewIndex)
                                         self.arrayImages.insert("", at: olderHeaderNewIndex)
+                                        self.arrayImageSizes.insert([0, 0], at: olderHeaderNewIndex)
                                         self.arrayTimes.insert(Int(Date().timeIntervalSince1970), at: olderHeaderNewIndex)
                                         self.arrayConditions.insert("", at: olderHeaderNewIndex)
                                         self.tableView.beginUpdates()
@@ -876,11 +900,12 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     //**********************************
     
     
-    func addPost(text: String, description: String, condition: String, link: String, image: String, time: Int) {
+    func addPost(text: String, description: String, condition: String, link: String, image: String, imageSize: [Double], time: Int) {
         arrayPosts.insert(text, at: 0)
         arrayDescriptions.insert(description, at: 0)
         arrayLinks.insert(link, at: 0)
         arrayImages.insert(image, at: 0)
+        arrayImageSizes.insert(imageSize, at: 0)
         arrayTimes.insert(time, at: 0)
         arrayConditions.insert(condition, at: 0)
     }
@@ -906,6 +931,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 arrayDescriptions.remove(at: self.olderHeaderIndex)
                 arrayLinks.remove(at: self.olderHeaderIndex)
                 arrayImages.remove(at: self.olderHeaderIndex)
+                arrayImageSizes.remove(at: self.olderHeaderIndex)
                 arrayTimes.remove(at: self.olderHeaderIndex)
                 arrayConditions.remove(at: self.olderHeaderIndex)
                 tableView.beginUpdates()
@@ -918,7 +944,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 //On launch
                 for item in result {
                     if !arrayPosts.contains(item.post) {
-                        addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
+                        addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, imageSize: item.imageSize, time: item.time)
                         
                         //Because I was stubid
                         if item.time > updates["1.3.1"]! {
@@ -928,7 +954,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                         }
                     }else if arrayDefaultPosts.contains(item.post) {
                         if arrayAddedDefaultPosts[item.time] != item.post && item.time > updates["1.3.1"]! {
-                            addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
+                            addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, imageSize: item.imageSize, time: item.time)
                             
                             arrayAddedDefaultPosts[item.time] = item.post
                         }
@@ -937,7 +963,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             }else{
                 for item in result {
                     if !arrayPosts.contains(item.post) {
-                        addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
+                        addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, imageSize: item.imageSize, time: item.time)
                         tableView.beginUpdates()
                         tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
                         tableView.endUpdates()
@@ -950,7 +976,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                         }
                     }else if arrayDefaultPosts.contains(item.post) {
                         if arrayAddedDefaultPosts[item.time] != item.post && item.time > updates["1.3.1"]! {
-                            addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, time: item.time)
+                            addPost(text: item.post, description: item.desc, condition: item.condition, link: item.link, image: item.image, imageSize: item.imageSize, time: item.time)
                             tableView.beginUpdates()
                             tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
                             tableView.endUpdates()
@@ -976,12 +1002,13 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         requestCount = defaults.integer(forKey: "requestCount")
     }
     
-    func configure(post: Post, text: String, description: String, condition: String, link: String, image: String, time: Int) {
+    func configure(post: Post, text: String, description: String, condition: String, link: String, image: String, imageSize: [Double], time: Int) {
         post.post = text
         post.desc = description
         post.condition = condition
         post.link = link
         post.image = image
+        post.imageSize = imageSize
         post.time = time
     }
     
@@ -1003,34 +1030,34 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     func configDefaultPosts() {
         let data1 = Post(context: container.viewContext)
-        configure(post: data1, text: arrayDefaultPosts[7], description: "", condition: "8", link: "", image: "", time: 1)
+        configure(post: data1, text: arrayDefaultPosts[7], description: "", condition: "8", link: "", image: "", imageSize: [0, 0], time: 1)
         saveContext()
         //addPost(text: arrayDefaultPosts[6], description: "", condition: "7", link: "", image: "", time: 2)
         
         let data2 = Post(context: container.viewContext)
-        configure(post: data2, text: arrayDefaultPosts[4], description: "", condition: "5", link: "", image: "", time: 2)
+        configure(post: data2, text: arrayDefaultPosts[4], description: "", condition: "5", link: "", image: "", imageSize: [0, 0], time: 2)
         saveContext()
         //addPost(text: arrayDefaultPosts[4], description: "", condition: "5", link: "", image: "", time: 3)
         
         let data3 = Post(context: container.viewContext)
-        configure(post: data3, text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", time: 3)
+        configure(post: data3, text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", imageSize: [0, 0], time: 3)
         saveContext()
         //addPost(text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", time: 4)
         
         
         //First posts
         let data4 = Post(context: container.viewContext)
-        configure(post: data4, text: "\"Life's challenges are not supposed to paralyse you, they're supposed to help you discover who you are.\" — Bernice Reagon", description: "", condition: "5", link: "", image: "", time: Int(Date().timeIntervalSince1970))
+        configure(post: data4, text: "\"Life's challenges are not supposed to paralyse you, they're supposed to help you discover who you are.\" — Bernice Reagon", description: "", condition: "5", link: "", image: "", imageSize: [0, 0], time: Int(Date().timeIntervalSince1970))
         saveContext()
         //addPost(text: "\"Life's challenges are not supposed to paralyse you, they're supposed to help you discover who you are.\" — Bernice Reagon", description: "", condition: "5", link: "", image: "", time: Int(Date().timeIntervalSince1970) + 3)
         
         let data5 = Post(context: container.viewContext)
-        configure(post: data5, text: "Silence is golden. Duck tape is silver.", description: "", condition: "4", link: "", image: "", time: Int(Date().timeIntervalSince1970))
+        configure(post: data5, text: "Silence is golden. Duck tape is silver.", description: "", condition: "4", link: "", image: "", imageSize: [0, 0], time: Int(Date().timeIntervalSince1970))
         saveContext()
         //addPost(text: "Silence is golden. Duck tape is silver.", description: "", condition: "4", link: "", image: "", time: Int(Date().timeIntervalSince1970) + 3)
         
         let data0 = Post(context: container.viewContext)
-        configure(post: data0, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
+        configure(post: data0, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", imageSize: [0, 0], time: 100)
         saveContext()
         //addPost(text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
     }

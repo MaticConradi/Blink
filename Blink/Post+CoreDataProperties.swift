@@ -18,6 +18,7 @@ extension Post {
     @NSManaged var desc: String
     @NSManaged var link: String
     @NSManaged var image: String
+    @NSManaged var imageSize: [Double]
     @NSManaged var condition: String
     @NSManaged var time: Int
 }

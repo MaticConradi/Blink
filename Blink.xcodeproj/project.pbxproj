@@ -40,6 +40,7 @@
 		64887D121D89D06B0061A489 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64887D111D89D06B0061A489 /* UserNotifications.framework */; };
 		648F63E81E85AFA70089B1D7 /* CATEGORIES shape.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 648F63E71E85AFA70089B1D7 /* CATEGORIES shape.pdf */; };
 		648F63EC1E85B3990089B1D7 /* SubscriptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648F63EB1E85B3990089B1D7 /* SubscriptionsViewController.swift */; };
+		6490368E1EDABCD0004D766A /* BLINK shape white.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6490368D1EDABCD0004D766A /* BLINK shape white.pdf */; };
 		6491613E1E4CE14200677CD4 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6491613D1E4CE14200677CD4 /* Settings.swift */; };
 		649161401E4CEBDF00677CD4 /* AboutTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6491613F1E4CEBDF00677CD4 /* AboutTableViewController.swift */; };
 		64922B6A1E817066003B3DA1 /* Chivo-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64922B661E817066003B3DA1 /* Chivo-Black.ttf */; };
@@ -158,6 +159,7 @@
 		64887D111D89D06B0061A489 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		648F63E71E85AFA70089B1D7 /* CATEGORIES shape.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "CATEGORIES shape.pdf"; sourceTree = "<group>"; };
 		648F63EB1E85B3990089B1D7 /* SubscriptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionsViewController.swift; sourceTree = "<group>"; };
+		6490368D1EDABCD0004D766A /* BLINK shape white.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "BLINK shape white.pdf"; sourceTree = "<group>"; };
 		6491613D1E4CE14200677CD4 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		6491613F1E4CEBDF00677CD4 /* AboutTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutTableViewController.swift; sourceTree = "<group>"; };
 		64922B661E817066003B3DA1 /* Chivo-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Chivo-Black.ttf"; sourceTree = "<group>"; };
@@ -239,6 +241,7 @@
 				647183C61D63116100712A97 /* Home.pdf */,
 				64588DCF1E806654008B0FB0 /* Share.pdf */,
 				64922B711E81718A003B3DA1 /* BLINK shape.pdf */,
+				6490368D1EDABCD0004D766A /* BLINK shape white.pdf */,
 				64133CEF1E9107F1001924AF /* BLINK welcome.pdf */,
 				648F63E71E85AFA70089B1D7 /* CATEGORIES shape.pdf */,
 				64133CF51E91923B001924AF /* OLDER shape.pdf */,
@@ -526,6 +529,7 @@
 				64A968561E89871700C34FBA /* 76@2x.png in Resources */,
 				64922B6D1E817066003B3DA1 /* Chivo-Regular.ttf in Resources */,
 				64A968531E89871700C34FBA /* 40@3x.png in Resources */,
+				6490368E1EDABCD0004D766A /* BLINK shape white.pdf in Resources */,
 				6429328E1E1BF22700A8EE77 /* More.pdf in Resources */,
 				64922B6C1E817066003B3DA1 /* Chivo-Italic.ttf in Resources */,
 				64DAB0AA1D55EA0C0029BB8B /* LaunchScreen.storyboard in Resources */,
