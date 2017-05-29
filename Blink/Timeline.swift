@@ -19,7 +19,6 @@ class PostCell: UITableViewCell {
     @IBOutlet weak var postImageView: UIImageView!
     @IBOutlet weak var imageShadowView: UIView!
     @IBOutlet weak var widthConstraint: NSLayoutConstraint!
-    @IBOutlet weak var heightImageConstraint: NSLayoutConstraint!
     @IBOutlet weak var heightViewConstraint: NSLayoutConstraint!
     
     let screenSize = UIScreen.main.bounds.size
@@ -487,9 +486,12 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             if arrayImageSizes[indexPath.row].count == 2 {
                 if arrayImageSizes[indexPath.row][0] != 0 || arrayImageSizes[indexPath.row][1] != 0 {
                     let newHeight = (cell.widthConstraint.constant + 30) * CGFloat(arrayImageSizes[indexPath.row][1]) / CGFloat(arrayImageSizes[indexPath.row][0])
-                    cell.heightImageConstraint.constant = newHeight
                     cell.heightViewConstraint.constant = newHeight
+                }else{
+                    cell.heightViewConstraint.constant = 225
                 }
+            }else{
+                cell.heightViewConstraint.constant = 225
             }
             
             cell.cardView.layer.shadowColor = UIColor.black.cgColor
@@ -629,6 +631,8 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         defaults.set(requestCount, forKey: "requestCount")
         defaults.synchronize()
+        
+        print(arrayImageSizes)
     }
     
     func update(newDay: Bool) {
@@ -835,6 +839,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                         }
                     }else if json?["status"] as? String == "update" {
                         let alert = UIAlertController(title: "Update Blink", message: "New version of Blink is available for download.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
                         self.present(alert, animated: true, completion:nil)
                     }
                     print("❎ Download process complete.")

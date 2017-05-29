@@ -100,6 +100,12 @@ class PhotoGalleryViewController: UIViewController {
     }
     
     func save() {
+        //Disable gesture recognizers so
+        for recognizer in scrollView.gestureRecognizers! {
+            recognizer.isEnabled = false
+            recognizer.isEnabled = true
+        }
+        
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let firstAction = UIAlertAction(title: "Save", style: .default) { (alert: UIAlertAction!) -> Void in
             let isSharing = true
