@@ -11,24 +11,47 @@ import SafariServices
 import CoreData
 import SystemConfiguration
 import MessageUI
+import UserNotifications
+import UserNotificationsUI
 
 class PostCell: UITableViewCell {
-    @IBOutlet var myTextLabel: UILabel!
-    @IBOutlet var myTypeLabel: UILabel!
+    @IBOutlet var postLabel: UILabel!
+    @IBOutlet var typeLabel: UILabel!
     @IBOutlet weak var cardView: UIView!
     @IBOutlet weak var postImageView: UIImageView!
     @IBOutlet weak var imageShadowView: UIView!
     @IBOutlet weak var widthConstraint: NSLayoutConstraint!
     @IBOutlet weak var heightViewConstraint: NSLayoutConstraint!
+    @IBOutlet weak var alternativeImage: UIImageView!
+    @IBOutlet weak var alternativeImageHeight: NSLayoutConstraint!
+    @IBOutlet weak var alternativeImageWidth: NSLayoutConstraint!
+    @IBOutlet weak var alternativeImageBlur: UIVisualEffectView!
     
     let screenSize = UIScreen.main.bounds.size
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        if screenSize.width < screenSize.height {
-            widthConstraint.constant = screenSize.width - 70
-        }else{
-            widthConstraint.constant = screenSize.height - 70
+        switch UIDevice.current.userInterfaceIdiom {
+        case .pad:
+            if screenSize.width < screenSize.height {
+                if screenSize.width < 600 {
+                    widthConstraint.constant = screenSize.width
+                }else{
+                    widthConstraint.constant = 600
+                }
+            }else{
+                if screenSize.height < 600 {
+                    widthConstraint.constant = screenSize.height
+                }else{
+                    widthConstraint.constant = 600
+                }
+            }
+        default:
+            if screenSize.width < screenSize.height {
+                widthConstraint.constant = screenSize.width - 70
+            }else{
+                widthConstraint.constant = screenSize.height - 70
+            }
         }
     }
     
@@ -50,14 +73,22 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet weak var blur: UIVisualEffectView!
     @IBOutlet weak var blurView: UIView!
     @IBOutlet weak var cardView: UIView!
+    @IBOutlet weak var blurWidthConstraint: NSLayoutConstraint!
+    
+    //Notifications
+    let requestIdentifier = "DailyReminder"
+    let center = UNUserNotificationCenter.current()
+    
+    //Transition
+    let interactor = Interactor()
     
     //Core data
     var container: NSPersistentContainer!
     
     //Stuff
-    let myRefreshControl: UIRefreshControl = UIRefreshControl()
+    let refreshControl: UIRefreshControl = UIRefreshControl()
     let defaults = UserDefaults.standard
-    let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
+    let calendar = Calendar(identifier: .gregorian)
     var version = "1.0"
     
     var arrayPosts = [String]()
@@ -77,6 +108,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     //Helpers: time managment
     var currentDayTime = Date()
     var lastDayTime = Date()
+    var isUpdating = false
     
     //Helpers: post management
     var boolDefaultPosts = [Int]()
@@ -105,83 +137,11 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //Observers
-        NotificationCenter.default.addObserver(self, selector: #selector(PostsViewController.dataRefresh), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
-        
-        //Core data
-        container = NSPersistentContainer(name: "myCoreDataModel")
-        container.loadPersistentStores { storeDescription, error in
-            self.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-            
-            if let error = error {
-                print("🆘 Unresolved error while configuring core data: \(error)")
-            }
-        }
-        
-        tableView.delegate = self
-        tableView.dataSource = self
-        
-        if traitCollection.forceTouchCapability == .available {
-            registerForPreviewing(with: self, sourceView: tableView)
-        } else {
-            //No 3D touch
-        }
-        
-        //Check app version and perform necessary updates
-        versionChech()
-        //Reload data
-        reloadData()
-        //Load posts
-        dataRefresh()
-        //loadSavedData(onUpdate: false)
-        
-        //TableView UI changes
-        //tableView.estimatedRowHeight = 370
-        //tableView.rowHeight = UITableViewAutomaticDimension
-        myRefreshControl.addTarget(self, action: #selector(PostsViewController.dataRefresh), for: .valueChanged)
-        tableView.addSubview(myRefreshControl)
-        tableView.contentInset = UIEdgeInsetsMake(94, 0, 20, 0)
-        
-        //Apple bug fix lol
-        tableView.setNeedsLayout()
-        tableView.layoutIfNeeded()
-        
-        if (defaults.bool(forKey: "welcomeBlur")) {
-            blur.effect = nil
-            blurView.layer.opacity = 0
-            blur.isHidden = true
-        }else{
-            blur.effect = UIBlurEffect(style: .regular)
-            defaults.set(true, forKey: "welcomeBlur")
-        }
-        
-        self.automaticallyAdjustsScrollViewInsets = false
-        
-        let color1 = UIColor(red: 222/255, green: 222/255, blue: 222/255, alpha: 1).cgColor
-        let color2 = UIColor(red: 222/255, green: 222/255, blue: 222/255, alpha: 0).cgColor
-        
-        var x: CGFloat = 0
-        if UIScreen.main.bounds.size.height > UIScreen.main.bounds.size.width {
-            x = UIScreen.main.bounds.size.height
-        }else{
-            x = UIScreen.main.bounds.size.width
-            landscape = true
-        }
-        
-        let gradient: CAGradientLayer = CAGradientLayer()
-        
-        gradient.colors = [color2, color1]
-        gradient.locations = [0.0 , 0.3]
-        gradient.startPoint = CGPoint(x: 1.0, y:1.0)
-        gradient.endPoint = CGPoint(x: 1.0, y: 0.0)
-        gradient.frame = CGRect(x: 0.0, y: 0.0, width: x, height: 94)
-        navigationView.layer.insertSublayer(gradient, at: 0)
-        
-        cardView.layer.shadowColor = UIColor.black.cgColor
-        cardView.layer.shadowRadius = 25
-        cardView.layer.shadowOpacity = 0.25
-        
-        self.view.layoutIfNeeded()
+        NotificationCenter.default.addObserver(self, selector: #selector(dataRefresh), name: .UIApplicationDidBecomeActive, object: nil)
+        prepareCoreData()
+        prepareTableView()
+        getData()
+        prepareViews()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -212,10 +172,13 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        myRefreshControl.endRefreshing()
+        refreshControl.endRefreshing()
+        defaults.set(Int(Date().timeIntervalSince1970) - 60, forKey: "lastTime")
+        defaults.synchronize()
     }
     
     override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
         SDImageCache.shared().clearMemory()
     }
     
@@ -226,6 +189,36 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         default:
             landscape = false
         }
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        let screenSize = UIScreen.main.bounds.size
+        switch UIDevice.current.userInterfaceIdiom {
+        case .pad:
+            if screenSize.width < screenSize.height {
+                if screenSize.width < 600 {
+                    blurWidthConstraint.constant = screenSize.width
+                }else{
+                    blurWidthConstraint.constant = 600
+                }
+            }else{
+                if screenSize.height < 600 {
+                    blurWidthConstraint.constant = screenSize.height
+                }else{
+                    blurWidthConstraint.constant = 600
+                }
+            }
+        default:
+            if screenSize.width < screenSize.height {
+                blurWidthConstraint.constant = screenSize.width - 70
+            }else{
+                blurWidthConstraint.constant = screenSize.height - 70
+            }
+        }
+        
+        tableView.setNeedsLayout()
     }
     
     func animateTable() {
@@ -252,12 +245,12 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     
     @IBAction func scrollToTop(_ sender: Any) {
-        scrollToTop()
+        tableView.setContentOffset(CGPoint(x: 0,y :-94), animated: true)
     }
     
     @IBAction func presentSettingsAction(_ sender: Any) {
         tapped()
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
             self.blur.effect = nil
             self.blurView.layer.opacity = 0
             self.blur.isHidden = true
@@ -271,6 +264,10 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         }) { (true) in
             self.blur.isHidden = true
         }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     
@@ -305,6 +302,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 detailViewController.desc = arrayDescriptions[indexPath.row]
                 detailViewController.imageUrl = arrayImages[indexPath.row]
                 detailViewController.condition = arrayConditions[indexPath.row]
+                detailViewController.imageSize = arrayImageSizes[indexPath.row]
                 indexPathRow = indexPath.row
                 detailViewController.preferredContentSize = CGSize(width: 0.0, height: 650)
                 
@@ -326,17 +324,18 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
         if arrayConditions[indexPathRow] == "10" {
-            if let vc = storyboard?.instantiateViewController(withIdentifier: "PhotoGalleryViewController") as? PhotoGalleryViewController {
-                vc.imageURL = arrayImages[indexPathRow]
-                vc.modalPresentationStyle = .overFullScreen
-                present(vc, animated: true)
+            if let photoGalleryViewController = storyboard?.instantiateViewController(withIdentifier: "PhotoGalleryViewController") as? PhotoGalleryViewController {
+                photoGalleryViewController.imageURL = arrayImages[indexPathRow]
+                photoGalleryViewController.transitioningDelegate = self
+                photoGalleryViewController.interactor = interactor
+                present(photoGalleryViewController, animated: true)
             }
         }else if arrayLinks[indexPathRow] != "" {
             if let url = URL(string: arrayLinks[indexPathRow]) {
-                let vc = SFSafariViewController(url: url, entersReaderIfAvailable: false)
-                vc.preferredControlTintColor = UIColor.black
-                vc.modalPresentationStyle = .overFullScreen
-                present(vc, animated: true)
+                let webPreview = SFSafariViewController(url: url, entersReaderIfAvailable: false)
+                webPreview.preferredControlTintColor = UIColor.black
+                webPreview.modalPresentationStyle = .overFullScreen
+                present(webPreview, animated: true)
             }
         }
     }
@@ -348,17 +347,21 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             if segue.identifier == "showImageSegue" {
                 if let photoGalleryViewController = segue.destination as? PhotoGalleryViewController {
                     photoGalleryViewController.imageURL = arrayImages[indexPath.row]
+                    photoGalleryViewController.transitioningDelegate = self
+                    photoGalleryViewController.interactor = interactor
                 }
             }else if segue.identifier == "showPostSegue" {
                 if let postGalleryViewController = segue.destination as? PostGalleryViewController {
                     postGalleryViewController.post = arrayPosts[indexPath.row]
+                    postGalleryViewController.transitioningDelegate = self
+                    postGalleryViewController.interactor = interactor
                 }
             }
         }
     }
     
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        if identifier == "showCategoriesSegue" {
+        if identifier == "showCategoriesSegue" || identifier == "noConnectionSegue" {
             return true
         }
         if let indexPath = tableView.indexPathForSelectedRow {
@@ -403,6 +406,9 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         if arrayPosts[indexPath.row] == "**EARLY**" {
             let cell = tableView.dequeueReusableCell(withIdentifier: "olderHeaderCell", for: indexPath) as UITableViewCell
             return cell
+        }else if arrayPosts[indexPath.row] == "**NOCON**" {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "noConnectionCell", for: indexPath) as! PostCell
+            return cell
         }
         //Data managment
         let post = NSMutableAttributedString()
@@ -419,7 +425,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             switch arrayConditions[indexPath.row] {
             case "7", "8", "11", "12" :
                 if arrayLinks[indexPath.row] != "" {
-                    let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
+                    let attributes = [NSAttributedStringKey.foregroundColor: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
                     let touchForMore = NSMutableAttributedString(string: " Touch for more...", attributes: attributes)
                     
                     post.append(NSMutableAttributedString(string: rawPost))
@@ -428,20 +434,20 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                     post.append(NSMutableAttributedString(string: rawPost))
                 }
             case "10" :
-                let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
+                let attributes = [NSAttributedStringKey.foregroundColor: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
                 let touchForMore = NSMutableAttributedString(string: " Touch to view...", attributes: attributes)
                 
                 post.append(NSMutableAttributedString(string: rawPost))
                 post.append(touchForMore)
             case "3" :
                 if !arrayAnswered.contains(indexPath.row) {
-                    let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
+                    let attributes = [NSAttributedStringKey.foregroundColor: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
                     let touchForMore = NSMutableAttributedString(string: " Touch to reveal...", attributes: attributes)
                     
                     post.append(NSMutableAttributedString(string: rawPost))
                     post.append(touchForMore)
                 }else if arrayAnswered.contains(indexPath.row) {
-                    let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
+                    let attributes = [NSAttributedStringKey.foregroundColor: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
                     let question = NSMutableAttributedString(string: rawPost, attributes: attributes)
                     
                     post.append(question)
@@ -467,8 +473,8 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.cardView.layer.shadowRadius = 25
             cell.cardView.layer.shadowOpacity = 0.15
             
-            cell.myTypeLabel.text = getCondition(arrayConditions[indexPath.row])
-            cell.myTextLabel.attributedText = post
+            cell.typeLabel.text = getCondition(arrayConditions[indexPath.row])
+            cell.postLabel.attributedText = post
             
             cell.layoutIfNeeded()
             
@@ -479,14 +485,25 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.imageShadowView.layer.shadowColor = UIColor.black.cgColor
             cell.imageShadowView.layer.shadowRadius = 25
             cell.imageShadowView.layer.shadowOpacity = 0.15
-            cell.postImageView.sd_setImage(with: URL(string: arrayImages[indexPath.row]), placeholderImage: nil, options: [.progressiveDownload, .continueInBackground], completed: { (image, error, cacheType, url) in
-                //Done
-            })
+            cell.postImageView.sd_setImage(with: URL(string: arrayImages[indexPath.row]), placeholderImage: nil, options: [.progressiveDownload, .continueInBackground])
+            cell.alternativeImageBlur.isHidden = true
             
             if arrayImageSizes[indexPath.row].count == 2 {
                 if arrayImageSizes[indexPath.row][0] != 0 || arrayImageSizes[indexPath.row][1] != 0 {
-                    let newHeight = (cell.widthConstraint.constant + 30) * CGFloat(arrayImageSizes[indexPath.row][1]) / CGFloat(arrayImageSizes[indexPath.row][0])
-                    cell.heightViewConstraint.constant = newHeight
+                    if CGFloat(arrayImageSizes[indexPath.row][0]) >= cell.widthConstraint.constant + 30 {
+                        let newHeight = (cell.widthConstraint.constant + 30) * CGFloat(arrayImageSizes[indexPath.row][1]) / CGFloat(arrayImageSizes[indexPath.row][0])
+                        if newHeight < UIScreen.main.bounds.height - 200 {
+                            cell.heightViewConstraint.constant = newHeight
+                        }else{
+                            cell.heightViewConstraint.constant = UIScreen.main.bounds.height - 200
+                        }
+                    }else{
+                        cell.alternativeImageBlur.isHidden = false
+                        cell.alternativeImage.sd_setImage(with: URL(string: arrayImages[indexPath.row]), placeholderImage: nil, options: [.progressiveDownload, .continueInBackground])
+                        cell.alternativeImageWidth.constant = CGFloat(arrayImageSizes[indexPath.row][0])
+                        cell.alternativeImageHeight.constant = CGFloat(arrayImageSizes[indexPath.row][1])
+                        cell.heightViewConstraint.constant = CGFloat(arrayImageSizes[indexPath.row][1]) + (cell.widthConstraint.constant + 30 - CGFloat(arrayImageSizes[indexPath.row][0])) / 2
+                    }
                 }else{
                     cell.heightViewConstraint.constant = 225
                 }
@@ -498,8 +515,8 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.cardView.layer.shadowRadius = 25
             cell.cardView.layer.shadowOpacity = 0.15
             
-            cell.myTypeLabel.text = getCondition(arrayConditions[indexPath.row])
-            cell.myTextLabel.attributedText = post
+            cell.typeLabel.text = getCondition(arrayConditions[indexPath.row])
+            cell.postLabel.attributedText = post
             
             cell.layoutIfNeeded()
             
@@ -562,6 +579,8 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             return 200
         }else if arrayPosts[indexPath.row] == "**EARLY**" {
             return 75
+        }else if arrayPosts[indexPath.row] == "**NOCON**" {
+            return 150
         }
         
         return 500
@@ -581,61 +600,81 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     //**********************************
     
     
-    func dataRefresh() {
-        defaults.synchronize()
-        //Reload all variables
-        if hasAnimated {
-            reloadData()
-        }
-        
-        //Remove all anwsers
-        let tempAnwsers = arrayAnswered
-        arrayAnswered.removeAll()
-        for i in 0..<tempAnwsers.count {
-            tableView.reloadRows(at: [IndexPath(row: tempAnwsers[i], section: 0)], with: .automatic)
-        }
-        
-        requestCount += 1
-        print("📳 REQUEST UPDATE #\(requestCount)")
-        
-        if defaults.bool(forKey: "newCategory") {
-            defaults.set(false, forKey: "newCategory")
-            loadSavedData()
-        }else{
-            if requestCount > 1 {
-                if dailyPostNumber == 0 {
-                    //First refresh
-                    defaults.set(1, forKey: "dailyPostNumber")
-                    print("📳 DAY #\(defaults.integer(forKey: "dayNumber") + 1)")
-                    lastDayTime = currentDayTime
-                    defaults.set(lastDayTime, forKey: "lastDayTime")
-                    
-                    loadSavedData()
+    @objc func dataRefresh() {
+        if !isUpdating {
+            isUpdating = true
+            defaults.synchronize()
+            //Reload all variables
+            if hasAnimated {
+                reloadVariables()
+            }
+            
+            //Remove old no connection row
+            if arrayPosts.count > 0 {
+                if arrayPosts[0] == "**NOCON**" {
+                    self.arrayPosts.remove(at: 0)
+                    self.arrayDescriptions.remove(at: 0)
+                    self.arrayLinks.remove(at: 0)
+                    self.arrayImages.remove(at: 0)
+                    self.arrayImageSizes.remove(at: 0)
+                    self.arrayTimes.remove(at: 0)
+                    self.arrayConditions.remove(at: 0)
+                    tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
                 }
-                
-                if currentDayTime.compare(lastDayTime) == .orderedDescending {
-                    print("📳 DAY #\(defaults.integer(forKey: "dayNumber") + 1)")
-                    lastDayTime = currentDayTime
-                    defaults.set(lastDayTime, forKey: "lastDayTime")
+            }
+            
+            //Remove all anwsers
+            let tempAnwsers = arrayAnswered
+            arrayAnswered.removeAll()
+            for i in 0..<tempAnwsers.count {
+                tableView.reloadRows(at: [IndexPath(row: tempAnwsers[i], section: 0)], with: .automatic)
+            }
+            
+            if defaults.bool(forKey: "newCategory") {
+                defaults.set(false, forKey: "newCategory")
+                loadSavedData()
+            }else{
+                requestCount += 1
+                print("📳 REQUEST UPDATE #\(requestCount)")
+                if requestCount > 1 {
+                    if dailyPostNumber == 0 {
+                        //First refresh
+                        defaults.set(1, forKey: "dailyPostNumber")
+                        print("📳 DAY #\(defaults.integer(forKey: "dayNumber") + 1)")
+                        lastDayTime = currentDayTime
+                        defaults.set(lastDayTime, forKey: "lastDayTime")
+                        
+                        loadSavedData()
+                    }
                     
-                    loadSavedData()
-                    update(newDay: true)
+                    if currentDayTime.compare(lastDayTime) == .orderedDescending {
+                        print("📳 DAY #\(defaults.integer(forKey: "dayNumber") + 1)")
+                        lastDayTime = currentDayTime
+                        defaults.set(lastDayTime, forKey: "lastDayTime")
+                        
+                        loadSavedData()
+                        prepareRequest(newDay: true)
+                    }else{
+                        loadSavedData()
+                        prepareRequest(newDay: false)
+                    }
+                    //isUpdating = false will be called once download completes
                 }else{
                     loadSavedData()
-                    update(newDay: false)
+                    isUpdating = false
                 }
-            }else{
-                loadSavedData()
+                defaults.set(requestCount, forKey: "requestCount")
+            }
+            
+            defaults.synchronize()
+        }else{
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                self.refreshControl.endRefreshing()
             }
         }
-        
-        defaults.set(requestCount, forKey: "requestCount")
-        defaults.synchronize()
-        
-        print(arrayImageSizes)
     }
     
-    func update(newDay: Bool) {
+    func prepareRequest(newDay: Bool) {
         if isConnectedToNetwork(){
             if newDay {
                 //Update day count
@@ -653,10 +692,26 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             baseURL = "http://services.conradi.si/blink/download.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[6])&news=\(boolDefaultPosts[7])&numbers=\(boolDefaultPosts[8])&space=\(boolDefaultPosts[9])&sports=\(boolDefaultPosts[10])&tech=\(boolDefaultPosts[11])&time=\(self.defaults.integer(forKey: "lastTime"))&version=3&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
             print("ℹ️ URL: \(baseURL)")
             //DOWNLOAD POSTS FROM SERVER
-            performSelector(inBackground: #selector(downloadData), with: nil)
+            performSelector(inBackground: #selector(makeRemoteRequest), with: nil)
+            
+            if defaults.bool(forKey: "dailyNotifications") {
+                scheduleNotification()
+            }
         }else{
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.myRefreshControl.endRefreshing()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                /*self.arrayPosts.insert("**NOCON**", at: 0)
+                self.arrayDescriptions.insert("", at: 0)
+                self.arrayLinks.insert("", at: 0)
+                self.arrayImages.insert("", at: 0)
+                self.arrayImageSizes.insert([0, 0], at: 0)
+                self.arrayTimes.insert(Int(Date().timeIntervalSince1970), at: 0)
+                self.arrayConditions.insert("", at: 0)
+                self.tableView.beginUpdates()
+                self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+                self.tableView.endUpdates()*/
+            
+                self.refreshControl.endRefreshing()
+                self.isUpdating = true
             }
         }
     }
@@ -710,88 +765,91 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         print("✅ Added Friday post.")
     }
     
-    func downloadData() {
+    @objc func makeRemoteRequest() {
         let url = URL(string: self.baseURL)
         let session = URLSession.shared
         
         let task = session.dataTask(with: url!) { (data:Data?, response:URLResponse?, error:Error?) in
             if error != nil {
-                print("🆘 Error with connection: \(error)")
+                print("🆘 Error with connection: \(String(describing: error))")
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    self.refreshControl.endRefreshing()
+                }
+                self.isUpdating = false
             } else {
                 do {
                     let json = try JSONSerialization.jsonObject(with: data!, options:.allowFragments) as? [String: Any]
                     
                     if json?["status"] as? String == "ok" {
-                        if let current_time = json?["current_time"] as? Int {
-                            //DELAY 5 SEC
-                            if self.defaults.integer(forKey: "lastTime") < current_time - 5 {
-                                self.defaults.set(current_time, forKey: "lastTime")
-                                
-                                DispatchQueue.main.sync {
-                                    if self.olderHeaderIndex > 0 {
-                                        //Remove old header
-                                        self.arrayPosts.remove(at: self.olderHeaderIndex)
-                                        self.arrayDescriptions.remove(at: self.olderHeaderIndex)
-                                        self.arrayLinks.remove(at: self.olderHeaderIndex)
-                                        self.arrayImages.remove(at: self.olderHeaderIndex)
-                                        self.arrayImageSizes.remove(at: self.olderHeaderIndex)
-                                        self.arrayTimes.remove(at: self.olderHeaderIndex)
-                                        self.arrayConditions.remove(at: self.olderHeaderIndex)
-                                        self.tableView.reloadData()
-                                    }
+                        //DELAY 1 MIN
+                        if self.defaults.integer(forKey: "lastTime") < Int(Date().timeIntervalSince1970) - 60 {
+                            self.defaults.set(Int(Date().timeIntervalSince1970), forKey: "lastTime")
+                            
+                            DispatchQueue.main.sync {
+                                if self.olderHeaderIndex > 0 {
+                                    //Remove old header
+                                    self.arrayPosts.remove(at: self.olderHeaderIndex)
+                                    self.arrayDescriptions.remove(at: self.olderHeaderIndex)
+                                    self.arrayLinks.remove(at: self.olderHeaderIndex)
+                                    self.arrayImages.remove(at: self.olderHeaderIndex)
+                                    self.arrayImageSizes.remove(at: self.olderHeaderIndex)
+                                    self.arrayTimes.remove(at: self.olderHeaderIndex)
+                                    self.arrayConditions.remove(at: self.olderHeaderIndex)
+                                    self.tableView.reloadData()
                                 }
-                                
-                                var olderHeaderNewIndex = 0
-                                
-                                if let posts = json?["posts"] as? [[String: AnyObject]] {
-                                    for post in posts {
-                                        if var text = post["text"] as? String {
-                                            if let condition = post["conditions"] as? String{
-                                                if let url = post["url"] as? String {
-                                                    if let time = post["time"] as? Int {
-                                                        if let image = post["image"] as? String {
-                                                            if let description = post["description"] as? String {
-                                                                if let imageSize = post["imageSize"] as? String {
-                                                                    DispatchQueue.main.sync {
-                                                                        //Safety check
-                                                                        if text != "" {
-                                                                            switch condition {
-                                                                            case "7":
-                                                                                text = "Review: " + text
-                                                                            case "8":
-                                                                                text = "Headline: " + text
-                                                                            default:
-                                                                                break;
+                            }
+                            
+                            var olderHeaderNewIndex = 0
+                            
+                            if let posts = json?["posts"] as? [[String: AnyObject]] {
+                                for post in posts {
+                                    if var text = post["text"] as? String {
+                                        if let condition = post["conditions"] as? String{
+                                            if let url = post["url"] as? String {
+                                                if let time = post["time"] as? Int {
+                                                    if let image = post["image"] as? String {
+                                                        if let description = post["description"] as? String {
+                                                            if let imageSize = post["imageSize"] as? String {
+                                                                DispatchQueue.main.sync {
+                                                                    //Safety check
+                                                                    if text != "" {
+                                                                        switch condition {
+                                                                        case "7":
+                                                                            text = "Review: " + text
+                                                                        case "8":
+                                                                            text = "Headline: " + text
+                                                                        default:
+                                                                            break;
+                                                                        }
+                                                                        
+                                                                        if condition == "7" || condition == "8" || condition == "10" || condition == "11" || condition == "12" {
+                                                                            if text.characters.last != "?" && text.characters.last != "!" && text.characters.last != "." && text.characters.last != "\"" && text.characters.last != ")" {
+                                                                                text = text + "."
                                                                             }
+                                                                        }
+                                                                        
+                                                                        let imageSizeComponents : [String] = imageSize.components(separatedBy: "*")
+                                                                        
+                                                                        // And then to access the individual words:
+                                                                        var width: Double = 0
+                                                                        var height: Double = 0
+                                                                        if imageSizeComponents.count == 2 {
+                                                                            width = Double(imageSizeComponents[0]) ?? 0
+                                                                            height = Double(imageSizeComponents[1]) ?? 0
+                                                                        }
+                                                                        
+                                                                        if !self.arrayPosts.contains(text) {
+                                                                            olderHeaderNewIndex += 1
+                                                                            //ADD NEW POSTS
+                                                                            let data = Post(context: self.container.viewContext)
+                                                                            self.configure(post: data, text: text, description: description, condition: condition, link: url, image: image, imageSize: [width, height], time: time)
+                                                                            self.saveContext()
                                                                             
-                                                                            if condition == "7" || condition == "8" || condition == "10" || condition == "11" || condition == "12" {
-                                                                                if text.characters.last != "?" && text.characters.last != "!" && text.characters.last != "." && text.characters.last != "\"" && text.characters.last != ")" {
-                                                                                    text = text + "."
-                                                                                }
-                                                                            }
-                                                                            
-                                                                            let imageSizeComponents : [String] = imageSize.components(separatedBy: "*")
-                                                                            
-                                                                            // And then to access the individual words:
-                                                                            var width: Double = 0
-                                                                            var height: Double = 0
-                                                                            if imageSizeComponents.count == 2 {
-                                                                                width = Double(imageSizeComponents[0]) ?? 0
-                                                                                height = Double(imageSizeComponents[1]) ?? 0
-                                                                            }
-                                                                            
-                                                                            if !self.arrayPosts.contains(text) {
-                                                                                olderHeaderNewIndex += 1
-                                                                                //ADD NEW POSTS
-                                                                                let data = Post(context: self.container.viewContext)
-                                                                                self.configure(post: data, text: text, description: description, condition: condition, link: url, image: image, imageSize: [width, height], time: time)
-                                                                                self.saveContext()
-                                                                                
-                                                                                self.addPost(text: text, description: description, condition: condition, link: url, image: image, imageSize: [width, height], time: time)
-                                                                                self.tableView.beginUpdates()
-                                                                                self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
-                                                                                self.tableView.endUpdates()
-                                                                            }
+                                                                            self.addPost(text: text, description: description, condition: condition, link: url, image: image, imageSize: [width, height], time: time)
+                                                                            self.tableView.beginUpdates()
+                                                                            self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+                                                                            self.tableView.endUpdates()
                                                                         }
                                                                     }
                                                                 }
@@ -803,55 +861,60 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                                         }
                                     }
                                 }
-                                
-                                DispatchQueue.main.sync {
-                                    //Is it friday yet?
-                                    if self.boolDefaultPosts[5] == 1 && self.configureFridayPost {
-                                        self.fridayPostNumber = self.defaults.integer(forKey: "fridayPostNumber")
-                                        if self.fridayPostNumber == 0 {
-                                            self.fridayPostNumber = Int(arc4random_uniform(UInt32(4))) + 1
-                                            self.addFridayPost()
-                                            olderHeaderNewIndex += 1
-                                        }
-                                        self.fridayPostNumber -= 1
-                                        self.defaults.set(self.fridayPostNumber, forKey: "fridayPostNumber")
-                                        self.configureFridayPost = false
-                                    }
-                                    
-                                    if olderHeaderNewIndex > 0 {
-                                        //Header
-                                        self.arrayPosts.insert("**EARLY**", at: olderHeaderNewIndex)
-                                        self.arrayDescriptions.insert("", at: olderHeaderNewIndex)
-                                        self.arrayLinks.insert("", at: olderHeaderNewIndex)
-                                        self.arrayImages.insert("", at: olderHeaderNewIndex)
-                                        self.arrayImageSizes.insert([0, 0], at: olderHeaderNewIndex)
-                                        self.arrayTimes.insert(Int(Date().timeIntervalSince1970), at: olderHeaderNewIndex)
-                                        self.arrayConditions.insert("", at: olderHeaderNewIndex)
-                                        self.tableView.beginUpdates()
-                                        self.tableView.insertRows(at: [IndexPath(row: olderHeaderNewIndex, section: 0)], with: .top)
-                                        self.tableView.endUpdates()
-                                        self.olderHeaderIndex = olderHeaderNewIndex
-                                    }
-                                }
-                            }else{
-                                print("⏸ Timeout: \(self.defaults.integer(forKey: "lastTime")) < \(current_time - 3)")
                             }
+                            
+                            DispatchQueue.main.sync {
+                                //Is it friday yet?
+                                if self.boolDefaultPosts[5] == 1 && self.configureFridayPost {
+                                    self.fridayPostNumber = self.defaults.integer(forKey: "fridayPostNumber")
+                                    if self.fridayPostNumber == 0 {
+                                        self.fridayPostNumber = Int(arc4random_uniform(UInt32(4))) + 1
+                                        self.addFridayPost()
+                                        olderHeaderNewIndex += 1
+                                    }
+                                    self.fridayPostNumber -= 1
+                                    self.defaults.set(self.fridayPostNumber, forKey: "fridayPostNumber")
+                                    self.configureFridayPost = false
+                                }
+                                
+                                if olderHeaderNewIndex > 0 {
+                                    //Header
+                                    self.arrayPosts.insert("**EARLY**", at: olderHeaderNewIndex)
+                                    self.arrayDescriptions.insert("", at: olderHeaderNewIndex)
+                                    self.arrayLinks.insert("", at: olderHeaderNewIndex)
+                                    self.arrayImages.insert("", at: olderHeaderNewIndex)
+                                    self.arrayImageSizes.insert([0, 0], at: olderHeaderNewIndex)
+                                    self.arrayTimes.insert(Int(Date().timeIntervalSince1970), at: olderHeaderNewIndex)
+                                    self.arrayConditions.insert("", at: olderHeaderNewIndex)
+                                    self.tableView.beginUpdates()
+                                    self.tableView.insertRows(at: [IndexPath(row: olderHeaderNewIndex, section: 0)], with: .top)
+                                    self.tableView.endUpdates()
+                                    self.olderHeaderIndex = olderHeaderNewIndex
+                                }
+                            }
+                        }else{
+                            print("⏸ Timeout: \(self.defaults.integer(forKey: "lastTime")) < \(Int(Date().timeIntervalSince1970) - 60)")
                         }
                     }else if json?["status"] as? String == "update" {
                         let alert = UIAlertController(title: "Update Blink", message: "New version of Blink is available for download.", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                         self.present(alert, animated: true, completion:nil)
                     }
                     print("❎ Download process complete.")
                     
                     DispatchQueue.main.sync {
-                        self.myRefreshControl.endRefreshing()
+                        self.refreshControl.endRefreshing()
                     }
+                    self.isUpdating = false
                 } catch {
                     print("🆘 Something went wrong during data download from the server.")
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        self.myRefreshControl.endRefreshing()
+                        self.refreshControl.endRefreshing()
+                        let alert = UIAlertController(title: "Something failed", message: "An error occurred connectiong to network.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                        self.present(alert, animated: true, completion:nil)
+                        self.isUpdating = false
                     }
                 }
             }
@@ -888,7 +951,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         defaults.set(0, forKey: "dailyPostNumber")
         defaults.set(0, forKey: "fridayPostNumber")
         defaults.set(0, forKey: "dayNumber")
-        defaults.set(Int(Date().timeIntervalSince1970) - 5, forKey: "lastTime")
+        defaults.set(Int(Date().timeIntervalSince1970) - 60, forKey: "lastTime")
         defaults.set(true, forKey: "dailyNotifications")
         defaults.set(true, forKey: "shakeToSendFeedback")
         defaults.set(8, forKey: "notificationTimeHour")
@@ -897,6 +960,8 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         //ADD DEFAULT POSTS
         configDefaultPosts()
+        
+        defaults.synchronize()
     }
     
     
@@ -996,7 +1061,8 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
     }
     
-    func reloadData() {
+    func reloadVariables() {
+        defaults.synchronize()
         arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
         boolDefaultPosts = defaults.object(forKey: "boolDefaultPosts") as! [Int]
         updates = defaults.dictionary(forKey: "updates") as! [String : Int]
@@ -1005,6 +1071,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         currentDayTime = calendar.startOfDay(for: Date())
         lastDayTime = defaults.object(forKey: "lastDayTime") as! Date
         requestCount = defaults.integer(forKey: "requestCount")
+        defaults.synchronize()
     }
     
     func configure(post: Post, text: String, description: String, condition: String, link: String, image: String, imageSize: [Double], time: Int) {
@@ -1208,12 +1275,13 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             }
         }
         
-        /*dailyPostNumber = 86
-        defaults.set(dailyPostNumber, forKey: "dailyPostNumber")*/
+        dailyPostNumber = 100
+        defaults.set(dailyPostNumber, forKey: "dailyPostNumber")
         
         version = "1.3.1"
         defaults.set(version, forKey: "version")
         print("📳 Version: \(version)")
+        defaults.synchronize()
     }
     
     func tapped() {
@@ -1246,13 +1314,8 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         return (isReachable && !needsConnection)
     }
     
-    public func scrollToTop() {
-        tableView.setContentOffset(CGPoint(x: 0,y :-94), animated: true)
-    }
-    
     func getDayOfWeek() -> Int {
-        let myCalendar = Calendar(identifier: .gregorian)
-        let weekDay = myCalendar.component(.weekday, from: Date())
+        let weekDay = calendar.component(.weekday, from: Date())
         return weekDay
     }
     
@@ -1285,5 +1348,120 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         default:
             return "Blink" //Other
         }
+    }
+    
+    
+    //**********************************
+    // MARK: Preparing app
+    //**********************************
+    
+    
+    func scheduleNotification() {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        
+        var oneDayfromNow: Date {
+            return (Calendar.current as NSCalendar).date(byAdding: .day, value: 1, to: Date(), options: [])!
+        }
+        
+        var notificationTime = (calendar as NSCalendar).components([.year, .month, .day, .hour, .minute, .second], from: oneDayfromNow)
+        notificationTime.hour = defaults.integer(forKey: "notificationTimeHour")
+        notificationTime.minute = defaults.integer(forKey: "notificationTimeMinute")
+        
+        let content = UNMutableNotificationContent()
+        content.body = "I have something for you..."
+        content.sound = UNNotificationSound.default()
+        content.badge = 1
+        
+        let trigger = UNCalendarNotificationTrigger.init(dateMatching: notificationTime, repeats: true)
+        let request = UNNotificationRequest(identifier:requestIdentifier, content: content, trigger: trigger)
+        
+        center.add(request)
+    }
+    
+    func prepareViews() {
+        //Welcome blur
+        if (defaults.bool(forKey: "welcomeBlur")) {
+            blur.effect = nil
+            blurView.layer.opacity = 0
+            blur.isHidden = true
+        }else{
+            blur.effect = UIBlurEffect(style: .regular)
+            defaults.set(true, forKey: "welcomeBlur")
+        }
+        //TableView insets
+        self.automaticallyAdjustsScrollViewInsets = false
+        let color1 = UIColor(red: 222/255, green: 222/255, blue: 222/255, alpha: 1).cgColor
+        let color2 = UIColor(red: 222/255, green: 222/255, blue: 222/255, alpha: 0).cgColor
+        
+        //NavigationBar
+        var x: CGFloat = 0
+        if UIScreen.main.bounds.size.height > UIScreen.main.bounds.size.width {
+            x = UIScreen.main.bounds.size.height
+        }else{
+            x = UIScreen.main.bounds.size.width
+            landscape = true
+        }
+        
+        let gradient: CAGradientLayer = CAGradientLayer()
+        gradient.colors = [color2, color1]
+        gradient.locations = [0.0 , 0.3]
+        gradient.startPoint = CGPoint(x: 1.0, y:1.0)
+        gradient.endPoint = CGPoint(x: 1.0, y: 0.0)
+        gradient.frame = CGRect(x: 0.0, y: 0.0, width: x, height: 94)
+        navigationView.layer.insertSublayer(gradient, at: 0)
+        
+        cardView.layer.shadowColor = UIColor.black.cgColor
+        cardView.layer.shadowRadius = 25
+        cardView.layer.shadowOpacity = 0.25
+        
+        //LayoutIfNeeded
+        self.view.layoutIfNeeded()
+    }
+    
+    func prepareTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        refreshControl.addTarget(self, action: #selector(dataRefresh), for: .valueChanged)
+        tableView.addSubview(refreshControl)
+        tableView.contentInset = UIEdgeInsetsMake(94, 0, 20, 0)
+        tableView.setNeedsLayout()
+        tableView.layoutIfNeeded()
+        
+        //3D touch
+        if traitCollection.forceTouchCapability == .available {
+            registerForPreviewing(with: self, sourceView: tableView)
+        } else {
+            //No 3D touch
+        }
+    }
+    
+    func getData() {
+        //Check app version and perform necessary updates
+        versionChech()
+        //Reload data
+        reloadVariables()
+        //Load posts
+        dataRefresh()
+    }
+    
+    func prepareCoreData() {
+        container = NSPersistentContainer(name: "myCoreDataModel")
+        container.loadPersistentStores { storeDescription, error in
+            self.container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+            
+            if let error = error {
+                print("🆘 Unresolved error while configuring core data: \(error)")
+            }
+        }
+    }
+}
+
+extension PostsViewController: UIViewControllerTransitioningDelegate {
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        return DismissAnimator()
+    }
+    
+    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        return interactor.hasStarted ? interactor : nil
     }
 }

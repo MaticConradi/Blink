@@ -13,6 +13,7 @@ class PreviewViewController: UITableViewController {
     var imageUrl: String?
     var desc: String?
     var condition: String?
+    var imageSize: [Double]?
     
     @IBOutlet var previewTableView: UITableView!
     @IBOutlet weak var imageView: UIImageView!
@@ -21,10 +22,25 @@ class PreviewViewController: UITableViewController {
     @IBOutlet weak var titleCardView: UIView!
     @IBOutlet weak var cardView: UIView!
     @IBOutlet weak var footerCardView: UIView!
+    @IBOutlet weak var alternativeImage: UIImageView!
+    @IBOutlet weak var alternativeImageHeight: NSLayoutConstraint!
+    @IBOutlet weak var alternativeImageWidth: NSLayoutConstraint!
+    @IBOutlet weak var alternativeImageBlur: UIVisualEffectView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        imageView.sd_setImage(with: URL(string: imageUrl!))
+        imageView.sd_setImage(with: URL(string: imageUrl!), placeholderImage: nil, options: [.progressiveDownload])
+        
+        if imageSize?.count == 2 {
+            if imageSize?[0] != 0 || imageSize?[1] != 0 {
+                if CGFloat(imageSize![0]) < imageView.frame.size.width {
+                    alternativeImageBlur.isHidden = false
+                    alternativeImage.sd_setImage(with: URL(string: imageUrl!), placeholderImage: nil, options: [.progressiveDownload, .continueInBackground])
+                    alternativeImageWidth.constant = CGFloat(imageSize![0])
+                    alternativeImageHeight.constant = CGFloat(imageSize![1])
+                }
+            }
+        }
         titleView.text = headline!
         descriptionView.text = desc!
         previewTableView.estimatedRowHeight = 250
@@ -42,6 +58,15 @@ class PreviewViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.row == 0 {
+            if imageSize?.count == 2 {
+                if imageSize?[0] != 0 || imageSize?[1] != 0 {
+                    if CGFloat(imageSize![0]) >= imageView.frame.size.width {
+                        return imageView.frame.size.width * CGFloat(imageSize![1]) / CGFloat(imageSize![0])
+                    }else{
+                        return CGFloat(imageSize![1]) + (imageView.frame.size.width - CGFloat(imageSize![0])) / 2
+                    }
+                }
+            }
             return 250
         }else if indexPath.row == 3 {
             return 300

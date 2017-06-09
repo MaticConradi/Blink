@@ -20,6 +20,8 @@ class PhotoGalleryViewController: UIViewController {
     
     var imageURL: String?
     
+    var interactor: Interactor? = nil
+    
     override func viewDidLoad() {
         dismissToolbar.layer.borderWidth = 0.5
         dismissToolbar.layer.borderColor = UIColor.clear.cgColor
@@ -46,21 +48,45 @@ class PhotoGalleryViewController: UIViewController {
         doubleTap.numberOfTapsRequired = 2
         scrollView.addGestureRecognizer(doubleTap)
         
-        let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(PhotoGalleryViewController.close))
-        swipeUp.direction = .up
-        scrollView.addGestureRecognizer(swipeUp)
-        
-        let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(PhotoGalleryViewController.close))
-        swipeDown.direction = .down
-        scrollView.addGestureRecognizer(swipeDown)
-        
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(PhotoGalleryViewController.save))
         longPressGesture.minimumPressDuration = 1.0 // 1 second press
         longPressGesture.allowableMovement = 15 // 15 points
         scrollView.addGestureRecognizer(longPressGesture)
     }
     
-    func handleDoubleTap(recognizer: UITapGestureRecognizer) {
+    @IBAction func handleGesture(_ sender: UIPanGestureRecognizer) {
+        let percentThreshold:CGFloat = 0.3
+        
+        // convert y-position to downward pull progress (percentage)
+        let translation = sender.translation(in: view)
+        let verticalMovement = translation.y / view.bounds.height
+        let downwardMovement = fmaxf(Float(verticalMovement), 0.0)
+        let downwardMovementPercent = fminf(downwardMovement, 1.0)
+        let progress = CGFloat(downwardMovementPercent)
+        
+        guard let interactor = interactor else { return }
+        
+        switch sender.state {
+        case .began:
+            interactor.hasStarted = true
+            dismiss(animated: true, completion: nil)
+        case .changed:
+            interactor.shouldFinish = progress > percentThreshold
+            interactor.update(progress)
+        case .cancelled:
+            interactor.hasStarted = false
+            interactor.cancel()
+        case .ended:
+            interactor.hasStarted = false
+            interactor.shouldFinish
+                ? interactor.finish()
+                : interactor.cancel()
+        default:
+            break
+        }
+    }
+    
+    @objc func handleDoubleTap(recognizer: UITapGestureRecognizer) {
         if (scrollView.zoomScale > scrollView.minimumZoomScale) {
             scrollView.setZoomScale(scrollView.minimumZoomScale, animated: true)
         }else{
@@ -93,13 +119,7 @@ class PhotoGalleryViewController: UIViewController {
         view.layoutIfNeeded()
     }
     
-    func close() {
-        if scrollView.zoomScale == scrollView.minimumZoomScale {
-            dismiss(animated: true, completion: nil)
-        }
-    }
-    
-    func save() {
+    @objc func save() {
         //Disable gesture recognizers so
         for recognizer in scrollView.gestureRecognizers! {
             recognizer.isEnabled = false

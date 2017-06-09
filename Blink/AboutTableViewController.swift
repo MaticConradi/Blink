@@ -100,7 +100,7 @@ class AboutTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 2 {
+        if indexPath.row == 1 {
             UIApplication.shared.open(URL(string: "http://www.conradi.si")!, options: [:], completionHandler: {(true) in })
         }
     }

@@ -20,6 +20,8 @@ class PostGalleryViewController: UIViewController {
     var colors = [[UIColor]]()
     
     var post: String?
+    
+    var interactor: Interactor? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,7 +83,6 @@ class PostGalleryViewController: UIViewController {
         landscapeBackgroundView.layer.insertSublayer(landscapeGradient, at: 0)
         
         textLabel.text = post
-        setupGestureRecognizer()
     }
     
     override func willAnimateRotation(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
@@ -101,21 +102,39 @@ class PostGalleryViewController: UIViewController {
         }
     }
     
-    func setupGestureRecognizer() {
-        let swipeUp = UISwipeGestureRecognizer(target: self, action: #selector(PhotoGalleryViewController.close))
-        swipeUp.direction = .up
-        self.view.addGestureRecognizer(swipeUp)
+    @IBAction func handleGesture(_ sender: UIPanGestureRecognizer) {
+        let percentThreshold:CGFloat = 0.3
         
-        let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(PhotoGalleryViewController.close))
-        swipeDown.direction = .down
-        self.view.addGestureRecognizer(swipeDown)
+        // convert y-position to downward pull progress (percentage)
+        let translation = sender.translation(in: view)
+        let verticalMovement = translation.y / view.bounds.height
+        let downwardMovement = fmaxf(Float(verticalMovement), 0.0)
+        let downwardMovementPercent = fminf(downwardMovement, 1.0)
+        let progress = CGFloat(downwardMovementPercent)
+        
+        guard let interactor = interactor else { return }
+        
+        switch sender.state {
+        case .began:
+            interactor.hasStarted = true
+            dismiss(animated: true, completion: nil)
+        case .changed:
+            interactor.shouldFinish = progress > percentThreshold
+            interactor.update(progress)
+        case .cancelled:
+            interactor.hasStarted = false
+            interactor.cancel()
+        case .ended:
+            interactor.hasStarted = false
+            interactor.shouldFinish
+                ? interactor.finish()
+                : interactor.cancel()
+        default:
+            break
+        }
     }
 
     @IBAction func dismiss(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    func close() {
         dismiss(animated: true, completion: nil)
     }
     

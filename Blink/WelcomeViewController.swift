@@ -11,7 +11,10 @@ import UIKit
 class WelcomeViewController: UIViewController {
     @IBOutlet weak var dismissButton: UIView!
     @IBOutlet weak var cardView: UIView!
-
+    @IBOutlet weak var widthConstraint: NSLayoutConstraint!
+    
+    let screenSize = UIScreen.main.bounds.size
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         let color1 = UIColor(red: 222/255, green: 1, blue: 201/255, alpha: 1).cgColor
@@ -34,6 +37,21 @@ class WelcomeViewController: UIViewController {
         cardView.layer.shadowColor = UIColor.black.cgColor
         cardView.layer.shadowRadius = 25
         cardView.layer.shadowOpacity = 0.15
+        
+        switch UIDevice.current.userInterfaceIdiom {
+        case .pad:
+            if screenSize.width < screenSize.height {
+                widthConstraint.constant = screenSize.width / 3 * 2
+            }else{
+                widthConstraint.constant = screenSize.height / 3 * 2
+            }
+        default:
+            if screenSize.width < screenSize.height {
+                widthConstraint.constant = screenSize.width - 70
+            }else{
+                widthConstraint.constant = screenSize.height - 70
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
