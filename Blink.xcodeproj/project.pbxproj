@@ -114,6 +114,7 @@
 		64133CF11E910A4B001924AF /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		64133CF51E91923B001924AF /* OLDER shape.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "OLDER shape.pdf"; sourceTree = "<group>"; };
 		6429328D1E1BF22700A8EE77 /* More.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = More.pdf; sourceTree = "<group>"; };
+		6437DCB91EEC40220040E0AA /* Blink@1024.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Blink@1024.png"; sourceTree = "<group>"; };
 		643F44261D639384000A6775 /* SubscriptionsCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionsCollectionView.swift; sourceTree = "<group>"; };
 		6448A5971E4A69B40061A857 /* MKAnnotationView+WebCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MKAnnotationView+WebCache.h"; sourceTree = "<group>"; };
 		6448A5981E4A69B40061A857 /* MKAnnotationView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MKAnnotationView+WebCache.m"; sourceTree = "<group>"; };
@@ -324,6 +325,7 @@
 		64A9683F1E89871700C34FBA /* App Icon */ = {
 			isa = PBXGroup;
 			children = (
+				6437DCB91EEC40220040E0AA /* Blink@1024.png */,
 				64A968401E89871700C34FBA /* 20@1x.png */,
 				64A968411E89871700C34FBA /* 20@2x.png */,
 				64A968421E89871700C34FBA /* 20@3x.png */,
@@ -716,6 +718,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -763,6 +766,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -788,7 +792,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "Blink/Blink-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -812,7 +816,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Blink/Blink-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

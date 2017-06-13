@@ -425,7 +425,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             switch arrayConditions[indexPath.row] {
             case "7", "8", "11", "12" :
                 if arrayLinks[indexPath.row] != "" {
-                    let attributes = [NSAttributedStringKey.foregroundColor: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
+                    let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
                     let touchForMore = NSMutableAttributedString(string: " Touch for more...", attributes: attributes)
                     
                     post.append(NSMutableAttributedString(string: rawPost))
@@ -434,20 +434,20 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                     post.append(NSMutableAttributedString(string: rawPost))
                 }
             case "10" :
-                let attributes = [NSAttributedStringKey.foregroundColor: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
+                let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
                 let touchForMore = NSMutableAttributedString(string: " Touch to view...", attributes: attributes)
                 
                 post.append(NSMutableAttributedString(string: rawPost))
                 post.append(touchForMore)
             case "3" :
                 if !arrayAnswered.contains(indexPath.row) {
-                    let attributes = [NSAttributedStringKey.foregroundColor: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
+                    let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
                     let touchForMore = NSMutableAttributedString(string: " Touch to reveal...", attributes: attributes)
                     
                     post.append(NSMutableAttributedString(string: rawPost))
                     post.append(touchForMore)
                 }else if arrayAnswered.contains(indexPath.row) {
-                    let attributes = [NSAttributedStringKey.foregroundColor: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
+                    let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
                     let question = NSMutableAttributedString(string: rawPost, attributes: attributes)
                     
                     post.append(question)
@@ -1275,8 +1275,8 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             }
         }
         
-        dailyPostNumber = 100
-        defaults.set(dailyPostNumber, forKey: "dailyPostNumber")
+        //dailyPostNumber = 100
+        //defaults.set(dailyPostNumber, forKey: "dailyPostNumber")
         
         version = "1.3.1"
         defaults.set(version, forKey: "version")
