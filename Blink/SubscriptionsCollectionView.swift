@@ -53,7 +53,12 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
         arrayDefaultPosts = defaults.object(forKey: "arrayDefaultPosts") as! [String]
         collectionViewFlowLayout.estimatedItemSize = CGSize(width: 150, height: 60)
         
-        subscriptionsCollectionView.contentInset = UIEdgeInsetsMake(10, 0, 0, 0)
+        switch UIDevice.current.userInterfaceIdiom {
+        case .pad:
+            subscriptionsCollectionView.contentInset = UIEdgeInsetsMake(30, 20, 0, 20)
+        default:
+            subscriptionsCollectionView.contentInset = UIEdgeInsetsMake(10, 0, 0, 0)
+        }
     }
     
     

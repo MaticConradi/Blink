@@ -20,40 +20,11 @@ class PostCell: UITableViewCell {
     @IBOutlet weak var cardView: UIView!
     @IBOutlet weak var postImageView: UIImageView!
     @IBOutlet weak var imageShadowView: UIView!
-    @IBOutlet weak var widthConstraint: NSLayoutConstraint!
     @IBOutlet weak var heightViewConstraint: NSLayoutConstraint!
     @IBOutlet weak var alternativeImage: UIImageView!
     @IBOutlet weak var alternativeImageHeight: NSLayoutConstraint!
     @IBOutlet weak var alternativeImageWidth: NSLayoutConstraint!
     @IBOutlet weak var alternativeImageBlur: UIVisualEffectView!
-    
-    let screenSize = UIScreen.main.bounds.size
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        switch UIDevice.current.userInterfaceIdiom {
-        case .pad:
-            if screenSize.width < screenSize.height {
-                if screenSize.width < 600 {
-                    widthConstraint.constant = screenSize.width
-                }else{
-                    widthConstraint.constant = 600
-                }
-            }else{
-                if screenSize.height < 600 {
-                    widthConstraint.constant = screenSize.height
-                }else{
-                    widthConstraint.constant = 600
-                }
-            }
-        default:
-            if screenSize.width < screenSize.height {
-                widthConstraint.constant = screenSize.width - 70
-            }else{
-                widthConstraint.constant = screenSize.height - 70
-            }
-        }
-    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -73,7 +44,6 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     @IBOutlet weak var blur: UIVisualEffectView!
     @IBOutlet weak var blurView: UIView!
     @IBOutlet weak var cardView: UIView!
-    @IBOutlet weak var blurWidthConstraint: NSLayoutConstraint!
     
     //Notifications
     let requestIdentifier = "DailyReminder"
@@ -86,6 +56,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     var container: NSPersistentContainer!
     
     //Stuff
+    var screenSize = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
     let refreshControl: UIRefreshControl = UIRefreshControl()
     let defaults = UserDefaults.standard
     let calendar = Calendar(identifier: .gregorian)
@@ -137,6 +108,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        screenSize = self.view.bounds
         NotificationCenter.default.addObserver(self, selector: #selector(dataRefresh), name: .UIApplicationDidBecomeActive, object: nil)
         prepareCoreData()
         prepareTableView()
@@ -177,6 +149,12 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         defaults.synchronize()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.setNeedsLayout()
+        tableView.layoutIfNeeded()
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         SDImageCache.shared().clearMemory()
@@ -189,36 +167,6 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         default:
             landscape = false
         }
-    }
-    
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        
-        let screenSize = UIScreen.main.bounds.size
-        switch UIDevice.current.userInterfaceIdiom {
-        case .pad:
-            if screenSize.width < screenSize.height {
-                if screenSize.width < 600 {
-                    blurWidthConstraint.constant = screenSize.width
-                }else{
-                    blurWidthConstraint.constant = 600
-                }
-            }else{
-                if screenSize.height < 600 {
-                    blurWidthConstraint.constant = screenSize.height
-                }else{
-                    blurWidthConstraint.constant = 600
-                }
-            }
-        default:
-            if screenSize.width < screenSize.height {
-                blurWidthConstraint.constant = screenSize.width - 70
-            }else{
-                blurWidthConstraint.constant = screenSize.height - 70
-            }
-        }
-        
-        tableView.setNeedsLayout()
     }
     
     func animateTable() {
@@ -412,8 +360,12 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         }
         //Data managment
         let post = NSMutableAttributedString()
-        //let rawPost = "\(arrayPosts[indexPath.row]) \(arrayTimes[indexPath.row])"
         let rawPost = arrayPosts[indexPath.row]
+        var cellWidth = self.view.bounds.width - 70
+        
+        if self.view.bounds.width > 670 {
+            cellWidth = 600
+        }
         
         if arrayDefaultPosts.contains(rawPost) {
             if arrayClicked.contains(indexPath.row) {
@@ -490,19 +442,19 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             
             if arrayImageSizes[indexPath.row].count == 2 {
                 if arrayImageSizes[indexPath.row][0] != 0 || arrayImageSizes[indexPath.row][1] != 0 {
-                    if CGFloat(arrayImageSizes[indexPath.row][0]) >= cell.widthConstraint.constant + 30 {
-                        let newHeight = (cell.widthConstraint.constant + 30) * CGFloat(arrayImageSizes[indexPath.row][1]) / CGFloat(arrayImageSizes[indexPath.row][0])
-                        if newHeight < UIScreen.main.bounds.height - 200 {
+                    if CGFloat(arrayImageSizes[indexPath.row][0]) >= cellWidth + 30 {
+                        let newHeight = (cellWidth + 30) * CGFloat(arrayImageSizes[indexPath.row][1]) / CGFloat(arrayImageSizes[indexPath.row][0])
+                        if newHeight < screenSize.height - 200 {
                             cell.heightViewConstraint.constant = newHeight
                         }else{
-                            cell.heightViewConstraint.constant = UIScreen.main.bounds.height - 200
+                            cell.heightViewConstraint.constant = screenSize.height - 200
                         }
                     }else{
                         cell.alternativeImageBlur.isHidden = false
                         cell.alternativeImage.sd_setImage(with: URL(string: arrayImages[indexPath.row]), placeholderImage: nil, options: [.progressiveDownload, .continueInBackground])
                         cell.alternativeImageWidth.constant = CGFloat(arrayImageSizes[indexPath.row][0])
                         cell.alternativeImageHeight.constant = CGFloat(arrayImageSizes[indexPath.row][1])
-                        cell.heightViewConstraint.constant = CGFloat(arrayImageSizes[indexPath.row][1]) + (cell.widthConstraint.constant + 30 - CGFloat(arrayImageSizes[indexPath.row][0])) / 2
+                        cell.heightViewConstraint.constant = CGFloat(arrayImageSizes[indexPath.row][1]) + (cellWidth + 30 - CGFloat(arrayImageSizes[indexPath.row][0])) / 2
                     }
                 }else{
                     cell.heightViewConstraint.constant = 225
@@ -735,7 +687,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             text = anwsers[Int(arc4random_uniform(UInt32(anwsers.count)))]
         case 4:
             //"Wed"
-            let anwsers = ["I thought it was yesterday but I was wrong.", "I'm pretty sure it was supposed to be today."]
+            let anwsers = ["I thought it was yesterday, but I was wrong.", "I'm pretty sure it was supposed to be today."]
             text = anwsers[Int(arc4random_uniform(UInt32(anwsers.count)))]
         case 5:
             //"Thu"
@@ -743,7 +695,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             text = anwsers[Int(arc4random_uniform(UInt32(anwsers.count)))]
         case 6:
             //"Fri"
-            let anwsers = ["Yep.", "Yes!", "It is indeed.", "Finally.", "This is a day I've been looking forward to for a month."]
+            let anwsers = ["Yep.", "Yes!", "It is indeed.", "Finally."]
             text = anwsers[Int(arc4random_uniform(UInt32(anwsers.count)))]
         case 7:
             //"Sat"
@@ -943,7 +895,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                              "💻 and ⌨️ and 🖥 and 🎮"]
         
         //Set default values
-        boolDefaultPosts = [0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0]
+        boolDefaultPosts = [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0]
         updates = ["1.3.1": 0]
         defaults.set(updates, forKey: "updates")
         defaults.set(arrayDefaultPosts, forKey: "arrayDefaultPosts")
@@ -1101,18 +1053,13 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     
     func configDefaultPosts() {
-        let data1 = Post(context: container.viewContext)
-        configure(post: data1, text: arrayDefaultPosts[7], description: "", condition: "8", link: "", image: "", imageSize: [0, 0], time: 1)
-        saveContext()
-        //addPost(text: arrayDefaultPosts[6], description: "", condition: "7", link: "", image: "", time: 2)
-        
         let data2 = Post(context: container.viewContext)
-        configure(post: data2, text: arrayDefaultPosts[4], description: "", condition: "5", link: "", image: "", imageSize: [0, 0], time: 2)
+        configure(post: data2, text: arrayDefaultPosts[4], description: "", condition: "5", link: "", image: "", imageSize: [0, 0], time: 1)
         saveContext()
         //addPost(text: arrayDefaultPosts[4], description: "", condition: "5", link: "", image: "", time: 3)
         
         let data3 = Post(context: container.viewContext)
-        configure(post: data3, text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", imageSize: [0, 0], time: 3)
+        configure(post: data3, text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", imageSize: [0, 0], time: 2)
         saveContext()
         //addPost(text: arrayDefaultPosts[3], description: "", condition: "4", link: "", image: "", time: 4)
         
@@ -1128,8 +1075,8 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         saveContext()
         //addPost(text: "Silence is golden. Duck tape is silver.", description: "", condition: "4", link: "", image: "", time: Int(Date().timeIntervalSince1970) + 3)
         
-        let data0 = Post(context: container.viewContext)
-        configure(post: data0, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", imageSize: [0, 0], time: 100)
+        let data1 = Post(context: container.viewContext)
+        configure(post: data1, text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", imageSize: [0, 0], time: 100)
         saveContext()
         //addPost(text: "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹", description: "", condition: "100", link: "", image: "", time: 100)
     }
@@ -1395,10 +1342,10 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         
         //NavigationBar
         var x: CGFloat = 0
-        if UIScreen.main.bounds.size.height > UIScreen.main.bounds.size.width {
-            x = UIScreen.main.bounds.size.height
+        if screenSize.height > screenSize.width {
+            x = screenSize.height
         }else{
-            x = UIScreen.main.bounds.size.width
+            x = screenSize.width
             landscape = true
         }
         
