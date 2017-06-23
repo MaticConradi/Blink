@@ -19,13 +19,16 @@ class PhotoGalleryViewController: UIViewController {
     @IBOutlet weak var dismissToolbar: UIToolbar!
     
     var imageURL: String?
+    var imageText: String?
+    var dismissToolbarHidden = false
+    var width: CGFloat = 0
+    var height: CGFloat = 0
+    var animateDuration = 0.0
     
     var interactor: Interactor? = nil
     
     override func viewDidLoad() {
-        dismissToolbar.layer.borderWidth = 0.5
-        dismissToolbar.layer.borderColor = UIColor.clear.cgColor
-        dismissToolbar.clipsToBounds = true
+        prepareVars()
         
         scrollView.minimumZoomScale = 1;
         scrollView.maximumZoomScale = 1;
@@ -40,6 +43,20 @@ class PhotoGalleryViewController: UIViewController {
                 self.updateMinZoomScaleForSize(size: self.view.bounds.size)
             })
         }
+        
+        //Toolbar
+        let color3 = UIColor(red: 0, green: 0, blue: 0, alpha: 0).cgColor
+        let color4 = UIColor(red: 0, green: 0, blue: 0, alpha: 0.66).cgColor
+        
+        let gradient: CAGradientLayer = CAGradientLayer()
+        gradient.colors = [color3, color4]
+        gradient.locations = [0.0 , 1.0]
+        gradient.frame = CGRect(x: 0.0, y: 0.0, width: width, height: 64)
+        dismissToolbar.layer.insertSublayer(gradient, at: 0)
+        
+        dismissToolbar.setBackgroundImage(UIImage(), forToolbarPosition: UIBarPosition.any, barMetrics: UIBarMetrics.default)
+        dismissToolbar.setShadowImage(UIImage(), forToolbarPosition: UIBarPosition.any)
+        
         setupGestureRecognizer()
     }
     
@@ -48,10 +65,31 @@ class PhotoGalleryViewController: UIViewController {
         doubleTap.numberOfTapsRequired = 2
         scrollView.addGestureRecognizer(doubleTap)
         
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(PhotoGalleryViewController.save))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(PhotoGalleryViewController.handleTap(recognizer:)))
+        tap.numberOfTapsRequired = 1
+        scrollView.addGestureRecognizer(tap)
+        
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(PhotoGalleryViewController.save(recognizer:)))
         longPressGesture.minimumPressDuration = 1.0 // 1 second press
         longPressGesture.allowableMovement = 15 // 15 points
         scrollView.addGestureRecognizer(longPressGesture)
+    }
+    
+    override func willRotate(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
+        UIView.animate(withDuration: duration / 2) {
+            self.scrollView.layer.opacity = 0
+            self.animateDuration = duration / 2.0
+        }
+    }
+    
+    override func didRotate(from fromInterfaceOrientation: UIInterfaceOrientation) {
+        if !scrollView.isHidden {
+            self.updateConstraintsForSize(size: self.view.bounds.size)
+            self.updateMinZoomScaleForSize(size: self.view.bounds.size)
+            UIView.animate(withDuration: animateDuration) {
+                self.scrollView.layer.opacity = 1
+            }
+        }
     }
     
     @IBAction func handleGesture(_ sender: UIPanGestureRecognizer) {
@@ -94,9 +132,22 @@ class PhotoGalleryViewController: UIViewController {
         }
     }
     
+    @objc func handleTap(recognizer: UITapGestureRecognizer) {
+        if dismissToolbarHidden {
+            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: {
+                self.dismissToolbar.transform = CGAffineTransform(translationX: 0, y: 0)
+            })
+        }else{
+            UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: {
+                self.dismissToolbar.transform = CGAffineTransform(translationX: 0, y: 64)
+            })
+        }
+        dismissToolbarHidden = !dismissToolbarHidden
+    }
+    
     func updateMinZoomScaleForSize(size: CGSize) {
         let widthScale = size.width / imageView.bounds.width
-        let heightScale = (size.height - 64) / imageView.bounds.height
+        let heightScale = size.height / imageView.bounds.height
         let minScale = min(widthScale, heightScale)
         scrollView.minimumZoomScale = minScale
         scrollView.zoomScale = minScale
@@ -108,7 +159,7 @@ class PhotoGalleryViewController: UIViewController {
     }
     
     func updateConstraintsForSize(size: CGSize) {
-        let yOffset = max(0, (size.height - 64 - imageView.frame.height) / 2)
+        let yOffset = max(0, (size.height - imageView.frame.height) / 2)
         imageViewTopConstraint.constant = yOffset
         imageViewBottomConstraint.constant = yOffset
         
@@ -119,38 +170,90 @@ class PhotoGalleryViewController: UIViewController {
         view.layoutIfNeeded()
     }
     
-    @objc func save() {
+    @objc func save(recognizer: UILongPressGestureRecognizer) {
         //Disable gesture recognizers so
         for recognizer in scrollView.gestureRecognizers! {
             recognizer.isEnabled = false
             recognizer.isEnabled = true
         }
         
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let firstAction = UIAlertAction(title: "Save", style: .default) { (alert: UIAlertAction!) -> Void in
+        share(needSrecognizer: true, recognizer: recognizer, barButton: nil)
+    }
+    
+    @IBAction func shareAction(_ sender: Any) {
+        share(needSrecognizer: false, recognizer: nil, barButton: sender)
+    }
+    
+    func share(needSrecognizer: Bool, recognizer: UILongPressGestureRecognizer?, barButton: Any?) {
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let shareAction = UIAlertAction(title: "Share", style: .default, handler: {
+            (alert: UIAlertAction!) -> Void in
             let isSharing = true
+            
             let manager = SDWebImageManager.shared()
             manager.loadImage(with: URL(string: self.imageURL!), options: .highPriority, progress: nil, completed: { (image, data, error, cacheType, finished, url) in
                 if isSharing {
-                    if let imageToShare = image {
-                        UIImageWriteToSavedPhotosAlbum(imageToShare, nil, nil, nil)
+                    if let shareImage = image {
+                        var objectsToShare = [Any]()
+                        
+                        objectsToShare.append("\(self.imageText ?? "")\n\nvia Blink for iPhone: https://appsto.re/si/jxhUib.i")
+                        objectsToShare.append(shareImage)
+                        
+                        let activityViewController = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+                        activityViewController.popoverPresentationController?.sourceView = self.view
+                        activityViewController.excludedActivityTypes = [UIActivityType.airDrop, UIActivityType.addToReadingList, UIActivityType.postToVimeo, UIActivityType.openInIBooks]
+                        if needSrecognizer {
+                            activityViewController.popoverPresentationController?.sourceRect = CGRect(x: recognizer!.location(ofTouch: 0, in: nil).x, y: recognizer!.location(ofTouch: 0, in: nil).y, width: 0, height: 0)
+                        }else{
+                            activityViewController.popoverPresentationController?.barButtonItem = barButton as? UIBarButtonItem
+                        }
+                        self.present(activityViewController, animated: true, completion: nil)
                     }
                 }
             })
+        })
+        
+        let saveAction = UIAlertAction(title: "Save screenshot", style: .default, handler: {
+            (alert: UIAlertAction!) -> Void in
+            let isSharing = true
             
-        }
+            let manager = SDWebImageManager.shared()
+            manager.loadImage(with: URL(string: self.imageURL!), options: .highPriority, progress: nil, completed: { (image, data, error, cacheType, finished, url) in
+                if isSharing {
+                    if let shareImage = image {
+                        UIImageWriteToSavedPhotosAlbum(shareImage, nil, nil, nil)
+                    }
+                }
+            })
+        })
         
-        let secondAction = UIAlertAction(title: "Cancel", style: .cancel) { (alert: UIAlertAction!) -> Void in
-            //Cancel
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {
+            (alert: UIAlertAction!) -> Void in
+        })
+        actionSheet.addAction(shareAction)
+        actionSheet.addAction(saveAction)
+        actionSheet.addAction(cancelAction)
+        if needSrecognizer {
+            actionSheet.popoverPresentationController?.sourceRect = CGRect(x: recognizer!.location(ofTouch: 0, in: nil).x, y: recognizer!.location(ofTouch: 0, in: nil).y, width: 0, height: 0)
+        }else{
+            actionSheet.popoverPresentationController?.barButtonItem = barButton as? UIBarButtonItem
         }
-        
-        alert.addAction(firstAction)
-        alert.addAction(secondAction)
-        present(alert, animated: true, completion:nil)
+        present(actionSheet, animated: true, completion: nil)
     }
     
     @IBAction func dismiss(_ sender: Any) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    func prepareVars() {
+        if UIScreen.main.bounds.size.height > UIScreen.main.bounds.size.width {
+            width = UIScreen.main.bounds.size.width
+            height = UIScreen.main.bounds.size.height
+        }else{
+            width = UIScreen.main.bounds.size.height
+            height = UIScreen.main.bounds.size.width
+        }
     }
 }
 

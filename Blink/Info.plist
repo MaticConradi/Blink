@@ -19,7 +19,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>20</string>
+	<string>22</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>
@@ -36,7 +36,7 @@
 			<string></string>
 		</dict>
 	</dict>
-	<key>NSPhotoLibraryUsageDescription</key>
+	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Blink needs to access your photo library to be able to save photos.</string>
 	<key>UIAppFonts</key>
 	<array>

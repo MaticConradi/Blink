@@ -163,7 +163,7 @@
 		648CDF621EDF385C008E7B95 /* DismissAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DismissAnimator.swift; sourceTree = "<group>"; };
 		648CDF641EDF3A40008E7B95 /* Interactor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Interactor.swift; sourceTree = "<group>"; };
 		648F63E71E85AFA70089B1D7 /* CATEGORIES shape.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "CATEGORIES shape.pdf"; sourceTree = "<group>"; };
-		648F63EB1E85B3990089B1D7 /* SubscriptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionsViewController.swift; sourceTree = "<group>"; };
+		648F63EB1E85B3990089B1D7 /* SubscriptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionsViewController.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		6490368D1EDABCD0004D766A /* BLINK shape white.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "BLINK shape white.pdf"; sourceTree = "<group>"; };
 		6491613D1E4CE14200677CD4 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		6491613F1E4CEBDF00677CD4 /* AboutTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutTableViewController.swift; sourceTree = "<group>"; };

@@ -25,11 +25,16 @@ class PostCell: UITableViewCell {
     @IBOutlet weak var alternativeImageHeight: NSLayoutConstraint!
     @IBOutlet weak var alternativeImageWidth: NSLayoutConstraint!
     @IBOutlet weak var alternativeImageBlur: UIVisualEffectView!
+    @IBOutlet weak var shareToolbar: UIToolbar!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    override func didMoveToSuperview() {
         self.layoutIfNeeded()
     }
+    
+    /*override func awakeFromNib() {
+        super.awakeFromNib()
+        self.layoutIfNeeded()
+    }*/
 }
 
 class PostsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate, UIViewControllerPreviewingDelegate {
@@ -274,6 +279,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         if arrayConditions[indexPathRow] == "10" {
             if let photoGalleryViewController = storyboard?.instantiateViewController(withIdentifier: "PhotoGalleryViewController") as? PhotoGalleryViewController {
                 photoGalleryViewController.imageURL = arrayImages[indexPathRow]
+                photoGalleryViewController.imageText = arrayPosts[indexPathRow]
                 photoGalleryViewController.transitioningDelegate = self
                 photoGalleryViewController.interactor = interactor
                 present(photoGalleryViewController, animated: true)
@@ -295,6 +301,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             if segue.identifier == "showImageSegue" {
                 if let photoGalleryViewController = segue.destination as? PhotoGalleryViewController {
                     photoGalleryViewController.imageURL = arrayImages[indexPath.row]
+                    photoGalleryViewController.imageText = arrayPosts[indexPath.row]
                     photoGalleryViewController.transitioningDelegate = self
                     photoGalleryViewController.interactor = interactor
                 }
@@ -363,8 +370,8 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         let rawPost = arrayPosts[indexPath.row]
         var cellWidth = self.view.bounds.width - 70
         
-        if self.view.bounds.width > 670 {
-            cellWidth = 600
+        if self.view.bounds.width > 570 {
+            cellWidth = 500
         }
         
         if arrayDefaultPosts.contains(rawPost) {
@@ -428,6 +435,9 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.typeLabel.text = getCondition(arrayConditions[indexPath.row])
             cell.postLabel.attributedText = post
             
+            cell.shareToolbar.setBackgroundImage(UIImage(), forToolbarPosition: UIBarPosition.any, barMetrics: UIBarMetrics.default)
+            cell.shareToolbar.setShadowImage(UIImage(), forToolbarPosition: UIBarPosition.any)
+            
             cell.layoutIfNeeded()
             
             return cell
@@ -469,6 +479,9 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             
             cell.typeLabel.text = getCondition(arrayConditions[indexPath.row])
             cell.postLabel.attributedText = post
+            
+            cell.shareToolbar.setBackgroundImage(UIImage(), forToolbarPosition: UIBarPosition.any, barMetrics: UIBarMetrics.default)
+            cell.shareToolbar.setShadowImage(UIImage(), forToolbarPosition: UIBarPosition.any)
             
             cell.layoutIfNeeded()
             
@@ -585,6 +598,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             if defaults.bool(forKey: "newCategory") {
                 defaults.set(false, forKey: "newCategory")
                 loadSavedData()
+                isUpdating = false
             }else{
                 requestCount += 1
                 print("📳 REQUEST UPDATE #\(requestCount)")
@@ -1129,11 +1143,12 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         controller.dismiss(animated: true)
     }
     
-    @IBAction func share(_ sender: UIButton) {
+    @IBAction func share(_ sender: UIBarButtonItem) {
         let isSharing = true
-        let button = sender
-        let view = button.superview!
-        let cell = view.superview?.superview as! PostCell
+        
+        let barButton = sender
+        let view: UIView = barButton.value(forKey: "view") as! UIView
+        let cell = view.superview?.superview?.superview?.superview?.superview?.superview as! PostCell
         let indexPath: IndexPath = tableView.indexPath(for: cell)!
         
         if arrayLinks[indexPath.row] != "" {
@@ -1335,8 +1350,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             blur.effect = UIBlurEffect(style: .regular)
             defaults.set(true, forKey: "welcomeBlur")
         }
-        //TableView insets
-        self.automaticallyAdjustsScrollViewInsets = false
+        
         let color1 = UIColor(red: 222/255, green: 222/255, blue: 222/255, alpha: 1).cgColor
         let color2 = UIColor(red: 222/255, green: 222/255, blue: 222/255, alpha: 0).cgColor
         
@@ -1370,6 +1384,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         tableView.dataSource = self
         refreshControl.addTarget(self, action: #selector(dataRefresh), for: .valueChanged)
         tableView.addSubview(refreshControl)
+        self.automaticallyAdjustsScrollViewInsets = false
         tableView.contentInset = UIEdgeInsetsMake(94, 0, 20, 0)
         tableView.setNeedsLayout()
         tableView.layoutIfNeeded()
