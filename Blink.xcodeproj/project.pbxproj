@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		64133CEE1E9104B5001924AF /* Castle.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 64133CED1E9104B5001924AF /* Castle.jpg */; };
 		64133CF01E9107F1001924AF /* BLINK welcome.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 64133CEF1E9107F1001924AF /* BLINK welcome.pdf */; };
 		64133CF21E910A4B001924AF /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64133CF11E910A4B001924AF /* WelcomeViewController.swift */; };
 		64133CF61E91923B001924AF /* OLDER shape.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 64133CF51E91923B001924AF /* OLDER shape.pdf */; };
@@ -75,6 +74,7 @@
 		64DAB0B51D55EA0C0029BB8B /* BlinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DAB0B41D55EA0C0029BB8B /* BlinkTests.swift */; };
 		64DAB0C01D55EA0C0029BB8B /* BlinkUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DAB0BF1D55EA0C0029BB8B /* BlinkUITests.swift */; };
 		64DAB0D01D5601460029BB8B /* Timeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DAB0CF1D5601460029BB8B /* Timeline.swift */; };
+		64F429F21EFE9194003521A6 /* Castle.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 64F429F11EFE9194003521A6 /* Castle.jpg */; };
 		64F910C51D748DA800E3E4B2 /* myCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 64F910C31D748DA800E3E4B2 /* myCoreDataModel.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
@@ -109,7 +109,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		64133CED1E9104B5001924AF /* Castle.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Castle.jpg; sourceTree = "<group>"; };
 		64133CEF1E9107F1001924AF /* BLINK welcome.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "BLINK welcome.pdf"; sourceTree = "<group>"; };
 		64133CF11E910A4B001924AF /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		64133CF51E91923B001924AF /* OLDER shape.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "OLDER shape.pdf"; sourceTree = "<group>"; };
@@ -165,6 +164,7 @@
 		648F63E71E85AFA70089B1D7 /* CATEGORIES shape.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "CATEGORIES shape.pdf"; sourceTree = "<group>"; };
 		648F63EB1E85B3990089B1D7 /* SubscriptionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionsViewController.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		6490368D1EDABCD0004D766A /* BLINK shape white.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "BLINK shape white.pdf"; sourceTree = "<group>"; };
+		649105C81EFED319000121AA /* Swipe up.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Swipe up.pdf"; sourceTree = "<group>"; };
 		6491613D1E4CE14200677CD4 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		6491613F1E4CEBDF00677CD4 /* AboutTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutTableViewController.swift; sourceTree = "<group>"; };
 		64922B661E817066003B3DA1 /* Chivo-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Chivo-Black.ttf"; sourceTree = "<group>"; };
@@ -205,6 +205,7 @@
 		64DAB0C11D55EA0C0029BB8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		64DAB0CF1D5601460029BB8B /* Timeline.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Timeline.swift; sourceTree = "<group>"; };
 		64E382E61D96E17100467364 /* NotificationCenter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NotificationCenter.framework; path = System/Library/Frameworks/NotificationCenter.framework; sourceTree = SDKROOT; };
+		64F429F11EFE9194003521A6 /* Castle.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Castle.jpg; sourceTree = "<group>"; };
 		64F910C41D748DA800E3E4B2 /* myCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = myCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -239,11 +240,12 @@
 		64360DFB1D58B4400094AE6B /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				64F429F11EFE9194003521A6 /* Castle.jpg */,
 				64A9683F1E89871700C34FBA /* App Icon */,
 				64922B6F1E8170D1003B3DA1 /* Fonts */,
-				64133CED1E9104B5001924AF /* Castle.jpg */,
 				6429328D1E1BF22700A8EE77 /* More.pdf */,
 				647183C61D63116100712A97 /* Home.pdf */,
+				649105C81EFED319000121AA /* Swipe up.pdf */,
 				64588DCF1E806654008B0FB0 /* Share.pdf */,
 				64922B711E81718A003B3DA1 /* BLINK shape.pdf */,
 				6490368D1EDABCD0004D766A /* BLINK shape white.pdf */,
@@ -528,7 +530,6 @@
 			files = (
 				64A9684F1E89871700C34FBA /* 29@1x.png in Resources */,
 				647183C81D63116100712A97 /* Home.pdf in Resources */,
-				64133CEE1E9104B5001924AF /* Castle.jpg in Resources */,
 				64922B6B1E817066003B3DA1 /* Chivo-BlackItalic.ttf in Resources */,
 				64A968501E89871700C34FBA /* 29@2x.png in Resources */,
 				64A968571E89871700C34FBA /* 83,5@2x.png in Resources */,
@@ -540,6 +541,7 @@
 				6490368E1EDABCD0004D766A /* BLINK shape white.pdf in Resources */,
 				6429328E1E1BF22700A8EE77 /* More.pdf in Resources */,
 				64922B6C1E817066003B3DA1 /* Chivo-Italic.ttf in Resources */,
+				64F429F21EFE9194003521A6 /* Castle.jpg in Resources */,
 				64DAB0AA1D55EA0C0029BB8B /* LaunchScreen.storyboard in Resources */,
 				64588DD01E806654008B0FB0 /* Share.pdf in Resources */,
 				64A968551E89871700C34FBA /* 76@1x.png in Resources */,
@@ -829,8 +831,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.BlinkTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blink.app/Blink";
 			};
 			name = Debug;
@@ -843,8 +845,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.BlinkTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Blink.app/Blink";
 			};
 			name = Release;
@@ -856,8 +858,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.BlinkUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Blink;
 			};
 			name = Debug;
@@ -869,8 +871,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = si.conradi.BlinkUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = Blink;
 			};
 			name = Release;

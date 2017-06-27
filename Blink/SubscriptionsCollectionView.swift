@@ -119,6 +119,7 @@ class SubscriptionsCollectionViewController: UICollectionViewController {
                 defaults.set(true, forKey: "newCategory")
                 addDefPost(indexPath.row)
             }
+            defaults.set(Int(Date().timeIntervalSince1970) - 60, forKey: "lastTime")
             boolDefaultPosts[indexPath.row] = 1
         }
         

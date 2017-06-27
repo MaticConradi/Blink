@@ -25,7 +25,6 @@ class PostCell: UITableViewCell {
     @IBOutlet weak var alternativeImageHeight: NSLayoutConstraint!
     @IBOutlet weak var alternativeImageWidth: NSLayoutConstraint!
     @IBOutlet weak var alternativeImageBlur: UIVisualEffectView!
-    @IBOutlet weak var shareToolbar: UIToolbar!
     
     override func didMoveToSuperview() {
         self.layoutIfNeeded()
@@ -150,7 +149,6 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         refreshControl.endRefreshing()
-        defaults.set(Int(Date().timeIntervalSince1970) - 60, forKey: "lastTime")
         defaults.synchronize()
     }
     
@@ -308,6 +306,9 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             }else if segue.identifier == "showPostSegue" {
                 if let postGalleryViewController = segue.destination as? PostGalleryViewController {
                     postGalleryViewController.post = arrayPosts[indexPath.row]
+                    postGalleryViewController.desc = arrayDescriptions[indexPath.row]
+                    postGalleryViewController.url = arrayLinks[indexPath.row]
+                    postGalleryViewController.condition = arrayConditions[indexPath.row]
                     postGalleryViewController.transitioningDelegate = self
                     postGalleryViewController.interactor = interactor
                 }
@@ -327,15 +328,11 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             }else if identifier == "showPostSegue" {
                 if !(defaults.object(forKey: "arrayDefaultPosts") as! [String]).contains(arrayPosts[indexPath.row]) && arrayPosts[indexPath.row] != "Hi! I'm Blink. Return every day and I'll try to make your day better. 🍹" {
                     switch arrayConditions[indexPath.row] {
-                    case "1", "2", "4", "5", "6", "9", "13":
+                    case "1", "2", "3", "4", "5", "6", "9", "13":
                         return true
                     default:
                         return false
                     }
-                }else{
-                    //let generator = UINotificationFeedbackGenerator()
-                    //generator.notificationOccurred(.error)
-                    return false
                 }
             }
         }
@@ -398,34 +395,13 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 
                 post.append(NSMutableAttributedString(string: rawPost))
                 post.append(touchForMore)
-            case "3" :
-                if !arrayAnswered.contains(indexPath.row) {
-                    let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
-                    let touchForMore = NSMutableAttributedString(string: " Touch to reveal...", attributes: attributes)
-                    
-                    post.append(NSMutableAttributedString(string: rawPost))
-                    post.append(touchForMore)
-                }else if arrayAnswered.contains(indexPath.row) {
-                    let attributes = [NSForegroundColorAttributeName: UIColor(red: 170/255, green: 170/255, blue: 170/255, alpha: 1)]
-                    let question = NSMutableAttributedString(string: rawPost, attributes: attributes)
-                    
-                    post.append(question)
-                    if arrayDescriptions[indexPath.row] == "True" {
-                        post.append(NSMutableAttributedString(string: " It's true."))
-                    }else if arrayDescriptions[indexPath.row] == "False" {
-                        post.append(NSMutableAttributedString(string: " It's false."))
-                    }else{
-                        post.append(NSMutableAttributedString(string: " \(arrayDescriptions[indexPath.row])"))
-                    }
-                }else{
-                    post.append(NSMutableAttributedString(string: rawPost))
-                }
             default:
                 post.append(NSMutableAttributedString(string: rawPost))
             }
         }
         
-        if arrayImages[indexPath.row] == "" {
+        switch arrayImages[indexPath.row] {
+        case "":
             let cell = tableView.dequeueReusableCell(withIdentifier: "postCellNoImage", for: indexPath) as! PostCell
             
             cell.cardView.layer.shadowColor = UIColor.black.cgColor
@@ -435,13 +411,10 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.typeLabel.text = getCondition(arrayConditions[indexPath.row])
             cell.postLabel.attributedText = post
             
-            cell.shareToolbar.setBackgroundImage(UIImage(), forToolbarPosition: UIBarPosition.any, barMetrics: UIBarMetrics.default)
-            cell.shareToolbar.setShadowImage(UIImage(), forToolbarPosition: UIBarPosition.any)
-            
             cell.layoutIfNeeded()
             
             return cell
-        }else{
+        default:
             let cell = tableView.dequeueReusableCell(withIdentifier: "postCellWithImage", for: indexPath) as! PostCell
             
             cell.imageShadowView.layer.shadowColor = UIColor.black.cgColor
@@ -480,9 +453,6 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             cell.typeLabel.text = getCondition(arrayConditions[indexPath.row])
             cell.postLabel.attributedText = post
             
-            cell.shareToolbar.setBackgroundImage(UIImage(), forToolbarPosition: UIBarPosition.any, barMetrics: UIBarMetrics.default)
-            cell.shareToolbar.setShadowImage(UIImage(), forToolbarPosition: UIBarPosition.any)
-            
             cell.layoutIfNeeded()
             
             return cell
@@ -494,27 +464,10 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             switch arrayConditions[indexPath.row] {
             case "7", "8", "11", "12":
                 if let url = URL(string: arrayLinks[indexPath.row]) {
-                    let vc = SFSafariViewController(url: url, entersReaderIfAvailable: false)
-                    vc.preferredControlTintColor = UIColor.black
-                    vc.modalPresentationStyle = .overFullScreen
-                    present(vc, animated: true)
-                }
-            case "3":
-                if arrayAnswered.count >= 3 {
-                    let row = arrayAnswered[0]
-                    arrayAnswered.removeFirst()
-                    tableView.reloadRows(at: [IndexPath(row: row, section: 0)], with: .automatic)
-                }else if !arrayAnswered.contains(indexPath.row) {
-                    arrayAnswered.append(indexPath.row)
-                    tableView.reloadRows(at: [indexPath], with: .automatic)
-                }else{
-                    for i in 0..<arrayAnswered.count {
-                        if arrayAnswered[i] == indexPath.row {
-                            arrayAnswered.remove(at: i)
-                            tableView.reloadRows(at: [indexPath], with: .automatic)
-                            break;
-                        }
-                    }
+                    let safariViewController = SFSafariViewController(url: url, entersReaderIfAvailable: false)
+                    safariViewController.preferredControlTintColor = UIColor.black
+                    safariViewController.modalPresentationStyle = .overFullScreen
+                    present(safariViewController, animated: true)
                 }
             default:
                 break
@@ -656,10 +609,13 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 configureFridayPost = true
             }
             baseURL = "http://services.conradi.si/blink/download.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[6])&news=\(boolDefaultPosts[7])&numbers=\(boolDefaultPosts[8])&space=\(boolDefaultPosts[9])&sports=\(boolDefaultPosts[10])&tech=\(boolDefaultPosts[11])&time=\(self.defaults.integer(forKey: "lastTime"))&version=3&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
-            print("ℹ️ URL: \(baseURL)")
-            //DOWNLOAD POSTS FROM SERVER
-            performSelector(inBackground: #selector(makeRemoteRequest), with: nil)
-            
+            //DELAY 1 MIN
+            if defaults.integer(forKey: "lastTime") < Int(Date().timeIntervalSince1970) - 60 {
+                defaults.set(Int(Date().timeIntervalSince1970), forKey: "lastTime")
+                print("ℹ️ Request URL: \(baseURL)")
+                //DOWNLOAD POSTS FROM SERVER
+                performSelector(inBackground: #selector(makeRemoteRequest), with: nil)
+            }
             if defaults.bool(forKey: "dailyNotifications") {
                 scheduleNotification()
             }
@@ -748,75 +704,70 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                     let json = try JSONSerialization.jsonObject(with: data!, options:.allowFragments) as? [String: Any]
                     
                     if json?["status"] as? String == "ok" {
-                        //DELAY 1 MIN
-                        if self.defaults.integer(forKey: "lastTime") < Int(Date().timeIntervalSince1970) - 60 {
-                            self.defaults.set(Int(Date().timeIntervalSince1970), forKey: "lastTime")
-                            
-                            DispatchQueue.main.sync {
-                                if self.olderHeaderIndex > 0 {
-                                    //Remove old header
-                                    self.arrayPosts.remove(at: self.olderHeaderIndex)
-                                    self.arrayDescriptions.remove(at: self.olderHeaderIndex)
-                                    self.arrayLinks.remove(at: self.olderHeaderIndex)
-                                    self.arrayImages.remove(at: self.olderHeaderIndex)
-                                    self.arrayImageSizes.remove(at: self.olderHeaderIndex)
-                                    self.arrayTimes.remove(at: self.olderHeaderIndex)
-                                    self.arrayConditions.remove(at: self.olderHeaderIndex)
-                                    self.tableView.reloadData()
-                                }
+                        DispatchQueue.main.sync {
+                            if self.olderHeaderIndex > 0 {
+                                //Remove old header
+                                self.arrayPosts.remove(at: self.olderHeaderIndex)
+                                self.arrayDescriptions.remove(at: self.olderHeaderIndex)
+                                self.arrayLinks.remove(at: self.olderHeaderIndex)
+                                self.arrayImages.remove(at: self.olderHeaderIndex)
+                                self.arrayImageSizes.remove(at: self.olderHeaderIndex)
+                                self.arrayTimes.remove(at: self.olderHeaderIndex)
+                                self.arrayConditions.remove(at: self.olderHeaderIndex)
+                                self.tableView.reloadData()
                             }
-                            
-                            var olderHeaderNewIndex = 0
-                            
-                            if let posts = json?["posts"] as? [[String: AnyObject]] {
-                                for post in posts {
-                                    if var text = post["text"] as? String {
-                                        if let condition = post["conditions"] as? String{
-                                            if let url = post["url"] as? String {
-                                                if let time = post["time"] as? Int {
-                                                    if let image = post["image"] as? String {
-                                                        if let description = post["description"] as? String {
-                                                            if let imageSize = post["imageSize"] as? String {
-                                                                DispatchQueue.main.sync {
-                                                                    //Safety check
-                                                                    if text != "" {
-                                                                        switch condition {
-                                                                        case "7":
-                                                                            text = "Review: " + text
-                                                                        case "8":
-                                                                            text = "Headline: " + text
-                                                                        default:
-                                                                            break;
+                        }
+                        
+                        var olderHeaderNewIndex = 0
+                        
+                        if let posts = json?["posts"] as? [[String: AnyObject]] {
+                            for post in posts {
+                                if var text = post["text"] as? String {
+                                    if let condition = post["conditions"] as? String{
+                                        if let url = post["url"] as? String {
+                                            if let time = post["time"] as? Int {
+                                                if let image = post["image"] as? String {
+                                                    if let description = post["description"] as? String {
+                                                        if let imageSize = post["imageSize"] as? String {
+                                                            DispatchQueue.main.sync {
+                                                                //Safety check
+                                                                if text != "" {
+                                                                    switch condition {
+                                                                    case "7":
+                                                                        text = "Review: " + text
+                                                                    case "8":
+                                                                        text = "Headline: " + text
+                                                                    default:
+                                                                        break;
+                                                                    }
+                                                                    
+                                                                    if condition == "7" || condition == "8" || condition == "10" || condition == "11" || condition == "12" {
+                                                                        if text.characters.last != "?" && text.characters.last != "!" && text.characters.last != "." && text.characters.last != "\"" && text.characters.last != ")" {
+                                                                            text = text + "."
                                                                         }
+                                                                    }
+                                                                    
+                                                                    let imageSizeComponents : [String] = imageSize.components(separatedBy: "*")
+                                                                    
+                                                                    // And then to access the individual words:
+                                                                    var width: Double = 0
+                                                                    var height: Double = 0
+                                                                    if imageSizeComponents.count == 2 {
+                                                                        width = Double(imageSizeComponents[0]) ?? 0
+                                                                        height = Double(imageSizeComponents[1]) ?? 0
+                                                                    }
+                                                                    
+                                                                    if !self.arrayPosts.contains(text) {
+                                                                        olderHeaderNewIndex += 1
+                                                                        //ADD NEW POSTS
+                                                                        let data = Post(context: self.container.viewContext)
+                                                                        self.configure(post: data, text: text, description: description, condition: condition, link: url, image: image, imageSize: [width, height], time: time)
+                                                                        self.saveContext()
                                                                         
-                                                                        if condition == "7" || condition == "8" || condition == "10" || condition == "11" || condition == "12" {
-                                                                            if text.characters.last != "?" && text.characters.last != "!" && text.characters.last != "." && text.characters.last != "\"" && text.characters.last != ")" {
-                                                                                text = text + "."
-                                                                            }
-                                                                        }
-                                                                        
-                                                                        let imageSizeComponents : [String] = imageSize.components(separatedBy: "*")
-                                                                        
-                                                                        // And then to access the individual words:
-                                                                        var width: Double = 0
-                                                                        var height: Double = 0
-                                                                        if imageSizeComponents.count == 2 {
-                                                                            width = Double(imageSizeComponents[0]) ?? 0
-                                                                            height = Double(imageSizeComponents[1]) ?? 0
-                                                                        }
-                                                                        
-                                                                        if !self.arrayPosts.contains(text) {
-                                                                            olderHeaderNewIndex += 1
-                                                                            //ADD NEW POSTS
-                                                                            let data = Post(context: self.container.viewContext)
-                                                                            self.configure(post: data, text: text, description: description, condition: condition, link: url, image: image, imageSize: [width, height], time: time)
-                                                                            self.saveContext()
-                                                                            
-                                                                            self.addPost(text: text, description: description, condition: condition, link: url, image: image, imageSize: [width, height], time: time)
-                                                                            self.tableView.beginUpdates()
-                                                                            self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
-                                                                            self.tableView.endUpdates()
-                                                                        }
+                                                                        self.addPost(text: text, description: description, condition: condition, link: url, image: image, imageSize: [width, height], time: time)
+                                                                        self.tableView.beginUpdates()
+                                                                        self.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .top)
+                                                                        self.tableView.endUpdates()
                                                                     }
                                                                 }
                                                             }
@@ -1141,30 +1092,6 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         controller.dismiss(animated: true)
-    }
-    
-    @IBAction func share(_ sender: UIBarButtonItem) {
-        let isSharing = true
-        
-        let barButton = sender
-        let view: UIView = barButton.value(forKey: "view") as! UIView
-        let cell = view.superview?.superview?.superview?.superview?.superview?.superview as! PostCell
-        let indexPath: IndexPath = tableView.indexPath(for: cell)!
-        
-        if arrayLinks[indexPath.row] != "" {
-            preparesShare(shareText: "\(arrayPosts[indexPath.row]): \(arrayLinks[indexPath.row])\n\nvia Blink for iPhone: https://appsto.re/si/jxhUib.i", shareImage: nil)
-        }else if arrayConditions[indexPath.row] == "10" {
-            let manager = SDWebImageManager.shared()
-            manager.loadImage(with: URL(string: arrayImages[indexPath.row]), options: .highPriority, progress: nil, completed: { (image, data, error, cacheType, finished, url) in
-                if isSharing {
-                    if let imageToShare = image {
-                        self.preparesShare(shareText: "\(self.arrayPosts[indexPath.row])\n\nvia Blink for iPhone: https://appsto.re/si/jxhUib.i", shareImage: imageToShare)
-                    }
-                }
-            })
-        }else{
-            preparesShare(shareText: "\(arrayPosts[indexPath.row])\n\nvia Blink for iPhone: https://appsto.re/si/jxhUib.i", shareImage: nil)
-        }
     }
     
     func preparesShare(shareText: String?, shareImage: UIImage?){
