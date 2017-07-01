@@ -18,7 +18,6 @@
         <!--Subscriptions View Controller-->
         <scene sceneID="dFY-lt-gnN">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="MiK-sO-VDW" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="SubscriptionsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="F22-Mj-8u0" customClass="SubscriptionsViewController" customModule="Blink" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="XKg-rG-EEG"/>
@@ -86,13 +85,13 @@
                         <outlet property="portraitWidthConstraint" destination="rIf-Oo-xqy" id="hD3-eo-8xN"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MiK-sO-VDW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5822" y="-526"/>
         </scene>
         <!--Subscriptions Collection View Controller-->
         <scene sceneID="ydb-HJ-qC9">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="vuQ-VU-73n" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <collectionViewController id="mcT-26-e1U" customClass="SubscriptionsCollectionViewController" customModule="Blink" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" id="i3G-Vo-rHB">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="495"/>
@@ -158,13 +157,13 @@
                         <outlet property="subscriptionsCollectionView" destination="i3G-Vo-rHB" id="R8s-Im-FkY"/>
                     </connections>
                 </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vuQ-VU-73n" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="6577" y="-526"/>
         </scene>
         <!--Settings View Controller-->
         <scene sceneID="PHB-k5-wrG">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="WXP-5i-XAD" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="Ti4-Dl-YgN" customClass="SettingsViewController" customModule="Blink" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="1lR-yc-7Ss"/>
@@ -218,23 +217,23 @@
                         <outlet property="dismissToolbar" destination="qQX-Dx-PEg" id="RbA-dB-9Go"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="WXP-5i-XAD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4305" y="-223"/>
         </scene>
         <!--Settings Page View Controller-->
         <scene sceneID="mr5-zY-Tbh">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Lih-WB-cld" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <pageViewController autoresizesArchivedViewToFullSize="NO" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="UfE-31-Ywa" customClass="SettingsPageViewController" customModule="Blink" customModuleProvider="target" sceneMemberID="viewController">
                     <nil key="simulatedTopBarMetrics"/>
                 </pageViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Lih-WB-cld" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5084" y="-223"/>
         </scene>
         <!--Welcome View Controller-->
         <scene sceneID="sTg-NJ-ThJ">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="fmV-DU-O9d" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="WelcomeViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="GN1-tO-jh7" customClass="WelcomeViewController" customModule="Blink" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="RZ4-6n-idw"/>
@@ -333,13 +332,13 @@
                         <outlet property="widthConstraint" destination="G0q-MJ-SS0" id="PS8-LA-aPx"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="fmV-DU-O9d" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2644" y="106.59670164917542"/>
         </scene>
         <!--Posts View Controller-->
         <scene sceneID="5IO-o3-arr">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="a8Y-y6-Yw2" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="8dz-FN-85d" customClass="PostsViewController" customModule="Blink" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="3zP-SO-dyu"/>
@@ -736,18 +735,13 @@
                         <outlet property="tableView" destination="I5R-ea-Nwj" id="gLz-Pm-smP"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="a8Y-y6-Yw2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3520.8000000000002" y="106.59670164917542"/>
         </scene>
         <!--Photo Gallery View Controller-->
         <scene sceneID="zRE-vP-3nj">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="JUc-wH-4AE" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <panGestureRecognizer minimumNumberOfTouches="1" id="aRb-aw-h0J">
-                    <connections>
-                        <action selector="handleGesture:" destination="YY9-fs-Mqp" id="UzZ-UY-FUV"/>
-                    </connections>
-                </panGestureRecognizer>
                 <viewController storyboardIdentifier="PhotoGalleryViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="YY9-fs-Mqp" customClass="PhotoGalleryViewController" customModule="Blink" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="5D2-Ow-Cah"/>
@@ -838,18 +832,18 @@
                         <outlet property="scrollView" destination="haP-Xc-u3q" id="4CT-dR-h1k"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JUc-wH-4AE" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="aRb-aw-h0J">
+                    <connections>
+                        <action selector="handleGesture:" destination="YY9-fs-Mqp" id="UzZ-UY-FUV"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="4304.8000000000002" y="455.62218890554726"/>
         </scene>
         <!--Post Gallery View Controller-->
         <scene sceneID="Dfk-VO-W2U">
             <objects>
-                <panGestureRecognizer minimumNumberOfTouches="1" id="hC5-Q7-ebI">
-                    <connections>
-                        <action selector="handleGesture:" destination="GqX-fA-TFW" id="tRA-JP-4Tf"/>
-                    </connections>
-                </panGestureRecognizer>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="DFy-c5-P48" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="GqX-fA-TFW" customClass="PostGalleryViewController" customModule="Blink" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="OoG-C1-iUB"/>
@@ -994,13 +988,18 @@
                         <outlet property="textLabel" destination="CMF-bv-98d" id="Ygm-zg-NZF"/>
                     </connections>
                 </viewController>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="hC5-Q7-ebI">
+                    <connections>
+                        <action selector="handleGesture:" destination="GqX-fA-TFW" id="tRA-JP-4Tf"/>
+                    </connections>
+                </panGestureRecognizer>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="DFy-c5-P48" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5084" y="455.62218890554726"/>
         </scene>
         <!--Photo Preview View Controller-->
         <scene sceneID="q8q-YW-mg6">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="eks-HN-qlz" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="PhotoPreviewViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="XlW-OZ-nwT" customClass="PhotoPreviewViewController" customModule="Blink" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="GxZ-2I-lSh"/>
@@ -1027,13 +1026,13 @@
                         <outlet property="imageView" destination="hew-xJ-XgR" id="YSx-tz-Rq5"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eks-HN-qlz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4305" y="1145"/>
         </scene>
         <!--Preview View Controller-->
         <scene sceneID="tt1-iR-Hjt">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="u2f-K9-Epp" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController storyboardIdentifier="PreviewViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="ERH-I7-r1v" customClass="PreviewViewController" customModule="Blink" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="PpB-qH-cF6">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
@@ -1199,13 +1198,13 @@
                         <outlet property="titleView" destination="q3l-Dj-38F" id="AtB-om-GKN"/>
                     </connections>
                 </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="u2f-K9-Epp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5084" y="1145"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="Ch4-fl-sma">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Ec8-RL-Dh5" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="uvN-UJ-3Zx" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Pxq-iR-zaP"/>
@@ -1217,13 +1216,13 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ec8-RL-Dh5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5822" y="874"/>
         </scene>
         <!--About Table View Controller-->
         <scene sceneID="pRx-ry-kcD">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="EIr-Sb-ZaU" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController storyboardIdentifier="AboutTableViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="7r6-Vk-Qfk" customClass="AboutTableViewController" customModule="Blink" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="none" rowHeight="541" sectionHeaderHeight="28" sectionFooterHeight="28" id="ny6-4X-eKd">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
@@ -1405,6 +1404,7 @@
                         <outlet property="widthConstraint" destination="BbB-5N-zn3" id="hVE-NX-Ii3"/>
                     </connections>
                 </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="EIr-Sb-ZaU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="5822" y="149"/>
         </scene>

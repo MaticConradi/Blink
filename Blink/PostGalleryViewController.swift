@@ -25,6 +25,7 @@ class PostGalleryViewController: UIViewController {
     
     var colors = [[UIColor]]()
     var dismissToolbarHidden = false
+    var hasAnimated = false
     var width: CGFloat = 0
     var height: CGFloat = 0
     var post: String?
@@ -71,21 +72,22 @@ class PostGalleryViewController: UIViewController {
         let downwardMovementPercent = fminf(downwardMovement, 1.0)
         let progress = CGFloat(downwardMovementPercent)
         
+        
         guard let interactor = interactor else { return }
         
         switch sender.state {
         case .began:
             interactor.hasStarted = true
             dismiss(animated: true, completion: nil)
-            if url != "" {
+            if url != "" && !hasAnimated {
                 animateOut(translation.y, withLink: true)
-            }else if condition == "3"{
+            }else if condition == "3" && !hasAnimated {
                 animateOut(translation.y, withLink: false)
             }
         case .changed:
             interactor.shouldFinish = progress > percentThreshold
             interactor.update(progress)
-            if url != "" {
+            if url != "" && !hasAnimated {
                 if Float(-translation.y) * 0.66 * 0.01 < 1 {
                     animateOut(translation.y, withLink: true)
                 }else{
@@ -99,7 +101,7 @@ class PostGalleryViewController: UIViewController {
                         interactor.cancel()
                     }
                 }
-            }else if condition == "3" {
+            }else if condition == "3" && !hasAnimated {
                 if Float(-translation.y) * 0.66 * 0.01 < 1 {
                     animateOut(translation.y, withLink: false)
                 }else{
@@ -127,14 +129,14 @@ class PostGalleryViewController: UIViewController {
         if dismissToolbarHidden {
             UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: {
                 self.dismissToolbar.transform = CGAffineTransform(translationX: 0, y: 0)
-                self.textButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: 0)
-                self.imageButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: 0)
+                self.textButtonSwipeUp.layer.opacity = 1
+                self.imageButtonSwipeUp.layer.opacity = 1
             })
         }else{
             UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: {
                 self.dismissToolbar.transform = CGAffineTransform(translationX: 0, y: 64)
-                self.textButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: 64)
-                self.imageButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: 64)
+                self.textButtonSwipeUp.layer.opacity = 0
+                self.imageButtonSwipeUp.layer.opacity = 0
             })
         }
         dismissToolbarHidden = !dismissToolbarHidden
@@ -189,8 +191,6 @@ class PostGalleryViewController: UIViewController {
                 }
                 UIView.animate(withDuration: 0.2, delay: 0.1, options: .curveEaseInOut, animations: {
                     self.dismissToolbar.transform = CGAffineTransform(translationX: 0, y: 0)
-                    self.textButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: 0)
-                    self.imageButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: 0)
                     self.textButtonSwipeUp.layer.opacity = 1
                     self.imageButtonSwipeUp.layer.opacity = 1
                 })
@@ -320,13 +320,10 @@ class PostGalleryViewController: UIViewController {
     }
     
     func animateOut(_ translationY: CGFloat, withLink: Bool) {
-        var offset: CGFloat = 0
-        if dismissToolbarHidden {
-            offset = 64
-        }
         if translationY < 0 {
-            textButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: offset + translationY * 0.33)
-            imageButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: offset + translationY * 0.33)
+            textLabel.layer.opacity = 1 - Float(-translationY) * 0.66 * 0.01
+            textButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: translationY * 0.33)
+            imageButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: translationY * 0.33)
             if withLink {
                 overlayView.layer.opacity = Float(-translationY) * 0.66 * 0.01
             }
@@ -334,26 +331,26 @@ class PostGalleryViewController: UIViewController {
     }
     
     func animateBack(_ sender: UIPanGestureRecognizer, shouldHide: Bool) {
-        var offset: CGFloat = 0
-        if dismissToolbarHidden {
-            offset = 64
-        }
-        
         if shouldHide {
             UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: {
-                self.textButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: offset)
-                self.imageButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: offset)
                 self.textButtonSwipeUp.layer.opacity = 0
                 self.imageButtonSwipeUp.layer.opacity = 0
-                self.overlayView.layer.opacity = 0
+                self.textButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: 0)
+                self.imageButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: 0)
+                self.textLabel.layer.opacity = 1
             }, completion: { (true) in
                 sender.isEnabled = true
             })
         }else{
             UIView.animate(withDuration: 0.5, delay: 0, options: .curveEaseInOut, animations: {
-                self.textButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: offset)
-                self.imageButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: offset)
+                if !self.dismissToolbarHidden {
+                    self.textButtonSwipeUp.layer.opacity = 1
+                    self.imageButtonSwipeUp.layer.opacity = 1
+                }
+                self.textButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: 0)
+                self.imageButtonSwipeUp.transform = CGAffineTransform(translationX: 0, y: 0)
                 self.overlayView.layer.opacity = 0
+                self.textLabel.layer.opacity = 1
             }, completion: { (true) in
                 sender.isEnabled = true
             })
@@ -361,6 +358,8 @@ class PostGalleryViewController: UIViewController {
     }
     
     func animateAnwser() {
+        textLabel.layer.opacity = 0
+        hasAnimated = true
         let post = NSMutableAttributedString()
         
         let attributes = [NSForegroundColorAttributeName: UIColor(red: 1, green: 1, blue: 1, alpha: 0.66)]
@@ -374,13 +373,14 @@ class PostGalleryViewController: UIViewController {
         }else{
             post.append(NSMutableAttributedString(string: " \(desc!)"))
         }
-        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseInOut, animations: {
-            self.textLabel.layer.opacity = 0
+        textLabel.attributedText = post
+        UIView.animate(withDuration: 0.5, delay: 0.0, options: .curveEaseInOut, animations: {
+            self.textLabel.layer.opacity = 1
+            self.textButtonSwipeUp.layer.opacity = 0
+            self.imageButtonSwipeUp.layer.opacity = 0
         }, completion: { (true) in
-            self.textLabel.attributedText = post
-            UIView.animate(withDuration: 0.2, delay: 0.1, options: .curveEaseInOut, animations: {
-                self.textLabel.layer.opacity = 1
-            })
+            self.textButtonSwipeUp.isHidden = true
+            self.imageButtonSwipeUp.isHidden = true
         })
     }
 }

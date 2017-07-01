@@ -31,7 +31,6 @@
 		6448A5CF1E4A69B40061A857 /* UIImageView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 6448A5B91E4A69B40061A857 /* UIImageView+WebCache.m */; };
 		6448A5D01E4A69B40061A857 /* UIView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 6448A5BB1E4A69B40061A857 /* UIView+WebCache.m */; };
 		6448A5D11E4A69B40061A857 /* UIView+WebCacheOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6448A5BD1E4A69B40061A857 /* UIView+WebCacheOperation.m */; };
-		64588DD01E806654008B0FB0 /* Share.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 64588DCF1E806654008B0FB0 /* Share.pdf */; };
 		646A7E041E1068A00045F685 /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64E382E61D96E17100467364 /* NotificationCenter.framework */; };
 		646A7E061E1068A00045F685 /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 646A7E051E1068A00045F685 /* UserNotificationsUI.framework */; };
 		646D1D981EA2BF49006B1A04 /* PostGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 646D1D971EA2BF49006B1A04 /* PostGalleryViewController.swift */; };
@@ -154,7 +153,6 @@
 		6448A5BB1E4A69B40061A857 /* UIView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+WebCache.m"; sourceTree = "<group>"; };
 		6448A5BC1E4A69B40061A857 /* UIView+WebCacheOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+WebCacheOperation.h"; sourceTree = "<group>"; };
 		6448A5BD1E4A69B40061A857 /* UIView+WebCacheOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+WebCacheOperation.m"; sourceTree = "<group>"; };
-		64588DCF1E806654008B0FB0 /* Share.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Share.pdf; sourceTree = "<group>"; };
 		646A7E051E1068A00045F685 /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
 		646D1D971EA2BF49006B1A04 /* PostGalleryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostGalleryViewController.swift; sourceTree = "<group>"; };
 		647183C61D63116100712A97 /* Home.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Home.pdf; sourceTree = "<group>"; };
@@ -246,7 +244,6 @@
 				6429328D1E1BF22700A8EE77 /* More.pdf */,
 				647183C61D63116100712A97 /* Home.pdf */,
 				649105C81EFED319000121AA /* Swipe up.pdf */,
-				64588DCF1E806654008B0FB0 /* Share.pdf */,
 				64922B711E81718A003B3DA1 /* BLINK shape.pdf */,
 				6490368D1EDABCD0004D766A /* BLINK shape white.pdf */,
 				64133CEF1E9107F1001924AF /* BLINK welcome.pdf */,
@@ -543,7 +540,6 @@
 				64922B6C1E817066003B3DA1 /* Chivo-Italic.ttf in Resources */,
 				64F429F21EFE9194003521A6 /* Castle.jpg in Resources */,
 				64DAB0AA1D55EA0C0029BB8B /* LaunchScreen.storyboard in Resources */,
-				64588DD01E806654008B0FB0 /* Share.pdf in Resources */,
 				64A968551E89871700C34FBA /* 76@1x.png in Resources */,
 				648F63E81E85AFA70089B1D7 /* CATEGORIES shape.pdf in Resources */,
 				64133CF01E9107F1001924AF /* BLINK welcome.pdf in Resources */,

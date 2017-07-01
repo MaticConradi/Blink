@@ -639,13 +639,10 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     
     func addFridayPost() {
-        //ADD NEW POSTS
         var text = ""
         switch getDayOfWeek() {
         case 1:
             //"Sun"
-            //let anwsers = ["No. Sadly."]
-            //text = anwsers[Int(arc4random_uniform(UInt32(anwsers.count)))]
             text = "No. Sadly."
         case 2:
             //"Mon"
@@ -669,9 +666,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
             text = anwsers[Int(arc4random_uniform(UInt32(anwsers.count)))]
         case 7:
             //"Sat"
-            //let anwsers = ["You've missed it."]
-            //text = anwsers[Int(arc4random_uniform(UInt32(anwsers.count)))]
-            text = "You just missed it."
+            text = "You've missed it."
         default:
             print("🆘 Error fetching days")
             return
@@ -747,7 +742,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                                                                         }
                                                                     }
                                                                     
-                                                                    let imageSizeComponents : [String] = imageSize.components(separatedBy: "*")
+                                                                    let imageSizeComponents: [String] = imageSize.components(separatedBy: "*")
                                                                     
                                                                     // And then to access the individual words:
                                                                     var width: Double = 0
@@ -843,7 +838,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
     func setUp() {
         //SET UP
         print("📳 Set up")
-        version = "1.3.1"
+        version = "1.5.2"
         defaults.set(version, forKey: "version")
         defaults.set(version, forKey: "setUpVersion")
         arrayDefaultPosts = ["I'll try to help you with some advice. ⚖️",
@@ -1167,7 +1162,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
         //dailyPostNumber = 100
         //defaults.set(dailyPostNumber, forKey: "dailyPostNumber")
         
-        version = "1.3.1"
+        version = "1.5.2"
         defaults.set(version, forKey: "version")
         print("📳 Version: \(version)")
         defaults.synchronize()
