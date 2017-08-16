@@ -93,7 +93,7 @@ class PhotoGalleryViewController: UIViewController {
     }
     
     @IBAction func handleGesture(_ sender: UIPanGestureRecognizer) {
-        let percentThreshold:CGFloat = 0.3
+        let percentThreshold:CGFloat = 0.2
         
         // convert y-position to downward pull progress (percentage)
         let translation = sender.translation(in: view)
@@ -214,7 +214,7 @@ class PhotoGalleryViewController: UIViewController {
             })
         })
         
-        let saveAction = UIAlertAction(title: "Save screenshot", style: .default, handler: {
+        let saveAction = UIAlertAction(title: "Save", style: .default, handler: {
             (alert: UIAlertAction!) -> Void in
             let isSharing = true
             

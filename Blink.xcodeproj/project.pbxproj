@@ -10,6 +10,7 @@
 		64133CF01E9107F1001924AF /* BLINK welcome.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 64133CEF1E9107F1001924AF /* BLINK welcome.pdf */; };
 		64133CF21E910A4B001924AF /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64133CF11E910A4B001924AF /* WelcomeViewController.swift */; };
 		64133CF61E91923B001924AF /* OLDER shape.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 64133CF51E91923B001924AF /* OLDER shape.pdf */; };
+		64218FED1F40DE95007CB741 /* ApiKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64218FEC1F40DE95007CB741 /* ApiKeys.swift */; };
 		6429328E1E1BF22700A8EE77 /* More.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6429328D1E1BF22700A8EE77 /* More.pdf */; };
 		643F44271D639384000A6775 /* SubscriptionsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 643F44261D639384000A6775 /* SubscriptionsCollectionView.swift */; };
 		6448A5BF1E4A69B40061A857 /* MKAnnotationView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 6448A5981E4A69B40061A857 /* MKAnnotationView+WebCache.m */; };
@@ -111,6 +112,7 @@
 		64133CEF1E9107F1001924AF /* BLINK welcome.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "BLINK welcome.pdf"; sourceTree = "<group>"; };
 		64133CF11E910A4B001924AF /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		64133CF51E91923B001924AF /* OLDER shape.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "OLDER shape.pdf"; sourceTree = "<group>"; };
+		64218FEC1F40DE95007CB741 /* ApiKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiKeys.swift; sourceTree = "<group>"; };
 		6429328D1E1BF22700A8EE77 /* More.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = More.pdf; sourceTree = "<group>"; };
 		6437DCB91EEC40220040E0AA /* Blink@1024.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Blink@1024.png"; sourceTree = "<group>"; };
 		643F44261D639384000A6775 /* SubscriptionsCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionsCollectionView.swift; sourceTree = "<group>"; };
@@ -380,6 +382,7 @@
 				648CDF621EDF385C008E7B95 /* DismissAnimator.swift */,
 				648CDF641EDF3A40008E7B95 /* Interactor.swift */,
 				64A15F801E8709D0006AF853 /* UICollectionViewLeftAlignedLayout.swift */,
+				64218FEC1F40DE95007CB741 /* ApiKeys.swift */,
 				64DAB0A61D55EA0C0029BB8B /* Assets.xcassets */,
 				64DAB0A81D55EA0C0029BB8B /* LaunchScreen.storyboard */,
 				64DAB0AB1D55EA0C0029BB8B /* Info.plist */,
@@ -585,6 +588,7 @@
 				6448A5CC1E4A69B40061A857 /* UIImage+MultiFormat.m in Sources */,
 				6448A5CD1E4A69B40061A857 /* UIImage+WebP.m in Sources */,
 				64A15F811E8709D1006AF853 /* UICollectionViewLeftAlignedLayout.swift in Sources */,
+				64218FED1F40DE95007CB741 /* ApiKeys.swift in Sources */,
 				64DAB0A01D55EA0C0029BB8B /* AppDelegate.swift in Sources */,
 				64D5251F1D8EE9EE000B2EA9 /* Post.swift in Sources */,
 				649161401E4CEBDF00677CD4 /* AboutTableViewController.swift in Sources */,

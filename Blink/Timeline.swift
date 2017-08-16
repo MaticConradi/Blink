@@ -236,14 +236,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 detailViewController.imageURL = arrayImages[indexPath.row]
                 indexPathRow = indexPath.row
                 
-                let manager = SDWebImageManager.shared()
-                manager.loadImage(with: URL(string: arrayImages[indexPath.row]), options: .highPriority, progress: nil, completed: { (image, data, error, cacheType, finished, url) in
-                    if let loadedImage = image {
-                        let width: CGFloat = 300
-                        let height = (width * loadedImage.size.height) / loadedImage.size.width
-                        detailViewController.preferredContentSize = CGSize(width: width, height: height)
-                    }
-                })
+                detailViewController.preferredContentSize = CGSize(width: CGFloat(arrayImageSizes[indexPathRow][0]), height: CGFloat(arrayImageSizes[indexPathRow][1]))
                 
                 previewingContext.sourceRect = tableView.convert(cell.imageShadowView.frame, from: cell.imageShadowView.superview)
                 return detailViewController
@@ -608,7 +601,7 @@ class PostsViewController: UIViewController, UITableViewDataSource, UITableViewD
                 //Is it Friday yet?
                 configureFridayPost = true
             }
-            baseURL = "http://services.conradi.si/blink/download.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[6])&news=\(boolDefaultPosts[7])&numbers=\(boolDefaultPosts[8])&space=\(boolDefaultPosts[9])&sports=\(boolDefaultPosts[10])&tech=\(boolDefaultPosts[11])&time=\(self.defaults.integer(forKey: "lastTime"))&version=3&token=cb5ffe91b428bed8a251dc098feced975687e0204d44451dc4869498311196fd"
+            baseURL = "http://services.conradi.si/blink/download.php?num=\(dailyPostNumber)&advice=\(boolDefaultPosts[0])&cats=\(boolDefaultPosts[1])&curiosities=\(boolDefaultPosts[2])&daily=\(boolDefaultPosts[3])&quotes=\(boolDefaultPosts[4])&movies=\(boolDefaultPosts[6])&news=\(boolDefaultPosts[7])&numbers=\(boolDefaultPosts[8])&space=\(boolDefaultPosts[9])&sports=\(boolDefaultPosts[10])&tech=\(boolDefaultPosts[11])&time=\(self.defaults.integer(forKey: "lastTime"))&version=3&token=\(ApiKeys().iOSKey)"
             //DELAY 1 MIN
             if defaults.integer(forKey: "lastTime") < Int(Date().timeIntervalSince1970) - 60 {
                 defaults.set(Int(Date().timeIntervalSince1970), forKey: "lastTime")

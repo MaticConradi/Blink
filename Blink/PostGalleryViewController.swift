@@ -62,8 +62,7 @@ class PostGalleryViewController: UIViewController {
     }
     
     @IBAction func handleGesture(_ sender: UIPanGestureRecognizer) {
-        
-        let percentThreshold:CGFloat = 0.3
+        let percentThreshold:CGFloat = 0.2
         
         // convert y-position to downward pull progress (percentage)
         let translation = sender.translation(in: view)
@@ -71,7 +70,6 @@ class PostGalleryViewController: UIViewController {
         let downwardMovement = fmaxf(Float(verticalMovement), 0.0)
         let downwardMovementPercent = fminf(downwardMovement, 1.0)
         let progress = CGFloat(downwardMovementPercent)
-        
         
         guard let interactor = interactor else { return }
         
@@ -183,11 +181,18 @@ class PostGalleryViewController: UIViewController {
                 self.textButtonSwipeUp.layer.opacity = 0
                 self.imageButtonSwipeUp.layer.opacity = 0
             }, completion: { (true) in
-                UIGraphicsBeginImageContext(self.view.frame.size)
-                self.view.layer.render(in: UIGraphicsGetCurrentContext()!)
-                let image = UIGraphicsGetImageFromCurrentImageContext()
-                if let shareImage = image {
-                    UIImageWriteToSavedPhotosAlbum(shareImage, nil, nil, nil)
+                let layer = UIApplication.shared.keyWindow!.layer
+                let scale = UIScreen.main.scale
+                UIGraphicsBeginImageContextWithOptions(layer.frame.size, false, scale)
+                layer.render(in: UIGraphicsGetCurrentContext()!)
+                let screenshot = UIGraphicsGetImageFromCurrentImageContext()
+                if let JPGImage = screenshot {
+                    if let image = UIImagePNGRepresentation(JPGImage) {
+                        UIImageWriteToSavedPhotosAlbum(UIImage(data: image)!, nil, nil, nil)
+                        
+                        let generator = UINotificationFeedbackGenerator()
+                        generator.notificationOccurred(.success)
+                    }
                 }
                 UIView.animate(withDuration: 0.2, delay: 0.1, options: .curveEaseInOut, animations: {
                     self.dismissToolbar.transform = CGAffineTransform(translationX: 0, y: 0)

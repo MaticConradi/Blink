@@ -1,11 +1,3 @@
-//
-//  DismissAnimator.swift
-//  Blink
-//
-//  Created by Matic Conradi on 31/05/2017.
-//  Copyright © 2017 Conradi.si. All rights reserved.
-//
-
 import UIKit
 
 class DismissAnimator : NSObject {
